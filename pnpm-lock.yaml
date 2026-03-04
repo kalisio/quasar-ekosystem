@@ -112,6 +112,8 @@ importers:
         specifier: 'catalog:'
         version: 4.0.18(@types/node@25.3.3)(yaml@2.8.2)
 
+  packages/quasar-form: {}
+
 packages:
 
   '@algolia/abtesting@1.15.1':

@@ -57,7 +57,7 @@
     "quasar": "catalog:"
   },
   "devDependencies": {
-   "@changesets/cli": "catalog:",
+    "@changesets/cli": "catalog:",
     "@kalisio/meta-ekosystem": "github:kalisio/meta-ekosystem",
     "@vitest/coverage-v8": "catalog:",
     "cross-env": "catalog:",
@@ -70,5 +70,8 @@
     "vitepress-plugin-mermaid": "catalog:",
     "vitepress-theme-kalisio": "catalog:",
     "vitest": "catalog:"
+  },
+  "pnpm": {
+    "overrides": {}
   }
 }
