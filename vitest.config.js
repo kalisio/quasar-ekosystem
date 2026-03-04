@@ -16,6 +16,13 @@ export default defineConfig({
     silent: false,
     testTimeout: 30000,
     projects: [
+      {
+        test: {
+          name: 'quasar-form',
+          root: 'packages/quasar-form',
+          include: ['test/**/*.test.js']
+        }
+      }
     ]
   }
 })
