@@ -49,6 +49,7 @@
     "quasar": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
-    "vue": "catalog:"
+    "vue": "catalog:",
+    "vue-i18n": "catalog:"
   }
 }

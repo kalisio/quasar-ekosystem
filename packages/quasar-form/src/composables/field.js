@@ -1,11 +1,9 @@
 import _ from 'lodash'
 import { ref, computed, watch } from 'vue'
 import { openURL } from 'quasar'
+import { useI18n } from 'vue-i18n'
 
-export function useField (props, emit, { t } = {}) {
-  // Translate if a translator function is provided, otherwise return the key as-is
-  const tie = t || ((key) => key)
-
+export function useField (props, emit) {
   // State
   const model = ref(emptyModel())
   const error = ref('')
@@ -13,7 +11,7 @@ export function useField (props, emit, { t } = {}) {
   // Computed
   const label = computed(() => {
     const description = _.get(props.properties, 'description', '')
-    return tie(_.get(props.properties.field, 'label', description))
+    return useI18n().t(_.get(props.properties.field, 'label', description))
   })
   const hasHelper = computed(() => !_.isEmpty(_.get(props.properties.field, 'helper', {})))
   const helperLabel = computed(() => _.get(props.properties.field?.helper, 'label', null))
@@ -27,7 +25,7 @@ export function useField (props, emit, { t } = {}) {
   const errorLabel = computed(() => {
     let err = _.get(props.properties.field, 'errorLabel', '')
     if (!err) err = error.value
-    return tie(err)
+    return useI18n().t(err)
   })
   const disabled = computed(() => _.get(props.properties.field, 'disabled', false))
 

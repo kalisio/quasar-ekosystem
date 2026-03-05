@@ -9,6 +9,11 @@ vi.mock('@logtape/logtape', () => ({
   getLogger: () => ({ debug: vi.fn(), error: vi.fn(), warn: vi.fn(), info: vi.fn() })
 }))
 
+// vue-i18n is a platform concern: provide identity translator
+vi.mock('vue-i18n', () => ({
+  useI18n: () => ({ t: (key) => key })
+}))
+
 // Quasar component stubs — render slots so child fields mount properly
 const quasarStubs = {
   'q-form': { template: '<form @submit.prevent="$emit(\'submit\', $event)"><slot /></form>', emits: ['submit'] },
@@ -16,6 +21,7 @@ const quasarStubs = {
   'q-card': { template: '<div><slot /></div>' },
   'q-card-section': { template: '<div><slot /></div>' },
   'q-item-section': { template: '<div><slot /></div>' },
+  'q-input': { template: '<input />', props: ['modelValue'], emits: ['update:modelValue', 'blur'] },
   'k-action': true
 }
 
@@ -60,8 +66,7 @@ describe('KForm', () => {
 
     it('renders one field per schema property', async () => {
       const wrapper = await mountReady(userSchema)
-      expect(wrapper.find('.k-text-field').exists()).toBe(true)
-      expect(wrapper.find('.k-number-field').exists()).toBe(true)
+      expect(wrapper.findAll('input').length).toBe(2)
     })
   })
 
