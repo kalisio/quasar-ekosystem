@@ -1,4 +1,9 @@
 import { defineConfig } from 'vitest/config'
+import { fileURLToPath } from 'url'
+import path from 'path'
+import vue from '@vitejs/plugin-vue'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
   test: {
@@ -17,9 +22,16 @@ export default defineConfig({
     testTimeout: 30000,
     projects: [
       {
+        plugins: [vue()],
+        resolve: {
+          alias: {
+            '@components': path.join(__dirname, 'packages/quasar-form/src/components')
+          }
+        },
         test: {
           name: 'quasar-form',
           root: 'packages/quasar-form',
+          environment: 'happy-dom',
           include: ['test/**/*.test.js']
         }
       }
