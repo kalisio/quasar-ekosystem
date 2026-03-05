@@ -39,7 +39,7 @@
     "ajv-formats": "catalog:",
     "ajv-keywords": "catalog:",
     "lodash": "catalog:",
-    "loglevel": "catalog:"
+    "@logtape/logtape": "catalog:"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "catalog:",

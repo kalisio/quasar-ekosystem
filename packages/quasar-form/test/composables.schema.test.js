@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { Schema } from '../src/composables/schema.js'
+import { Schema } from '../src/utils/index.js'
 
 const userSchema = {
   $id: 'user',

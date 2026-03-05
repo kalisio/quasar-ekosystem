@@ -2,11 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 
 import KForm from '../src/components/KForm.vue'
-import { Schema } from '../src/composables/index.js'
+import { Schema } from '../src/utils/index.js'
 
-// loglevel is a platform concern (like global.document in graphiks): silence noise
-vi.mock('loglevel', () => ({
-  default: { debug: vi.fn(), error: vi.fn(), trace: vi.fn() }
+// logtape is a platform concern (like global.document in graphiks): silence noise
+vi.mock('@logtape/logtape', () => ({
+  getLogger: () => ({ debug: vi.fn(), error: vi.fn(), warn: vi.fn(), info: vi.fn() })
 }))
 
 // Quasar component stubs — render slots so child fields mount properly
@@ -24,8 +24,8 @@ const userSchema = {
   $id: 'user-form',
   type: 'object',
   properties: {
-    name: { type: 'string', field: { component: 'form/KTextField' } },
-    age: { type: ['integer', 'null'], field: { component: 'form/KNumberField' } }
+    name: { type: 'string', field: { component: 'KTextField' } },
+    age: { type: ['integer', 'null'], field: { component: 'KNumberField' } }
   },
   required: ['name']
 }

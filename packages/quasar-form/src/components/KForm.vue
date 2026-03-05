@@ -73,7 +73,9 @@
 
 <script setup>
 import _ from 'lodash'
-import logger from 'loglevel'
+import { getLogger } from '@logtape/logtape'
+
+const logger = getLogger(['quasar-form', 'KForm'])
 import { ref, watch, computed, onMounted } from 'vue'
 import { loadComponent } from '../utils/index.js'
 import { useSchema } from '../composables/index.js'
@@ -124,11 +126,11 @@ const groups = computed(() => {
 
 // Watch
 watch(() => props.schema, async (value) => {
-  logger.debug('[KDK] Schema content changed', value)
+  logger.debug('Schema content changed: {schema}', { schema: value })
   if (value) await build()
 })
 watch(() => props.filter, async (value) => {
-  logger.debug('[KDK] Schema filter changed', value)
+  logger.debug('Schema filter changed: {filter}', { filter: value })
   if (value) await build()
 })
 
@@ -136,7 +138,7 @@ watch(() => props.filter, async (value) => {
 function getField (name) {
   const field = _.find(fields.value, { name })
   if (field) return field
-  logger.error(`[KDK] Cannot find field ${name}`)
+  logger.error('Cannot find field {name}', { name })
 }
 function onFieldRefCreated (reference) {
   if (reference) {
@@ -150,7 +152,7 @@ function onFieldRefCreated (reference) {
     // Check whether the form is ready
     nbReadyFields.value++
     if (nbReadyFields.value === fields.value.length) {
-      logger.debug(`[KDK] schema ${schema.value.$id} ready`)
+      logger.debug('Schema {id} ready', { id: schema.value.$id })
       isReady.value = true
       emit('form-ready')
     }
@@ -204,9 +206,9 @@ async function build () {
       let component = _.get(field.field, 'component', '')
       if (!component) {
         // Provide a default component based on schema value type when none is specified
-        if (field.type === 'number' || field.type === 'integer') component = 'form/KNumberField'
-        else if (field.type === 'boolean') component = 'form/KToggleField'
-        else if (field.type === 'string') component = 'form/KTextField'
+        if (field.type === 'number' || field.type === 'integer') component = 'KNumberField'
+        else if (field.type === 'boolean') component = 'KToggleField'
+        else if (field.type === 'string') component = 'KTextField'
       }
       cloneField.component = loadComponent(component)
       cloneField.reference = null // will be set once te field is rendered
@@ -226,7 +228,7 @@ function values () {
 }
 function fill (values) {
   if (!isReady.value) throw new Error('Cannot fill the form while not ready')
-  logger.debug('[KDK] Filling form', schema.value.$id, values)
+  logger.debug('Filling form {id}', { id: schema.value.$id })
   _.forEach(fields.value, field => {
     if (_.has(values, field.name)) {
       getField(field.name).reference.fill(_.get(values, field.name), values)
@@ -238,12 +240,12 @@ function fill (values) {
 }
 function clear () {
   if (!isReady.value) throw new Error('Cannot clear the form while not ready')
-  logger.debug('[KDK] Clearing form', schema.value.$id)
+  logger.debug('Clearing form {id}', { id: schema.value.$id })
   _.forEach(fields.value, field => field.reference.clear())
 }
 function validate () {
   if (!isReady.value) throw new Error('Cannot validate the form while not ready')
-  logger.debug('[KDK] Validating form', schema.value.$id)
+  logger.debug('Validating form {id}', { id: schema.value.$id })
   const fieldValues = values()
   const { isValid, errors } = validateSchema(fieldValues)
   if (!isValid) {

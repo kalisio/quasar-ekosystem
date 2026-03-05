@@ -9,6 +9,9 @@ catalogs:
     '@changesets/cli':
       specifier: ^2.29.8
       version: 2.30.0
+    '@logtape/logtape':
+      specifier: ^0.7.0
+      version: 0.7.2
     '@vitejs/plugin-vue':
       specifier: ^6.0.4
       version: 6.0.4
@@ -45,9 +48,6 @@ catalogs:
     lodash:
       specifier: ^4.17.21
       version: 4.17.23
-    loglevel:
-      specifier: ^1.9.2
-      version: 1.9.2
     mermaid:
       specifier: ^10.8.0
       version: 10.9.5
@@ -141,6 +141,9 @@ importers:
 
   packages/quasar-form:
     dependencies:
+      '@logtape/logtape':
+        specifier: 'catalog:'
+        version: 0.7.2
       ajv:
         specifier: 'catalog:'
         version: 8.18.0
@@ -153,9 +156,6 @@ importers:
       lodash:
         specifier: 'catalog:'
         version: 4.17.23
-      loglevel:
-        specifier: 'catalog:'
-        version: 1.9.2
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: 'catalog:'
@@ -732,6 +732,9 @@ packages:
     version: 0.2.1
     engines: {node: '>=20'}
     hasBin: true
+
+  '@logtape/logtape@0.7.2':
+    resolution: {integrity: sha512-3iL71YEiJ8GM6HzeW4eCG2pS8/F9EX6tYfVVCp/oWhzYjQ5FY/QMesSPMtAYdAGG4Evac23ugOSXZJp592zg0A==}
 
   '@manypkg/find-root@1.1.0':
     resolution: {integrity: sha512-mki5uBvhHzO8kYYix/WRy2WX8S3B5wdVSc9D6KcU5lQNglP2yt58/VfLuAK49glRXChosY8ap2oJ1qgma3GUVA==}
@@ -2447,10 +2450,6 @@ packages:
     resolution: {integrity: sha512-9ie8ItPR6tjY5uYJh8K/Zrv/RMZ5VOlOWvtZdEHYSTFKZfIBPQa9tOAEeAWhd+AnIneLJ22w5fjOYtoutpWq5w==}
     engines: {node: '>=18'}
 
-  loglevel@1.9.2:
-    resolution: {integrity: sha512-HgMmCqIJSAKqo68l0rS2AanEWfkxaZ5wNiEFb5ggm08lDs9Xl2KxBlX3PTcaD2chBM1gXAYf491/M2Rv8Jwayg==}
-    engines: {node: '>= 0.6.0'}
-
   loose-envify@1.4.0:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
     hasBin: true
@@ -4037,6 +4036,8 @@ snapshots:
       node-plop: 0.32.3(@types/node@25.3.3)
     transitivePeerDependencies:
       - '@types/node'
+
+  '@logtape/logtape@0.7.2': {}
 
   '@manypkg/find-root@1.1.0':
     dependencies:
@@ -6009,8 +6010,6 @@ snapshots:
       slice-ansi: 7.1.2
       strip-ansi: 7.2.0
       wrap-ansi: 9.0.2
-
-  loglevel@1.9.2: {}
 
   loose-envify@1.4.0:
     dependencies:

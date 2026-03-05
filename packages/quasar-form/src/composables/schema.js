@@ -1,35 +1,39 @@
-import Ajv from 'ajv'
-import addFormats from 'ajv-formats'
-import addKeywords from 'ajv-keywords'
+import _ from 'lodash'
+import { ref, readonly } from 'vue'
+import { Schema } from '../utils/schema-registry.js'
 
-const defaultOptions = {
-  allErrors: true,
-  strict: false,
-  $data: true,
-  keywords: ['field']
-}
+export function useSchema () {
+  const validator = ref(null)
+  const schema = ref(null)
 
-export const Schema = {
-  initialize (options) {
-    this.ajv = new Ajv(options || defaultOptions)
-    addKeywords(this.ajv)
-    addFormats(this.ajv)
-  },
-  register (schema) {
-    if (!this.ajv) throw new Error('Schema must be initialized first')
-    if (!schema.$id) throw new Error('the schema must have an `$id` property')
-    return this.ajv.getSchema(schema.$id) || this.ajv.compile(schema)
-  },
-  addKeyword (keyword) {
-    if (!this.ajv) throw new Error('Schema must be initialized first')
-    this.ajv.addKeyword(keyword)
-  },
-  getKeyword (keyword) {
-    if (!this.ajv) throw new Error('Schema must be initialized first')
-    return this.ajv.getKeyword(keyword)
-  },
-  removeKeyword (keyword) {
-    if (!this.ajv) throw new Error('Schema must be initialized first')
-    this.ajv.removeKeyword(keyword)
+  async function compile (schemaNameOrObject, propertiesFilter) {
+    if (typeof schemaNameOrObject === 'string') {
+      const schemaModule = await import(`@schemas/${schemaNameOrObject}.json`)
+      schema.value = _.cloneDeep(schemaModule.default)
+    } else {
+      schema.value = _.cloneDeep(schemaNameOrObject)
+    }
+    if (propertiesFilter) {
+      let properties = propertiesFilter
+      if (typeof propertiesFilter === 'string') properties = _.split(propertiesFilter, ',')
+      _.forOwn(schema.value.properties, (_value, key) => {
+        if (!properties.includes(key)) delete schema.value.properties[key]
+      })
+      schema.value.$id += properties.join()
+      schema.value.required = _.intersection(schema.value.required, properties)
+    }
+    validator.value = Schema.register(schema.value)
+  }
+
+  function validate (values) {
+    if (!validator.value) return { isValid: false, errors: [] }
+    const result = validator.value(values)
+    return { isValid: result, errors: validator.value.errors || [] }
+  }
+
+  return {
+    schema: readonly(schema),
+    compile,
+    validate
   }
 }
