@@ -21,16 +21,9 @@
 
 <script setup>
 import _ from 'lodash'
-import { useField } from '../composables/index.js'
+import { useField, fieldProps } from '../composables/index.js'
 
-const props = defineProps({
-  properties: { type: Object, required: true },
-  values: { type: Object, default: null },
-  required: { type: Boolean, default: false },
-  readOnly: { type: Boolean, default: false },
-  dense: { type: Boolean, default: false }
-})
-
+const props = defineProps(fieldProps)
 const emit = defineEmits(['field-changed'])
 
 const field = useField(props, emit)
