@@ -1,28 +1,28 @@
 import _ from 'lodash'
 import { ref, readonly } from 'vue'
-import { Schema } from '../utils/schema-registry.js'
+import { schemaRegistry as registry } from '../utils/index.js'
 
 export function useSchema () {
   const validator = ref(null)
-  const schema = ref(null)
+  const schemaRegistry = ref(null)
 
   async function compile (schemaNameOrObject, propertiesFilter) {
     if (typeof schemaNameOrObject === 'string') {
       const schemaModule = await import(`@schemas/${schemaNameOrObject}.json`)
-      schema.value = _.cloneDeep(schemaModule.default)
+      schemaRegistry.value = _.cloneDeep(schemaModule.default)
     } else {
-      schema.value = _.cloneDeep(schemaNameOrObject)
+      schemaRegistry.value = _.cloneDeep(schemaNameOrObject)
     }
     if (propertiesFilter) {
       let properties = propertiesFilter
       if (typeof propertiesFilter === 'string') properties = _.split(propertiesFilter, ',')
-      _.forOwn(schema.value.properties, (_value, key) => {
-        if (!properties.includes(key)) delete schema.value.properties[key]
+      _.forOwn(schemaRegistry.value.properties, (_value, key) => {
+        if (!properties.includes(key)) delete schemaRegistry.value.properties[key]
       })
-      schema.value.$id += properties.join()
-      schema.value.required = _.intersection(schema.value.required, properties)
+      schemaRegistry.value.$id += properties.join()
+      schemaRegistry.value.required = _.intersection(schemaRegistry.value.required, properties)
     }
-    validator.value = Schema.register(schema.value)
+    validator.value = registry.register(schemaRegistry.value)
   }
 
   function validate (values) {
@@ -32,7 +32,7 @@ export function useSchema () {
   }
 
   return {
-    schema: readonly(schema),
+    schemaRegistry: readonly(schemaRegistry),
     compile,
     validate
   }

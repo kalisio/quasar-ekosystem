@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 
 import KForm from '../src/components/KForm.vue'
-import { Schema } from '../src/utils/index.js'
+import { schemaRegistry } from '../src/utils/index.js'
 
 // logtape is a platform concern (like global.document in graphiks): silence noise
 vi.mock('@logtape/logtape', () => ({
@@ -49,7 +49,7 @@ async function mountReady (schemaObj, extraProps = {}) {
 describe('KForm', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    Schema.initialize()
+    schemaRegistry.initialize()
   })
 
   describe('render', () => {

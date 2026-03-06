@@ -9,27 +9,27 @@ const DEFAULT_OPTIONS = {
   keywords: ['field']
 }
 
-export const Schema = {
+export const schemaRegistry = {
   initialize (options) {
     this.ajv = new Ajv(options || DEFAULT_OPTIONS)
     addKeywords(this.ajv)
     addFormats(this.ajv)
   },
   register (schema) {
-    if (!this.ajv) throw new Error('Schema must be initialized first')
+    if (!this.ajv) throw new Error('schemaRegistry must be initialized first')
     if (!schema.$id) throw new Error('the schema must have an `$id` property')
     return this.ajv.getSchema(schema.$id) || this.ajv.compile(schema)
   },
   addKeyword (keyword) {
-    if (!this.ajv) throw new Error('Schema must be initialized first')
+    if (!this.ajv) throw new Error('schemaRegistry must be initialized first')
     this.ajv.addKeyword(keyword)
   },
   getKeyword (keyword) {
-    if (!this.ajv) throw new Error('Schema must be initialized first')
+    if (!this.ajv) throw new Error('schemaRegistry must be initialized first')
     return this.ajv.getKeyword(keyword)
   },
   removeKeyword (keyword) {
-    if (!this.ajv) throw new Error('Schema must be initialized first')
+    if (!this.ajv) throw new Error('schemaRegistry must be initialized first')
     this.ajv.removeKeyword(keyword)
   }
 }

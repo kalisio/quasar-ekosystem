@@ -21,7 +21,8 @@
 
 <script setup>
 import _ from 'lodash'
-import { useField, fieldProps } from '../composables/index.js'
+import { useField } from '../composables/index.js'
+import { fieldProps } from '../utils/index.js'
 
 const props = defineProps(fieldProps)
 const emit = defineEmits(['field-changed'])

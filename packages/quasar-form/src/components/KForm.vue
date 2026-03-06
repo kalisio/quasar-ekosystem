@@ -1,6 +1,6 @@
 <template>
   <q-form
-    v-if="schema"
+    v-if="schemaRegistry"
     autofocus
     @submit.prevent="onSubmit"
     class="column"
@@ -108,7 +108,7 @@ const props = defineProps({
 const emit = defineEmits(['field-changed', 'form-ready'])
 
 // Data
-const { schema, compile: compileSchema, validate: validateSchema } = useSchema()
+const { schemaRegistry, compile: compileSchema, validate: validateSchema } = useSchema()
 const fields = ref([])
 const isReady = ref(false)
 const nbReadyFields = ref(0)
@@ -116,8 +116,8 @@ let buildInProgress = false
 
 // Computed
 const groups = computed(() => {
-  if (schema.value && schema.value.groups) {
-    return _.mapValues(schema.value.groups, (group, id) => Object.assign({
+  if (schemaRegistry.value && schemaRegistry.value.groups) {
+    return _.mapValues(schemaRegistry.value.groups, (group, id) => Object.assign({
       hasFields: _.find(fields.value, { group: id })
     }, group))
   }
@@ -152,7 +152,7 @@ function onFieldRefCreated (reference) {
     // Check whether the form is ready
     nbReadyFields.value++
     if (nbReadyFields.value === fields.value.length) {
-      logger.debug('Schema {id} ready', { id: schema.value.$id })
+      logger.debug('Schema {id} ready', { id: schemaRegistry.value.$id })
       isReady.value = true
       emit('form-ready')
     }
@@ -198,8 +198,8 @@ async function build () {
   // Compile the schema
   await compileSchema(props.schema, props.filter)
   // Build the fields
-  if (!_.isEmpty(schema.value.properties)) {
-    _.forOwn(schema.value.properties, (field, property) => {
+  if (!_.isEmpty(schemaRegistry.value.properties)) {
+    _.forOwn(schemaRegistry.value.properties, (field, property) => {
       // clone and configure the field
       const cloneField = _.clone(field)
       cloneField.name = property // assign a name to allow binding between properties and fields
@@ -212,7 +212,7 @@ async function build () {
       }
       cloneField.component = loadComponent(component)
       cloneField.reference = null // will be set once te field is rendered
-      cloneField.required = _.includes(schema.value.required, property) // add extra required info
+      cloneField.required = _.includes(schemaRegistry.value.required, property) // add extra required info
       // add the field to the list of fields to be rendered
       fields.value.push(cloneField)
     })
@@ -228,7 +228,7 @@ function values () {
 }
 function fill (values) {
   if (!isReady.value) throw new Error('Cannot fill the form while not ready')
-  logger.debug('Filling form {id}', { id: schema.value.$id })
+  logger.debug('Filling form {id}', { id: schemaRegistry.value.$id })
   _.forEach(fields.value, field => {
     if (_.has(values, field.name)) {
       getField(field.name).reference.fill(_.get(values, field.name), values)
@@ -240,12 +240,12 @@ function fill (values) {
 }
 function clear () {
   if (!isReady.value) throw new Error('Cannot clear the form while not ready')
-  logger.debug('Clearing form {id}', { id: schema.value.$id })
+  logger.debug('Clearing form {id}', { id: schemaRegistry.value.$id })
   _.forEach(fields.value, field => field.reference.clear())
 }
 function validate () {
   if (!isReady.value) throw new Error('Cannot validate the form while not ready')
-  logger.debug('Validating form {id}', { id: schema.value.$id })
+  logger.debug('Validating form {id}', { id: schemaRegistry.value.$id })
   const fieldValues = values()
   const { isValid, errors } = validateSchema(fieldValues)
   if (!isValid) {
