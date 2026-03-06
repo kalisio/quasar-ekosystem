@@ -79,7 +79,7 @@ catalogs:
       specifier: ^3.5.0
       version: 3.5.29
     vue-i18n:
-      specifier: ^11.2.8
+      specifier: ^20.3.1
       version: 11.2.8
 
 overrides:
@@ -144,6 +144,15 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 4.0.18(@types/node@25.3.3)(happy-dom@20.8.3)(yaml@2.8.2)
+
+  examples/quasar-form:
+    devDependencies:
+      '@kalisio/quasar-form':
+        specifier: workspace:*
+        version: link:../../packages/quasar-form
+      vite:
+        specifier: 'catalog:'
+        version: 7.3.1(@types/node@25.3.3)(yaml@2.8.2)
 
   packages/quasar-form:
     dependencies:

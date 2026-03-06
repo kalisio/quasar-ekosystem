@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/quasar@2.18.5/dist/quasar.prod.css" rel="stylesheet" type="text/css">
+  </head>
+
+  <body>
+    <!-- HTML -->
+    <div id="q-app">
+      <q-layout view="lhh LpR lff">
+        <q-header class="q-pa-md">
+          <q-banner class="bg-primary text-white">
+            <span class="text-h5">quasar-form</span>
+            <template v-slot:avatar>
+              <q-icon name="dynamic_form" color="white" size="md"></q-icon>
+            </template>
+          </q-banner>
+        </q-header>
+        <q-page-container>
+          <q-page padding>
+
+          </q-page>
+        </q-page-container>
+      </q-layout>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quasar@2.18.5/dist/quasar.umd.prod.js"></script>
+    <script type="module">
+      const app = Vue.createApp({
+        components: {
+
+        },
+        setup () {
+        }
+      })
+      app.use(Quasar)
+      app.mount('#q-app')
+    </script>
+  </body>
+</html>
