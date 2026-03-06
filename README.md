@@ -12,12 +12,12 @@ _A collection of advanced components for extending the Quasar Framework_
 
 ## Documentation
 
-Detailed documentation is available at the following [link](https://github.com/kalisio/quasar-ekosystem).
+Detailed documentation is available at the following [link](https://kalisio.github.io/quasar-ekosystem).
 
 ## License
 
 Licensed under the [MIT license](LICENSE).
 
-Copyright (c) 2026 [Kalisio](https://kalisio.com)
+Copyright (c) 2026 [Kalisio](https://kalisio.com).
 
 [![Kalisio](https://kalisio.github.io/kalisioscope/kalisio/kalisio-logo-black-256x84.png)](https://kalisio.com)
