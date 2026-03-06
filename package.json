@@ -36,6 +36,9 @@
     "docs:build": "vitepress build docs"
   },
   "keywords": [
+    "form",
+    "quasar",
+    "ekosystem",
     "kalisio"
   ],
   "author": {
