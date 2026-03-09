@@ -32,7 +32,7 @@ export default defineConfig({
         '*.config.js'
       ],
       reporter: ['text', 'html', 'lcov'],
-      reportsDirectory: '../../coverage/quasar-form'
+      reportsDirectory: './coverage'
     }
   }
 })
