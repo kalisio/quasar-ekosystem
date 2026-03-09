@@ -211,7 +211,7 @@ describe('KPasswordField', () => {
 })
 
 describe('KSelectField', () => {
-  const stubs = { 'q-select': selectStub, 'q-chip': true }
+  const stubs = { 'q-select': selectStub, 'q-chip': true, 'q-item': true, 'q-item-section': true, 'q-item-label': true }
   const options = [
     { label: 'Option A', value: 'a' },
     { label: 'Option B', value: 'b' }
