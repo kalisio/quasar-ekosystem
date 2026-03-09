@@ -6,6 +6,8 @@ import KUrlField from '../src/components/KUrlField.vue'
 import KToggleField from '../src/components/KToggleField.vue'
 import KPasswordField from '../src/components/KPasswordField.vue'
 import KSelectField from '../src/components/KSelectField.vue'
+import KPhoneField from '../src/components/KPhoneField.vue'
+import KOptionsField from '../src/components/KOptionsField.vue'
 
 vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (key) => key }) }))
 
@@ -14,6 +16,7 @@ const iconStub = { template: '<button @click="$emit(\'click\')" />', emits: ['cl
 const fieldStub = { template: '<div><slot name="control" /></div>', props: ['modelValue'] }
 const toggleStub = { template: '<input type="checkbox" />', props: ['modelValue'], emits: ['update:modelValue', 'blur'] }
 const selectStub = { template: '<select />', props: ['modelValue', 'options'], emits: ['update:modelValue', 'blur'] }
+const optionGroupStub = { template: '<div><slot v-for="opt in options" name="label" :="opt" /></div>', props: ['modelValue', 'options'], emits: ['update:modelValue'] }
 
 function makeProps (propertiesOverride = {}) {
   return { properties: { name: 'test', field: {}, ...propertiesOverride } }
@@ -257,6 +260,99 @@ describe('KSelectField', () => {
 
   it('onChanged emits field-changed', async () => {
     const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
+    wrapper.vm.fill('b')
+    await wrapper.vm.onChanged()
+    expect(wrapper.emitted('field-changed')).toBeTruthy()
+    expect(wrapper.emitted('field-changed')[0]).toEqual(['test', 'b'])
+  })
+})
+
+describe('KPhoneField', () => {
+  const stubs = { 'q-input': inputStub }
+
+  it('renders a q-input in edit mode', () => {
+    const wrapper = mount(KPhoneField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.find('input').exists()).toBe(true)
+  })
+
+  it('renders a tel link in readOnly mode', () => {
+    const wrapper = mount(KPhoneField, { props: { ...makeProps(), readOnly: true, values: { test: '+33612345678' } }, global: { stubs } })
+    expect(wrapper.find('a[href="tel:+33612345678"]').exists()).toBe(true)
+  })
+
+  it('fill sets the model value', () => {
+    const wrapper = mount(KPhoneField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill('+33612345678')
+    expect(wrapper.vm.value()).toBe('+33612345678')
+  })
+
+  it('clear resets model to null', () => {
+    const wrapper = mount(KPhoneField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill('+33612345678')
+    wrapper.vm.clear()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('invalidate sets hasError to true', () => {
+    const wrapper = mount(KPhoneField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.invalidate('invalid phone')
+    expect(wrapper.vm.hasError).toBe(true)
+  })
+
+  it('validate clears the error', () => {
+    const wrapper = mount(KPhoneField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.invalidate('invalid phone')
+    wrapper.vm.validate()
+    expect(wrapper.vm.hasError).toBe(false)
+  })
+
+  it('onChanged emits field-changed', async () => {
+    const wrapper = mount(KPhoneField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill('+33612345678')
+    await wrapper.vm.onChanged()
+    expect(wrapper.emitted('field-changed')).toBeTruthy()
+    expect(wrapper.emitted('field-changed')[0]).toEqual(['test', '+33612345678'])
+  })
+})
+
+describe('KOptionsField', () => {
+  const stubs = { 'q-field': fieldStub, 'q-option-group': optionGroupStub, 'q-chip': true }
+  const options = [
+    { label: 'Option A', value: 'a' },
+    { label: 'Option B', value: 'b' }
+  ]
+
+  it('renders a q-option-group in edit mode', () => {
+    const wrapper = mount(KOptionsField, { props: makeProps({ field: { options } }), global: { stubs } })
+    expect(wrapper.find('div').exists()).toBe(true)
+  })
+
+  it('renders a q-chip in readOnly mode', () => {
+    const wrapper = mount(KOptionsField, { props: { ...makeProps(), readOnly: true }, global: { stubs } })
+    expect(wrapper.find('q-chip-stub').exists()).toBe(true)
+  })
+
+  it('options are computed from properties.field.options', () => {
+    const wrapper = mount(KOptionsField, { props: makeProps({ field: { options } }), global: { stubs } })
+    expect(wrapper.vm.options().length).toBe(2)
+    expect(wrapper.vm.options()[0].value).toBe('a')
+  })
+
+  it('fill sets the model value', () => {
+    const wrapper = mount(KOptionsField, { props: makeProps({ field: { options } }), global: { stubs } })
+    wrapper.vm.fill('a')
+    expect(wrapper.vm.value()).toBe('a')
+  })
+
+  it('clear resets model to null', () => {
+    const wrapper = mount(KOptionsField, { props: makeProps({ field: { options } }), global: { stubs } })
+    wrapper.vm.fill('a')
+    wrapper.vm.clear()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('onChanged emits field-changed', async () => {
+    const wrapper = mount(KOptionsField, { props: makeProps({ field: { options } }), global: { stubs } })
     wrapper.vm.fill('b')
     await wrapper.vm.onChanged()
     expect(wrapper.emitted('field-changed')).toBeTruthy()
