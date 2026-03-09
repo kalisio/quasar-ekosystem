@@ -31,10 +31,10 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "lint": "pnpm -r lint --fix",
-    "lint:quasar-form": "pnpm --filter @kalisio/quasar-form lint",
+    "lint:quasar-form": "pnpm --filter @kalisio/quasar-form lint --fix",
     "prepare": "husky",
     "test": "pnpm -r test --coverage",
-    "test:quasar-form": "pnpm --filter @kalisio/quasar-form test"
+    "test:quasar-form": "pnpm --filter @kalisio/quasar-form test --coverage"
   },
   "keywords": [
     "form",
