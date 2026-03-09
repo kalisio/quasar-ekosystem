@@ -25,7 +25,7 @@ export default defineConfig({
       all: true,
       clean: true,
       include: ['src/**/*.js'],
-      exclude: ['node_modules/**', 'dist/**', 'test/**'],
+      exclude: ['node_modules/**', 'dist/**', 'test/**', '*.config.js'],
       reporter: ['text', 'html', 'lcov'],
       reportsDirectory: '../../coverage/quasar-form'
     }
