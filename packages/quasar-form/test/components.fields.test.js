@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 
 import KEmailField from '../src/components/KEmailField.vue'
 import KUrlField from '../src/components/KUrlField.vue'
@@ -68,6 +69,26 @@ describe('KEmailField', () => {
     expect(wrapper.emitted('field-changed')).toBeTruthy()
     expect(wrapper.emitted('field-changed')[0]).toEqual(['test', 'user@example.com'])
   })
+
+  it('label is read from properties.field.label', () => {
+    const wrapper = mount(KEmailField, { props: makeProps({ field: { label: 'Email address' } }), global: { stubs } })
+    expect(wrapper.vm.label).toBe('Email address')
+  })
+
+  it('values prop initializes the model', () => {
+    const wrapper = mount(KEmailField, { props: { ...makeProps(), values: { test: 'init@example.com' } }, global: { stubs } })
+    expect(wrapper.vm.value()).toBe('init@example.com')
+  })
+
+  it('field.disabled disables the field', () => {
+    const wrapper = mount(KEmailField, { props: makeProps({ field: { disabled: true } }), global: { stubs } })
+    expect(wrapper.vm.disabled).toBe(true)
+  })
+
+  it('readOnly hides the input', () => {
+    const wrapper = mount(KEmailField, { props: { ...makeProps(), readOnly: true }, global: { stubs } })
+    expect(wrapper.find('input').exists()).toBe(false)
+  })
 })
 
 describe('KUrlField', () => {
@@ -115,6 +136,26 @@ describe('KUrlField', () => {
     await wrapper.vm.onChanged()
     expect(wrapper.emitted('field-changed')).toBeTruthy()
     expect(wrapper.emitted('field-changed')[0]).toEqual(['test', 'https://example.com'])
+  })
+
+  it('label is read from properties.field.label', () => {
+    const wrapper = mount(KUrlField, { props: makeProps({ field: { label: 'Website' } }), global: { stubs } })
+    expect(wrapper.vm.label).toBe('Website')
+  })
+
+  it('values prop initializes the model', () => {
+    const wrapper = mount(KUrlField, { props: { ...makeProps(), values: { test: 'https://init.example.com' } }, global: { stubs } })
+    expect(wrapper.vm.value()).toBe('https://init.example.com')
+  })
+
+  it('field.disabled disables the field', () => {
+    const wrapper = mount(KUrlField, { props: makeProps({ field: { disabled: true } }), global: { stubs } })
+    expect(wrapper.vm.disabled).toBe(true)
+  })
+
+  it('readOnly hides the input', () => {
+    const wrapper = mount(KUrlField, { props: { ...makeProps(), readOnly: true }, global: { stubs } })
+    expect(wrapper.find('input').exists()).toBe(false)
   })
 })
 
@@ -166,6 +207,18 @@ describe('KToggleField', () => {
     expect(wrapper.emitted('field-changed')).toBeTruthy()
     expect(wrapper.emitted('field-changed')[0]).toEqual(['test', true])
   })
+
+  it('values prop initializes model to true', () => {
+    const wrapper = mount(KToggleField, { props: { ...makeProps(), values: { test: true } }, global: { stubs } })
+    expect(wrapper.vm.value()).toBe(true)
+  })
+
+  it('clear uses default value from properties', () => {
+    const wrapper = mount(KToggleField, { props: makeProps({ default: true }), global: { stubs } })
+    wrapper.vm.fill(false)
+    wrapper.vm.clear()
+    expect(wrapper.vm.value()).toBe(true)
+  })
 })
 
 describe('KPasswordField', () => {
@@ -207,6 +260,19 @@ describe('KPasswordField', () => {
     await wrapper.vm.onChanged()
     expect(wrapper.emitted('field-changed')).toBeTruthy()
     expect(wrapper.emitted('field-changed')[0]).toEqual(['test', 'secret123'])
+  })
+
+  it('values prop initializes the model', () => {
+    const wrapper = mount(KPasswordField, { props: { ...makeProps(), values: { test: 'mypassword' } }, global: { stubs } })
+    expect(wrapper.vm.value()).toBe('mypassword')
+  })
+
+  it('double-clicking icon re-hides the password', async () => {
+    const wrapper = mount(KPasswordField, { props: makeProps(), global: { stubs } })
+    await wrapper.find('button').trigger('click')
+    expect(wrapper.vm.showPassword).toBe(false)
+    await wrapper.find('button').trigger('click')
+    expect(wrapper.vm.showPassword).toBe(true)
   })
 })
 
@@ -265,6 +331,26 @@ describe('KSelectField', () => {
     expect(wrapper.emitted('field-changed')).toBeTruthy()
     expect(wrapper.emitted('field-changed')[0]).toEqual(['test', 'b'])
   })
+
+  it('readOnly hides the select', () => {
+    const wrapper = mount(KSelectField, { props: { ...makeProps({ field: { options } }), readOnly: true }, global: { stubs } })
+    expect(wrapper.find('select').exists()).toBe(false)
+    expect(wrapper.find('q-chip-stub').exists()).toBe(true)
+  })
+
+  it('dense prop is forwarded to q-select', () => {
+    const denseStub = { template: '<select :data-dense="String(dense)" />', props: ['modelValue', 'options', 'dense'], emits: ['update:modelValue', 'blur', 'filter'] }
+    const wrapper = mount(KSelectField, {
+      props: { ...makeProps({ field: { options } }), dense: true },
+      global: { stubs: { ...stubs, 'q-select': denseStub } }
+    })
+    expect(wrapper.find('[data-dense="true"]').exists()).toBe(true)
+  })
+
+  it('values prop initializes the model', () => {
+    const wrapper = mount(KSelectField, { props: { ...makeProps({ field: { options } }), values: { test: 'a' } }, global: { stubs } })
+    expect(wrapper.vm.value()).toBe('a')
+  })
 })
 
 describe('KPhoneField', () => {
@@ -313,6 +399,26 @@ describe('KPhoneField', () => {
     expect(wrapper.emitted('field-changed')).toBeTruthy()
     expect(wrapper.emitted('field-changed')[0]).toEqual(['test', '+33612345678'])
   })
+
+  it('label is read from properties.field.label', () => {
+    const wrapper = mount(KPhoneField, { props: makeProps({ field: { label: 'Phone number' } }), global: { stubs } })
+    expect(wrapper.vm.label).toBe('Phone number')
+  })
+
+  it('values prop initializes the model', () => {
+    const wrapper = mount(KPhoneField, { props: { ...makeProps(), values: { test: '+33600000000' } }, global: { stubs } })
+    expect(wrapper.vm.value()).toBe('+33600000000')
+  })
+
+  it('field.disabled disables the field', () => {
+    const wrapper = mount(KPhoneField, { props: makeProps({ field: { disabled: true } }), global: { stubs } })
+    expect(wrapper.vm.disabled).toBe(true)
+  })
+
+  it('readOnly hides the input', () => {
+    const wrapper = mount(KPhoneField, { props: { ...makeProps(), readOnly: true }, global: { stubs } })
+    expect(wrapper.find('input').exists()).toBe(false)
+  })
 })
 
 describe('KOptionsField', () => {
@@ -357,5 +463,38 @@ describe('KOptionsField', () => {
     await wrapper.vm.onChanged()
     expect(wrapper.emitted('field-changed')).toBeTruthy()
     expect(wrapper.emitted('field-changed')[0]).toEqual(['test', 'b'])
+  })
+
+  it('options returns empty array when no options defined', () => {
+    const wrapper = mount(KOptionsField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.options()).toEqual([])
+  })
+
+  it('options labels are translated via i18n', () => {
+    const translatedOptions = [{ label: 'some.translation.key', value: 'a' }]
+    const wrapper = mount(KOptionsField, { props: makeProps({ field: { options: translatedOptions } }), global: { stubs } })
+    expect(wrapper.vm.options()[0].label).toBe('some.translation.key')
+  })
+
+  it('selectedClass is text-weight-regular by default', async () => {
+    const wrapper = mount(KOptionsField, { props: makeProps({ field: { options } }), global: { stubs } })
+    wrapper.vm.fill('a')
+    await nextTick()
+    const spans = wrapper.findAll('span')
+    expect(spans[0].classes()).toContain('text-weight-regular')
+  })
+
+  it('selectedClass can be customized via properties', async () => {
+    const wrapper = mount(KOptionsField, { props: makeProps({ field: { options, selectedClass: 'text-bold' } }), global: { stubs } })
+    wrapper.vm.fill('a')
+    await nextTick()
+    const spans = wrapper.findAll('span')
+    expect(spans[0].classes()).toContain('text-bold')
+    expect(spans[1].classes()).toContain('text-weight-regular')
+  })
+
+  it('values prop initializes the model', () => {
+    const wrapper = mount(KOptionsField, { props: { ...makeProps({ field: { options } }), values: { test: 'b' } }, global: { stubs } })
+    expect(wrapper.vm.value()).toBe('b')
   })
 })
