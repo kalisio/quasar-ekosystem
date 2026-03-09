@@ -29,11 +29,7 @@ export default defineConfig({
         'node_modules/**',
         'dist/**',
         'test/**',
-        '*.config.js',
-        'packages/**/node_modules/**',
-        'packages/**dist/**',
-        'packages/**/test/**',
-        'packages/**/*.config.js'
+        '*.config.js'
       ],
       reporter: ['text', 'html', 'lcov'],
       reportsDirectory: '../../coverage/quasar-form'
