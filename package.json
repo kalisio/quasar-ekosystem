@@ -22,18 +22,19 @@
     ]
   },
   "scripts": {
-    "prepare": "husky",
-    "lint": "standard 'packages/**/*.js' --fix",
-    "test": "vitest run --coverage",
-    "test:quasar-form": "pnpm run test --project quasar-form",
-    "build": "pnpm -r --filter @kalisio/quasar-* build",
+    "build": "pnpm -r build",
     "build:quasar-form": "pnpm --filter @kalisio/quasar-form build",
     "changeset": "changeset",
     "changeset:status": "changeset status",
     "changeset:version": "changeset version",
     "changeset:release": "pnpm build && changeset publish",
     "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs"
+    "docs:build": "vitepress build docs",
+    "lint": "pnpm -r lint --fix",
+    "lint:quasar-form": "pnpm --filter @kalisio/quasar-form lint",
+    "prepare": "husky",
+    "test": "pnpm -r test --coverage",
+    "test:quasar-form": "pnpm --filter @kalisio/quasar-form test"
   },
   "keywords": [
     "form",
