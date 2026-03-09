@@ -10,7 +10,7 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      '@components': path.resolve(__dirname, './src/components')
+      '@components': path.resolve(__dirname, 'src/components')
     }
   },
   test: {
@@ -25,7 +25,7 @@ export default defineConfig({
       all: true,
       clean: true,
       include: ['src/**/*.js'],
-      exclude: ['**/node_modules/**', '**/dist/**', '**/*.test.js'],
+      exclude: ['node_modules/**', 'dist/**', 'test/**'],
       reporter: ['text', 'html', 'lcov'],
       reportsDirectory: '../../coverage/quasar-form'
     }
