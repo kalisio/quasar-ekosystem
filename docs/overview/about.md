@@ -4,4 +4,4 @@
 
 This repository contains the following packages:
 
-- **[@kalisio/quasar-form](./packages/quasar-form)**
+- **[@kalisio/quasar-form](../packages/quasar-form)**
