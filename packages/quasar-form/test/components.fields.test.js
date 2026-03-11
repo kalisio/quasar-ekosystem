@@ -144,6 +144,16 @@ describe('KUrlField', () => {
     expect(wrapper.find('a[href="https://example.com"]').exists()).toBe(true)
   })
 
+  it('readOnly link href is bound to model value (not a static string)', () => {
+    const wrapper = mount(KUrlField, { props: { ...makeProps(), readOnly: true, values: { test: 'https://dynamic.url' } }, global: { stubs } })
+    expect(wrapper.find('a[href="https://dynamic.url"]').exists()).toBe(true)
+  })
+
+  it('readOnly link opens in a new tab (target=_blank)', () => {
+    const wrapper = mount(KUrlField, { props: { ...makeProps(), readOnly: true, values: { test: 'https://example.com' } }, global: { stubs } })
+    expect(wrapper.find('a').attributes('target')).toBe('_blank')
+  })
+
   it('fill sets the model value', () => {
     const wrapper = mount(KUrlField, { props: makeProps(), global: { stubs } })
     wrapper.vm.fill('https://example.com')
@@ -397,6 +407,16 @@ describe('KPasswordField', () => {
     wrapper.vm.apply(obj, 'test')
     expect(obj.test).toBe('secret123')
   })
+
+  it('autocomplete defaults to "on"', () => {
+    const wrapper = mount(KPasswordField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.autocomplete).toBe('on')
+  })
+
+  it('autocomplete can be customized via properties.field.autocomplete', () => {
+    const wrapper = mount(KPasswordField, { props: makeProps({ field: { autocomplete: 'new-password' } }), global: { stubs } })
+    expect(wrapper.vm.autocomplete).toBe('new-password')
+  })
 })
 
 describe('KSelectField', () => {
@@ -518,6 +538,75 @@ describe('KSelectField', () => {
     const obj = {}
     wrapper.vm.apply(obj, 'test')
     expect(obj.test).toBe('a')
+  })
+
+  it('multiple defaults to false', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
+    expect(wrapper.vm.multiple).toBe(false)
+  })
+
+  it('multiple is true when multiselect is set in properties', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ multiselect: true, field: { options } }), global: { stubs } })
+    expect(wrapper.vm.multiple).toBe(true)
+  })
+
+  it('chips defaults to false', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
+    expect(wrapper.vm.chips).toBe(false)
+  })
+
+  it('chips is true when properties.field.chips is set', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options, chips: true } }), global: { stubs } })
+    expect(wrapper.vm.chips).toBe(true)
+  })
+
+  it('isClearable defaults to true', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
+    expect(wrapper.vm.isClearable).toBe(true)
+  })
+
+  it('isClearable can be disabled via properties.field.clearable', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options, clearable: false } }), global: { stubs } })
+    expect(wrapper.vm.isClearable).toBe(false)
+  })
+
+  it('selectedClass defaults to text-weight-regular', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
+    expect(wrapper.vm.selectedClass).toBe('text-weight-regular')
+  })
+
+  it('selectedClass can be customized via properties.field.selectedClass', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options, selectedClass: 'text-bold' } }), global: { stubs } })
+    expect(wrapper.vm.selectedClass).toBe('text-bold')
+  })
+
+  it('dense computed reflects the dense prop', () => {
+    const wrapper = mount(KSelectField, { props: { ...makeProps({ field: { options } }), dense: true }, global: { stubs } })
+    expect(wrapper.vm.dense).toBe(true)
+  })
+
+  it('onFilter narrows the options list', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
+    wrapper.vm.onFilter('option a', (fn) => fn())
+    expect(wrapper.vm.options.length).toBe(1)
+    expect(wrapper.vm.options[0].value).toBe('a')
+  })
+
+  it('onFilter with empty string resets the filter', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
+    wrapper.vm.onFilter('option a', (fn) => fn())
+    wrapper.vm.onFilter('', (fn) => fn())
+    expect(wrapper.vm.options.length).toBe(2)
+  })
+
+  it('getId returns kebab-case id for string values', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
+    expect(wrapper.vm.getId({ value: 'my value', label: 'My Value' })).toBe('my-value')
+  })
+
+  it('getId falls back to label for object values', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
+    expect(wrapper.vm.getId({ value: { nested: 'obj' }, label: 'My Label' })).toBe('my-label')
   })
 })
 
@@ -708,6 +797,21 @@ describe('KOptionsField', () => {
     wrapper.vm.apply(obj, 'test')
     expect(obj.test).toBe('a')
   })
+
+  it('selectedClass() returns text-weight-regular by default', () => {
+    const wrapper = mount(KOptionsField, { props: makeProps({ field: { options } }), global: { stubs } })
+    expect(wrapper.vm.selectedClass()).toBe('text-weight-regular')
+  })
+
+  it('selectedClass() returns custom class when set in properties', () => {
+    const wrapper = mount(KOptionsField, { props: makeProps({ field: { options, selectedClass: 'text-italic' } }), global: { stubs } })
+    expect(wrapper.vm.selectedClass()).toBe('text-italic')
+  })
+
+  it('readOnly shows an empty chip (KDK behavior — no label displayed)', () => {
+    const wrapper = mount(KOptionsField, { props: { ...makeProps({ field: { options } }), readOnly: true, values: { test: 'a' } }, global: { stubs } })
+    expect(wrapper.find('q-chip-stub').exists()).toBe(true)
+  })
 })
 
 describe('KTextareaField', () => {
@@ -723,6 +827,11 @@ describe('KTextareaField', () => {
     expect(wrapper.find('div').text()).toBe('hello world')
   })
 
+  it('model initializes to empty string (KDK emptyModel behavior)', () => {
+    const wrapper = mount(KTextareaField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.value()).toBe('')
+  })
+
   it('emptyModel returns empty string', () => {
     const wrapper = mount(KTextareaField, { props: makeProps(), global: { stubs } })
     expect(wrapper.vm.emptyModel()).toBe('')
@@ -730,6 +839,15 @@ describe('KTextareaField', () => {
 
   it('isEmpty returns true for empty string', () => {
     const wrapper = mount(KTextareaField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('isEmpty returns false for non-empty string (not null)', () => {
+    const wrapper = mount(KTextareaField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.isEmpty()).toBe(true)
+    wrapper.vm.fill('hello')
+    expect(wrapper.vm.isEmpty()).toBe(false)
+    wrapper.vm.clear()
     expect(wrapper.vm.isEmpty()).toBe(true)
   })
 

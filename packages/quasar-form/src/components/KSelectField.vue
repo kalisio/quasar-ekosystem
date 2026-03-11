@@ -67,6 +67,7 @@ const emit = defineEmits(['field-changed'])
 
 const filter = ref(null)
 
+const dense = computed(() => props.dense)
 const multiple = computed(() => _.get(props.properties, 'multiselect', false))
 const chips = computed(() => _.get(props.properties, 'field.chips', false))
 const isClearable = computed(() => _.get(props.properties, 'field.clearable', true))
@@ -123,5 +124,5 @@ function onFilter (pattern, update) {
   update(() => { filter.value = pattern.toLowerCase() })
 }
 
-defineExpose({ properties: props.properties, ...field, options, emptyModel, isEmpty, clear })
+defineExpose({ properties: props.properties, ...field, dense, multiple, chips, isClearable, selectedClass, options, onFilter, getId, emptyModel, isEmpty, clear })
 </script>

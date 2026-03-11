@@ -43,5 +43,5 @@ const autocomplete = _.get(props.properties, 'field.autocomplete', 'on')
 const field = useField(props, emit)
 const { model, label, hasError, errorLabel, hasFocus, disabled, onChanged } = field
 
-defineExpose({ properties: props.properties, ...field, showPassword })
+defineExpose({ properties: props.properties, ...field, showPassword, autocomplete })
 </script>

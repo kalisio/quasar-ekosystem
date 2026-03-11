@@ -56,5 +56,5 @@ function selectedClass () {
 const field = useField(props, emit)
 const { model, label, hasError, errorLabel, disabled, onChanged } = field
 
-defineExpose({ properties: props.properties, ...field, options })
+defineExpose({ properties: props.properties, ...field, options, selectedClass })
 </script>
