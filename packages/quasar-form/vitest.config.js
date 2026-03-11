@@ -24,7 +24,7 @@ export default defineConfig({
       provider: 'v8',
       all: true,
       clean: true,
-      include: ['src/**/*.js'],
+      include: ['src/**/*.{js,vue}'],
       exclude: [
         'node_modules/**',
         'dist/**',
