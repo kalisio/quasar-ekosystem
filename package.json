@@ -35,7 +35,7 @@
     "prepare": "husky",
     "pretest": "mkdir -p coverage",
     "test": "pnpm -r test --coverage",
-    "posttest": "pnpm dlx lcov-result-merger --prepend-source-files 'packages/*/coverage/lcov.info' coverage/lcov.info",
+    "posttest": "pnpm lcov-result-merger --prepend-source-files 'packages/*/coverage/lcov.info' coverage/lcov.info",
     "test:quasar-form": "pnpm --filter @kalisio/quasar-form test --coverage"
   },
   "keywords": [

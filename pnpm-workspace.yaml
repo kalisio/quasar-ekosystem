@@ -76,6 +76,7 @@ catalog:
   standard: ^17.1.2
   superagent: ^10.3.0
   vite: ^7.1.9
+  vite-bundle-visualizer: ^1.2.1
   vitepress: ^1.6.3
   vitepress-plugin-mermaid: ^2.0.16
   vitepress-theme-kalisio: https://github.com/kalisio/vitepress-theme-kalisio
