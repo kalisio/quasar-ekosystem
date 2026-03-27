@@ -88,5 +88,6 @@
   },
   "pnpm": {
     "overrides": {}
-  }
+  },
+  "metaCatalog": "0.7.0"
 }
