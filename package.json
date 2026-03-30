@@ -16,11 +16,6 @@
       "dist/**"
     ]
   },
-  "lint-staged": {
-    "*.{js,cjs,mjs}": [
-      "pnpm lint"
-    ]
-  },
   "scripts": {
     "build": "pnpm -r build",
     "build:quasar-form": "pnpm --filter @kalisio/quasar-form build",
