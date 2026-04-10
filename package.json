@@ -61,7 +61,6 @@
   },
   "devDependencies": {
     "@changesets/cli": "catalog:",
-    "@kalisio/meta-ekosystem": "^0.6.0",
     "@vitejs/plugin-vue": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "cross-env": "catalog:",
