@@ -83,5 +83,8 @@
   "pnpm": {
     "overrides": {}
   },
-  "metaCatalog": "0.7.0"
+  "metaCatalog": {
+    "version": "0.7.0",
+    "syncedAt": "2026-04-10T18:10:48.872Z"
+  }
 }
