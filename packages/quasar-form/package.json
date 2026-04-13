@@ -13,7 +13,7 @@
   "files": [
     "dist"
   ],
-    "standard": {
+  "standard": {
     "ignore": [
       "dist/**"
     ]
@@ -49,13 +49,8 @@
     "@logtape/logtape": "catalog:"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "catalog:",
-    "@vitest/coverage-v8": "catalog:",
     "@vue/test-utils": "catalog:",
     "happy-dom": "catalog:",
-    "quasar": "catalog:",
-    "vite": "catalog:",
-    "vitest": "catalog:",
     "vue": "catalog:",
     "vue-i18n": "catalog:"
   }
