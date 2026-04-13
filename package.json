@@ -29,9 +29,9 @@
     "lint:quasar-form": "pnpm --filter @kalisio/quasar-form lint",
     "prepare": "husky",
     "pretest": "mkdir -p coverage",
-    "test": "pnpm -r test --coverage",
+    "test": "pnpm -r test",
     "posttest": "pnpm lcov-result-merger --prepend-source-files 'packages/*/coverage/lcov.info' coverage/lcov.info",
-    "test:quasar-form": "pnpm --filter @kalisio/quasar-form test --coverage"
+    "test:quasar-form": "pnpm --filter @kalisio/quasar-form test"
   },
   "keywords": [
     "form",
