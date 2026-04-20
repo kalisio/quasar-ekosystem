@@ -17,6 +17,12 @@ import KNumberField from '../src/components/KNumberField.vue'
 import KColorField from '../src/components/KColorField.vue'
 import KSliderField from '../src/components/KSliderField.vue'
 import KChipsField from '../src/components/KChipsField.vue'
+import KRoleField from '../src/components/KRoleField.vue'
+import KTokenField from '../src/components/KTokenField.vue'
+import KResolutionField from '../src/components/KResolutionField.vue'
+import KItemField from '../src/components/KItemField.vue'
+import KPropertyItemField from '../src/components/KPropertyItemField.vue'
+import KUnitField from '../src/components/KUnitField.vue'
 
 vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (key) => key }) }))
 
@@ -1316,6 +1322,29 @@ describe('KNumberField', () => {
     wrapper.vm.apply(obj, 'test')
     expect(obj.test).toBe(42)
   })
+
+  it('onUpdated with a non-number value (null) sets model to null', async () => {
+    const wrapper = mount(KNumberField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill(42)
+    await wrapper.findComponent(inputStub).vm.$emit('update:modelValue', null)
+    await nextTick()
+    expect(wrapper.vm.value()).toBeNull()
+  })
+
+  it('onUpdated with 0 keeps model as 0 (not null)', async () => {
+    const wrapper = mount(KNumberField, { props: makeProps(), global: { stubs } })
+    await wrapper.findComponent(inputStub).vm.$emit('update:modelValue', 0)
+    await nextTick()
+    expect(wrapper.vm.value()).toBe(0)
+  })
+
+  it('onUpdated with a number emits field-changed', async () => {
+    const wrapper = mount(KNumberField, { props: makeProps(), global: { stubs } })
+    await wrapper.findComponent(inputStub).vm.$emit('update:modelValue', 7)
+    await nextTick()
+    expect(wrapper.emitted('field-changed')).toBeTruthy()
+    expect(wrapper.emitted('field-changed').at(-1)).toEqual(['test', 7])
+  })
 })
 
 describe('KColorField', () => {
@@ -1448,6 +1477,28 @@ describe('KColorField', () => {
     wrapper.vm.apply(obj, 'test')
     expect(obj.test).toBe('#aabbcc')
   })
+
+  it('onReferenceCreated with null ref does nothing (no throw)', () => {
+    const wrapper = mount(KColorField, { props: makeProps(), global: { stubs } })
+    expect(() => wrapper.vm.onReferenceCreated(null)).not.toThrow()
+    expect(wrapper.vm.picker).toBe(false)
+  })
+
+  it('isEmpty returns true when model is empty string', () => {
+    const wrapper = mount(KColorField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('isEmpty returns false when model has a color', () => {
+    const wrapper = mount(KColorField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill('#ff0000')
+    expect(wrapper.vm.isEmpty()).toBe(false)
+  })
+
+  it('emptyModel returns empty string', () => {
+    const wrapper = mount(KColorField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.emptyModel()).toBe('')
+  })
 })
 
 describe('KSliderField', () => {
@@ -1544,6 +1595,35 @@ describe('KSliderField', () => {
     const obj = {}
     wrapper.vm.apply(obj, 'test')
     expect(obj.test).toBe(42)
+  })
+
+  it('emptyModel returns the min value', () => {
+    const wrapper = mount(KSliderField, { props: makeProps({ field: { min: 5 } }), global: { stubs } })
+    expect(wrapper.vm.emptyModel()).toBe(5)
+  })
+
+  it('isEmpty returns false (slider always has a value)', () => {
+    const wrapper = mount(KSliderField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.isEmpty()).toBe(false)
+  })
+
+  it('markers defaults to false', () => {
+    const wrapper = mount(KSliderField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.markers).toBe(false)
+  })
+
+  it('markers is read from properties.field.markers', () => {
+    const wrapper = mount(KSliderField, { props: makeProps({ field: { markers: true } }), global: { stubs } })
+    expect(wrapper.vm.markers).toBe(true)
+  })
+
+  it('slider change event emits field-changed', async () => {
+    const wrapper = mount(KSliderField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill(50)
+    await wrapper.findComponent(sliderStub).vm.$emit('change')
+    await nextTick()
+    expect(wrapper.emitted('field-changed')).toBeTruthy()
+    expect(wrapper.emitted('field-changed').at(-1)).toEqual(['test', 50])
   })
 })
 
@@ -1698,6 +1778,22 @@ describe('KChipsField', () => {
     expect(wrapper.vm.chips).toEqual([chipB])
   })
 
+  it('icon mode: chipValue falls back to chip.name when chip.value is falsy', () => {
+    const wrapper = mount(KChipsField, { props: makeProps({ field: { icon: true } }), global: { stubs } })
+    expect(wrapper.vm.chipValue({ name: 'fallback', icon: {} })).toBe('fallback')
+  })
+
+  it('icon mode: chipColor defaults to dark when icon.color is absent', () => {
+    const wrapper = mount(KChipsField, { props: makeProps({ field: { icon: true } }), global: { stubs } })
+    expect(wrapper.vm.chipColor({ value: 'x', icon: {} })).toBe('dark')
+  })
+
+  it('icon mode: readOnly renders chips using chipValue from icon objects', async () => {
+    const chips = [{ value: 'alpha', icon: { name: 'star', color: 'primary' } }]
+    const wrapper = mount(KChipsField, { props: { ...makeProps({ field: { icon: true } }), readOnly: true, values: { test: chips } }, global: { stubs } })
+    expect(wrapper.findAll('q-chip-stub').length).toBe(1)
+  })
+
   it('invalidate sets hasError to true', () => {
     const wrapper = mount(KChipsField, { props: makeProps(), global: { stubs } })
     wrapper.vm.invalidate('required')
@@ -1742,5 +1838,575 @@ describe('KChipsField', () => {
     const obj = {}
     wrapper.vm.apply(obj, 'test')
     expect(obj.test).toEqual(['tag1', 'tag2'])
+  })
+})
+
+describe('KRoleField', () => {
+  const stubs = { 'q-field': fieldStub, 'q-option-group': optionGroupStub, 'q-chip': { template: '<span><slot /></span>' } }
+
+  it('renders a q-option-group in edit mode', () => {
+    const wrapper = mount(KRoleField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.findComponent(optionGroupStub).exists()).toBe(true)
+  })
+
+  it('renders a chip in readOnly mode', () => {
+    const wrapper = mount(KRoleField, { props: { ...makeProps(), readOnly: true, values: { test: 'owner' } }, global: { stubs } })
+    expect(wrapper.find('span').exists()).toBe(true)
+  })
+
+  it('defaults to first role when no value provided', () => {
+    const wrapper = mount(KRoleField, { props: makeProps({ field: { roles: ['owner', 'manager', 'member'] } }), global: { stubs } })
+    expect(wrapper.vm.value()).toBe('owner')
+  })
+
+  it('uses custom roles from field.roles', () => {
+    const wrapper = mount(KRoleField, { props: makeProps({ field: { roles: ['admin', 'user'] } }), global: { stubs } })
+    const roles = wrapper.vm.roles
+    expect(roles.map(r => r.value)).toEqual(['admin', 'user'])
+  })
+
+  it('isEmpty always returns false', () => {
+    const wrapper = mount(KRoleField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.isEmpty()).toBe(false)
+  })
+
+  it('fill sets the model value', () => {
+    const wrapper = mount(KRoleField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill('manager')
+    expect(wrapper.vm.value()).toBe('manager')
+  })
+
+  it('clear resets to first role', () => {
+    const wrapper = mount(KRoleField, { props: makeProps({ field: { roles: ['owner', 'manager'] } }), global: { stubs } })
+    wrapper.vm.fill('manager')
+    wrapper.vm.clear()
+    expect(wrapper.vm.value()).toBe('owner')
+  })
+
+  it('onChanged emits field-changed', async () => {
+    const wrapper = mount(KRoleField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill('member')
+    await wrapper.vm.onChanged()
+    expect(wrapper.emitted('field-changed')).toBeTruthy()
+    expect(wrapper.emitted('field-changed')[0]).toEqual(['test', 'member'])
+  })
+
+  it('values prop initializes the model', () => {
+    const wrapper = mount(KRoleField, { props: { ...makeProps(), values: { test: 'manager' } }, global: { stubs } })
+    expect(wrapper.vm.value()).toBe('manager')
+  })
+
+  it('field.disabled disables the field', () => {
+    const wrapper = mount(KRoleField, { props: makeProps({ field: { disabled: true } }), global: { stubs } })
+    expect(wrapper.vm.disabled).toBe(true)
+  })
+
+  it('apply writes the model value to a target object', () => {
+    const wrapper = mount(KRoleField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill('manager')
+    const obj = {}
+    wrapper.vm.apply(obj, 'test')
+    expect(obj.test).toBe('manager')
+  })
+
+  it('invalidate sets hasError to true', () => {
+    const wrapper = mount(KRoleField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.invalidate('required')
+    expect(wrapper.vm.hasError).toBe(true)
+  })
+
+  it('validate clears the error', () => {
+    const wrapper = mount(KRoleField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.invalidate('required')
+    wrapper.vm.validate()
+    expect(wrapper.vm.hasError).toBe(false)
+  })
+
+  it('uses default role names when field.roles is not set', () => {
+    const wrapper = mount(KRoleField, { props: makeProps({ field: {} }), global: { stubs } })
+    const values = wrapper.vm.roles.map(r => r.value)
+    expect(values).toEqual(['owner', 'manager', 'member'])
+  })
+
+  it('values prop change updates model reactively', async () => {
+    const wrapper = mount(KRoleField, { props: makeProps({ field: { roles: ['owner', 'manager', 'member'] } }), global: { stubs } })
+    await wrapper.setProps({ values: { test: 'manager' } })
+    await nextTick()
+    expect(wrapper.vm.value()).toBe('manager')
+  })
+
+  it('roles computed labels are translated (uppercase key)', () => {
+    const wrapper = mount(KRoleField, { props: makeProps({ field: { roles: ['owner'] } }), global: { stubs } })
+    // vi.mock('vue-i18n') returns key as-is, so label should be the uppercase key
+    expect(wrapper.vm.roles[0].label).toBe('OWNER')
+  })
+})
+
+describe('KTokenField', () => {
+  const inputsStub = { template: '<input :id="id" />', props: ['modelValue', 'id', 'mask', 'disable', 'autofocus', 'outlined'], emits: ['update:modelValue', 'blur', 'keyup'] }
+  const stubs = { 'q-input': inputsStub }
+
+  it('renders the correct number of inputs from field.tokenLength', () => {
+    const wrapper = mount(KTokenField, { props: makeProps({ field: { tokenLength: 4 } }), global: { stubs } })
+    expect(wrapper.findAll('input').length).toBe(4)
+  })
+
+  it('defaults to 6 inputs when tokenLength not set', () => {
+    const wrapper = mount(KTokenField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.findAll('input').length).toBe(6)
+  })
+
+  it('renders text in readOnly mode', () => {
+    const wrapper = mount(KTokenField, { props: { ...makeProps(), readOnly: true, values: { test: '1234' } }, global: { stubs } })
+    expect(wrapper.find('div').exists()).toBe(true)
+    expect(wrapper.findAll('input').length).toBe(0)
+  })
+
+  it('fill sets the model value', () => {
+    const wrapper = mount(KTokenField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill('123456')
+    expect(wrapper.vm.value()).toBe('123456')
+  })
+
+  it('values prop initializes the model', () => {
+    const wrapper = mount(KTokenField, { props: { ...makeProps(), values: { test: '654321' } }, global: { stubs } })
+    expect(wrapper.vm.value()).toBe('654321')
+  })
+
+  it('invalidate sets hasError to true', () => {
+    const wrapper = mount(KTokenField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.invalidate('invalid token')
+    expect(wrapper.vm.hasError).toBe(true)
+  })
+
+  it('validate clears the error', () => {
+    const wrapper = mount(KTokenField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.invalidate('invalid token')
+    wrapper.vm.validate()
+    expect(wrapper.vm.hasError).toBe(false)
+  })
+
+  it('field.disabled disables the field', () => {
+    const wrapper = mount(KTokenField, { props: makeProps({ field: { disabled: true } }), global: { stubs } })
+    expect(wrapper.vm.disabled).toBe(true)
+  })
+
+  it('tokenLength computed returns field.tokenLength', () => {
+    const wrapper = mount(KTokenField, { props: makeProps({ field: { tokenLength: 8 } }), global: { stubs } })
+    expect(wrapper.vm.tokenLength).toBe(8)
+  })
+
+  it('apply writes the model value to a target object', () => {
+    const wrapper = mount(KTokenField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill('123456')
+    const obj = {}
+    wrapper.vm.apply(obj, 'test')
+    expect(obj.test).toBe('123456')
+  })
+
+  it('updateModel joins fieldValues into the model string', async () => {
+    const wrapper = mount(KTokenField, { props: makeProps({ field: { tokenLength: 4 } }), global: { stubs } })
+    wrapper.vm.fieldValues[0] = '1'
+    wrapper.vm.fieldValues[1] = '2'
+    wrapper.vm.fieldValues[2] = '3'
+    wrapper.vm.fieldValues[3] = '4'
+    wrapper.vm.updateModel(5) // index 5 is out of range, no focus attempt
+    expect(wrapper.vm.value()).toBe('1234')
+  })
+
+  it('updateModel emits field-changed', async () => {
+    const wrapper = mount(KTokenField, { props: makeProps({ field: { tokenLength: 3 } }), global: { stubs } })
+    wrapper.vm.fieldValues[0] = '7'
+    wrapper.vm.fieldValues[1] = '8'
+    wrapper.vm.fieldValues[2] = '9'
+    await wrapper.vm.updateModel(4)
+    expect(wrapper.emitted('field-changed')).toBeTruthy()
+    expect(wrapper.emitted('field-changed').at(-1)[1]).toBe('789')
+  })
+
+  it('onKeyUp Backspace clears the previous input cell', () => {
+    const wrapper = mount(KTokenField, { props: makeProps({ field: { tokenLength: 4 } }), global: { stubs } })
+    wrapper.vm.fieldValues[0] = '5'
+    wrapper.vm.fieldValues[1] = '6'
+    wrapper.vm.onKeyUp({ key: 'Backspace' }, 1) // at index 1, clears index 0
+    expect(wrapper.vm.fieldValues[0]).toBe('')
+  })
+
+  it('onKeyUp ArrowLeft clears the previous input cell', () => {
+    const wrapper = mount(KTokenField, { props: makeProps({ field: { tokenLength: 4 } }), global: { stubs } })
+    wrapper.vm.fieldValues[0] = '3'
+    wrapper.vm.onKeyUp({ key: 'ArrowLeft' }, 1)
+    expect(wrapper.vm.fieldValues[0]).toBe('')
+  })
+
+  it('labelClass includes text-red when the field has an error', () => {
+    const wrapper = mount(KTokenField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.invalidate('wrong code')
+    expect(wrapper.vm.labelClass['text-red']).toBe(true)
+  })
+
+  it('labelClass does not include text-red without error', () => {
+    const wrapper = mount(KTokenField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.labelClass['text-red']).toBeFalsy()
+  })
+})
+
+describe('KResolutionField', () => {
+  const stubs = { 'q-select': selectStub, 'q-input': inputStub, 'q-item': { template: '<li />' }, 'q-item-section': { template: '<span />' }, 'q-item-label': { template: '<span />' } }
+
+  it('renders a q-select', () => {
+    const wrapper = mount(KResolutionField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.findComponent(selectStub).exists()).toBe(true)
+  })
+
+  it('model is an object with width and height', () => {
+    const wrapper = mount(KResolutionField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.model).toMatchObject({ width: expect.any(Number), height: expect.any(Number) })
+  })
+
+  it('defaults to HD resolution (1280x720)', () => {
+    const wrapper = mount(KResolutionField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.model).toEqual({ width: 1280, height: 720 })
+  })
+
+  it('updateModel sets model from width and height', () => {
+    const wrapper = mount(KResolutionField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.width = 1920
+    wrapper.vm.height = 1080
+    wrapper.vm.updateModel()
+    expect(wrapper.vm.model).toEqual({ width: 1920, height: 1080 })
+  })
+
+  it('provides 7 resolution options', () => {
+    const wrapper = mount(KResolutionField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.resolutions.length).toBe(7)
+  })
+
+  it('borderless defaults to false', () => {
+    const wrapper = mount(KResolutionField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.borderless).toBe(false)
+  })
+
+  it('borderless can be set via field.borderless', () => {
+    const wrapper = mount(KResolutionField, { props: makeProps({ field: { borderless: true } }), global: { stubs } })
+    expect(wrapper.vm.borderless).toBe(true)
+  })
+
+  it('onChanged emits field-changed', async () => {
+    const wrapper = mount(KResolutionField, { props: makeProps(), global: { stubs } })
+    await wrapper.vm.onChanged()
+    expect(wrapper.emitted('field-changed')).toBeTruthy()
+  })
+
+  it('field.disabled disables the field', () => {
+    const wrapper = mount(KResolutionField, { props: makeProps({ field: { disabled: true } }), global: { stubs } })
+    expect(wrapper.vm.disabled).toBe(true)
+  })
+
+  it('selecting the FHD preset sets width=1920 and height=1080', async () => {
+    const wrapper = mount(KResolutionField, { props: makeProps(), global: { stubs } })
+    const fhd = wrapper.vm.resolutions.find(r => r.value === '1920x1080')
+    wrapper.vm.resolution = fhd
+    await nextTick()
+    expect(wrapper.vm.width).toBe(1920)
+    expect(wrapper.vm.height).toBe(1080)
+    expect(wrapper.vm.model).toEqual({ width: 1920, height: 1080 })
+  })
+
+  it('selecting the personalized preset sets readonly to false', async () => {
+    const wrapper = mount(KResolutionField, { props: makeProps(), global: { stubs } })
+    const personalized = wrapper.vm.resolutions.find(r => r.readonly === false)
+    wrapper.vm.resolution = personalized
+    await nextTick()
+    expect(wrapper.vm.readonly).toBe(false)
+  })
+
+  it('width below 256 is clamped to 256', async () => {
+    const wrapper = mount(KResolutionField, { props: makeProps(), global: { stubs } })
+    // Switch to personalized to allow custom width
+    wrapper.vm.resolution = wrapper.vm.resolutions.find(r => !r.readonly)
+    await nextTick()
+    wrapper.vm.width = 10
+    await nextTick()
+    expect(wrapper.vm.width).toBe(256)
+  })
+
+  it('width above 4000 is clamped to 4000', async () => {
+    const wrapper = mount(KResolutionField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.resolution = wrapper.vm.resolutions.find(r => !r.readonly)
+    await nextTick()
+    wrapper.vm.width = 9999
+    await nextTick()
+    expect(wrapper.vm.width).toBe(4000)
+  })
+
+  it('height below 256 is clamped to 256', async () => {
+    const wrapper = mount(KResolutionField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.height = 50
+    await nextTick()
+    expect(wrapper.vm.height).toBe(256)
+  })
+})
+
+describe('KItemField', () => {
+  const stubs = { 'q-select': selectStub, 'q-chip': { template: '<span><slot /></span>' } }
+
+  it('renders a q-select in edit mode', () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [{ service: 'users', field: 'name' }] }), global: { stubs } })
+    expect(wrapper.findComponent(selectStub).exists()).toBe(true)
+  })
+
+  it('renders a chip in readOnly mode', () => {
+    const wrapper = mount(KItemField, { props: { ...makeProps({ services: [{ service: 'users', field: 'name' }] }), readOnly: true, values: { test: { name: 'Alice' } } }, global: { stubs } })
+    expect(wrapper.find('span').exists()).toBe(true)
+  })
+
+  it('emptyModel returns null for single-select', () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [] }), global: { stubs } })
+    expect(wrapper.vm.emptyModel()).toBeNull()
+  })
+
+  it('emptyModel returns [] for multiselect', () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [], multiselect: true }), global: { stubs } })
+    expect(wrapper.vm.emptyModel()).toEqual([])
+  })
+
+  it('fill sets the model value', () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [{ service: 'users', field: 'name' }] }), global: { stubs } })
+    wrapper.vm.fill({ name: 'Bob' })
+    expect(wrapper.vm.value()).toEqual({ name: 'Bob' })
+  })
+
+  it('clear resets model to null', () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [{ service: 'users', field: 'name' }] }), global: { stubs } })
+    wrapper.vm.fill({ name: 'Bob' })
+    wrapper.vm.clear()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('search inject is used for onSearch', async () => {
+    const mockSearch = vi.fn().mockResolvedValue([{ name: 'Alice', service: 'users' }])
+    const wrapper = mount(KItemField, {
+      props: makeProps({ services: [{ service: 'users', field: 'name' }] }),
+      global: { stubs, provide: { search: mockSearch } }
+    })
+    let updated = false
+    await wrapper.vm.onSearch('Ali', (fn) => { fn(); updated = true }, () => {})
+    expect(mockSearch).toHaveBeenCalled()
+    expect(updated).toBe(true)
+  })
+
+  it('onSearch aborts when pattern is too short', async () => {
+    const abortFn = vi.fn()
+    const wrapper = mount(KItemField, { props: makeProps({ services: [] }), global: { stubs } })
+    await wrapper.vm.onSearch('a', () => {}, abortFn)
+    expect(abortFn).toHaveBeenCalled()
+  })
+
+  it('invalidate sets hasError to true', () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [] }), global: { stubs } })
+    wrapper.vm.invalidate('required')
+    expect(wrapper.vm.hasError).toBe(true)
+  })
+
+  it('apply writes the model value to a target object', () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [{ service: 'users', field: 'name' }] }), global: { stubs } })
+    wrapper.vm.fill({ name: 'Charlie' })
+    const obj = {}
+    wrapper.vm.apply(obj, 'test')
+    expect(obj.test).toEqual({ name: 'Charlie' })
+  })
+
+  it('values prop change updates items reactively', async () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [{ service: 'users', field: 'name' }] }), global: { stubs } })
+    expect(wrapper.vm.items).toBeNull()
+    await wrapper.setProps({ values: { test: { name: 'Dave' } } })
+    await nextTick()
+    expect(wrapper.vm.value()).toEqual({ name: 'Dave' })
+    expect(wrapper.vm.items).toEqual({ name: 'Dave' })
+  })
+
+  it('getLabel uses the service field property to extract the label', () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [{ service: 'users', field: 'displayName' }] }), global: { stubs } })
+    expect(wrapper.vm.getLabel({ displayName: 'Alice Smith', service: 'users' })).toBe('Alice Smith')
+  })
+
+  it('getLabel falls back to name when no service field defined', () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [{ service: 'users' }] }), global: { stubs } })
+    expect(wrapper.vm.getLabel({ name: 'Bob', service: 'users' })).toBe('Bob')
+  })
+
+  it('getIcon extracts icon.name from item', () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [] }), global: { stubs } })
+    expect(wrapper.vm.getIcon({ icon: { name: 'las la-user' } })).toBe('las la-user')
+  })
+
+  it('getIcon falls back to flat icon string', () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [] }), global: { stubs } })
+    expect(wrapper.vm.getIcon({ icon: 'las la-user' })).toBe('las la-user')
+  })
+
+  it('getIcon returns empty string when no icon', () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [] }), global: { stubs } })
+    expect(wrapper.vm.getIcon({})).toBe('')
+  })
+
+  it('onSelected with null value clears the model', async () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [] }), global: { stubs } })
+    wrapper.vm.fill({ name: 'Eve' })
+    await wrapper.vm.onSelected(null)
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+})
+
+describe('KPropertyItemField', () => {
+  const stubs = { 'q-select': selectStub, 'q-chip': { template: '<span><slot /></span>' } }
+  const serviceProps = { field: { service: 'items', propertyField: 'code', multiple: false } }
+
+  it('renders a q-select in edit mode', () => {
+    const wrapper = mount(KPropertyItemField, { props: makeProps(serviceProps), global: { stubs } })
+    expect(wrapper.findComponent(selectStub).exists()).toBe(true)
+  })
+
+  it('renders a chip in readOnly mode', () => {
+    const wrapper = mount(KPropertyItemField, { props: { ...makeProps(serviceProps), readOnly: true, values: { test: 'ABC' } }, global: { stubs } })
+    expect(wrapper.find('span').exists()).toBe(true)
+  })
+
+  it('emptyModel returns null for single', () => {
+    const wrapper = mount(KPropertyItemField, { props: makeProps(serviceProps), global: { stubs } })
+    expect(wrapper.vm.emptyModel()).toBeNull()
+  })
+
+  it('emptyModel returns [] for multiple', () => {
+    const wrapper = mount(KPropertyItemField, { props: makeProps({ field: { ...serviceProps.field, multiple: true } }), global: { stubs } })
+    expect(wrapper.vm.emptyModel()).toEqual([])
+  })
+
+  it('onSearch aborts when pattern is too short', async () => {
+    const abortFn = vi.fn()
+    const wrapper = mount(KPropertyItemField, { props: makeProps(serviceProps), global: { stubs } })
+    await wrapper.vm.onSearch('x', () => {}, abortFn)
+    expect(abortFn).toHaveBeenCalled()
+  })
+
+  it('search inject is used for onSearch', async () => {
+    const mockSearch = vi.fn().mockResolvedValue([{ code: 'XYZ', description: 'Item XYZ' }])
+    const wrapper = mount(KPropertyItemField, {
+      props: makeProps(serviceProps),
+      global: { stubs, provide: { search: mockSearch } }
+    })
+    let updated = false
+    await wrapper.vm.onSearch('XY', (fn) => { fn(); updated = true }, () => {})
+    expect(mockSearch).toHaveBeenCalled()
+    expect(updated).toBe(true)
+    expect(wrapper.vm.options[0]).toMatchObject({ id: 'xyz', value: 'XYZ' })
+  })
+
+  it('invalidate sets hasError to true', () => {
+    const wrapper = mount(KPropertyItemField, { props: makeProps(serviceProps), global: { stubs } })
+    wrapper.vm.invalidate('required')
+    expect(wrapper.vm.hasError).toBe(true)
+  })
+
+  it('field.disabled disables the field', () => {
+    const wrapper = mount(KPropertyItemField, { props: makeProps({ field: { ...serviceProps.field, disabled: true } }), global: { stubs } })
+    expect(wrapper.vm.disabled).toBe(true)
+  })
+
+  it('onSelected with null clears the model', async () => {
+    const wrapper = mount(KPropertyItemField, { props: makeProps(serviceProps), global: { stubs } })
+    wrapper.vm.model = 'XYZ'
+    await wrapper.vm.onSelected(null)
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('clear resets model to emptyModel', () => {
+    const wrapper = mount(KPropertyItemField, { props: makeProps(serviceProps), global: { stubs } })
+    wrapper.vm.model = 'ABC'
+    wrapper.vm.clear()
+    expect(wrapper.vm.value()).toBeNull()
+  })
+
+  it('values prop change updates model reactively', async () => {
+    const wrapper = mount(KPropertyItemField, { props: makeProps(serviceProps), global: { stubs } })
+    await wrapper.setProps({ values: { test: 'CODE42' } })
+    await nextTick()
+    expect(wrapper.vm.value()).toBe('CODE42')
+  })
+
+  it('options are cleared after onSelected', async () => {
+    const mockSearch = vi.fn().mockResolvedValue([{ code: 'ABC' }])
+    const wrapper = mount(KPropertyItemField, {
+      props: makeProps(serviceProps),
+      global: { stubs, provide: { search: mockSearch } }
+    })
+    await wrapper.vm.onSearch('AB', (fn) => fn(), () => {})
+    expect(wrapper.vm.options.length).toBe(1)
+    await wrapper.vm.onSelected('ABC')
+    expect(wrapper.vm.options.length).toBe(0)
+  })
+})
+
+describe('KUnitField', () => {
+  const stubs = { 'q-select': selectStub }
+  const unitOptions = [{ name: 'm', label: 'Meter' }, { name: 'km', label: 'Kilometer' }]
+
+  it('renders a q-select in edit mode', () => {
+    const wrapper = mount(KUnitField, { props: makeProps({ field: { options: unitOptions } }), global: { stubs } })
+    expect(wrapper.findComponent(selectStub).exists()).toBe(true)
+  })
+
+  it('renders model value in readOnly mode', () => {
+    const wrapper = mount(KUnitField, { props: { ...makeProps({ field: {} }), readOnly: true, values: { test: 'm' } }, global: { stubs } })
+    expect(wrapper.text()).toContain('m')
+  })
+
+  it('builds options from field.options when no getUnits inject', () => {
+    const wrapper = mount(KUnitField, { props: makeProps({ field: { options: unitOptions } }), global: { stubs } })
+    expect(wrapper.vm.options.map(o => o.value)).toEqual(['m', 'km'])
+  })
+
+  it('uses getUnits inject when provided', () => {
+    const mockGetUnits = vi.fn().mockReturnValue([{ name: 'kg', label: 'Kilogram' }])
+    const wrapper = mount(KUnitField, {
+      props: makeProps({ field: { quantity: 'mass' } }),
+      global: { stubs, provide: { getUnits: mockGetUnits } }
+    })
+    expect(mockGetUnits).toHaveBeenCalledWith('mass')
+    expect(wrapper.vm.options[0].value).toBe('kg')
+  })
+
+  it('fill sets the model value', () => {
+    const wrapper = mount(KUnitField, { props: makeProps({ field: { options: unitOptions } }), global: { stubs } })
+    wrapper.vm.fill('km')
+    expect(wrapper.vm.value()).toBe('km')
+  })
+
+  it('onChanged emits field-changed', async () => {
+    const wrapper = mount(KUnitField, { props: makeProps({ field: { options: unitOptions } }), global: { stubs } })
+    wrapper.vm.fill('m')
+    await wrapper.vm.onChanged()
+    expect(wrapper.emitted('field-changed')[0]).toEqual(['test', 'm'])
+  })
+
+  it('invalidate sets hasError to true', () => {
+    const wrapper = mount(KUnitField, { props: makeProps({ field: {} }), global: { stubs } })
+    wrapper.vm.invalidate('required')
+    expect(wrapper.vm.hasError).toBe(true)
+  })
+
+  it('field.disabled disables the field', () => {
+    const wrapper = mount(KUnitField, { props: makeProps({ field: { disabled: true } }), global: { stubs } })
+    expect(wrapper.vm.disabled).toBe(true)
+  })
+
+  it('applies unit filter from field.filter when getUnits is provided', () => {
+    const mockGetUnits = vi.fn().mockReturnValue([{ name: 'm', label: 'Meter' }, { name: 'km', label: 'Kilometer' }, { name: 'cm', label: 'Centimeter' }])
+    const wrapper = mount(KUnitField, {
+      props: makeProps({ field: { quantity: 'length', filter: ['m', 'km'] } }),
+      global: { stubs, provide: { getUnits: mockGetUnits } }
+    })
+    expect(wrapper.vm.options.map(o => o.value)).toEqual(['m', 'km'])
   })
 })
