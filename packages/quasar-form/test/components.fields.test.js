@@ -2049,6 +2049,27 @@ describe('KTokenField', () => {
     const wrapper = mount(KTokenField, { props: makeProps(), global: { stubs } })
     expect(wrapper.vm.labelClass['text-red']).toBeFalsy()
   })
+
+  it('clearInput empties the cell at the given index', () => {
+    const wrapper = mount(KTokenField, { props: makeProps({ field: { tokenLength: 4 } }), global: { stubs } })
+    wrapper.vm.fieldValues[2] = '9'
+    wrapper.vm.clearInput(2)
+    expect(wrapper.vm.fieldValues[2]).toBe('')
+  })
+
+  it('values prop change updates the model reactively', async () => {
+    const wrapper = mount(KTokenField, { props: makeProps(), global: { stubs } })
+    await wrapper.setProps({ values: { test: '999999' } })
+    await nextTick()
+    expect(wrapper.vm.value()).toBe('999999')
+  })
+
+  it('onChanged emits field-changed', async () => {
+    const wrapper = mount(KTokenField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill('123456')
+    await wrapper.vm.onChanged()
+    expect(wrapper.emitted('field-changed')).toBeTruthy()
+  })
 })
 
 describe('KResolutionField', () => {
@@ -2257,6 +2278,52 @@ describe('KItemField', () => {
     await wrapper.vm.onSelected(null)
     expect(wrapper.vm.isEmpty()).toBe(true)
   })
+
+  it('onSelected with a value syncs model from items', async () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [{ service: 'users', field: 'name' }] }), global: { stubs } })
+    wrapper.vm.items = { name: 'Frank', service: 'users' }
+    await wrapper.vm.onSelected({ name: 'Frank', service: 'users' })
+    expect(wrapper.vm.value()).toEqual({ name: 'Frank', service: 'users' })
+  })
+
+  it('onSelected emits field-changed', async () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [{ service: 'users', field: 'name' }] }), global: { stubs } })
+    wrapper.vm.items = { name: 'Grace', service: 'users' }
+    await wrapper.vm.onSelected({ name: 'Grace' })
+    expect(wrapper.emitted('field-changed')).toBeTruthy()
+  })
+
+  it('onSearch in multiselect mode excludes already-selected items', async () => {
+    // The filter uses item.field to resolve the comparison key, so results must carry the field property
+    const mockSearch = vi.fn().mockResolvedValue([
+      { name: 'Alice', service: 'users', field: 'name' },
+      { name: 'Bob', service: 'users', field: 'name' }
+    ])
+    const wrapper = mount(KItemField, {
+      props: makeProps({ services: [{ service: 'users', field: 'name' }], multiselect: true }),
+      global: { stubs, provide: { search: mockSearch } }
+    })
+    wrapper.vm.items = [{ name: 'Alice', service: 'users', field: 'name' }]
+    await wrapper.vm.onSearch('li', (fn) => fn(), () => {})
+    // Alice is already selected so only Bob should remain
+    expect(wrapper.vm.options.length).toBe(1)
+    expect(wrapper.vm.options[0].name).toBe('Bob')
+  })
+
+  it('getDescription uses the service description property', () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [{ service: 'users', field: 'name', description: 'email' }] }), global: { stubs } })
+    expect(wrapper.vm.getDescription({ email: 'alice@example.com', service: 'users' })).toBe('alice@example.com')
+  })
+
+  it('getDescription falls back to description field when not configured', () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [{ service: 'users', field: 'name' }] }), global: { stubs } })
+    expect(wrapper.vm.getDescription({ description: 'A user', service: 'users' })).toBe('A user')
+  })
+
+  it('getId returns kebab-case from the label', () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [{ service: 'users', field: 'name' }] }), global: { stubs } })
+    expect(wrapper.vm.getId({ name: 'Alice Smith', service: 'users' })).toBe('alice-smith')
+  })
 })
 
 describe('KPropertyItemField', () => {
@@ -2346,6 +2413,38 @@ describe('KPropertyItemField', () => {
     await wrapper.vm.onSelected('ABC')
     expect(wrapper.vm.options.length).toBe(0)
   })
+
+  it('onSearch in multiple mode excludes already-selected values', async () => {
+    const mockSearch = vi.fn().mockResolvedValue([{ code: 'ABC' }, { code: 'XYZ' }])
+    const wrapper = mount(KPropertyItemField, {
+      props: makeProps({ field: { ...serviceProps.field, multiple: true } }),
+      global: { stubs, provide: { search: mockSearch } }
+    })
+    // Simulate ABC already selected
+    wrapper.vm.model = ['abc'] // ids are kebab-cased
+    await wrapper.vm.onSearch('AB', (fn) => fn(), () => {})
+    // ABC has id 'abc' which matches the selected value, so only XYZ should remain
+    expect(wrapper.vm.options.length).toBe(1)
+    expect(wrapper.vm.options[0].value).toBe('XYZ')
+  })
+
+  it('search result description field is mapped correctly', async () => {
+    const mockSearch = vi.fn().mockResolvedValue([{ code: 'DEF', note: 'Some note' }])
+    const wrapper = mount(KPropertyItemField, {
+      props: makeProps({ field: { ...serviceProps.field, descriptionField: 'note' } }),
+      global: { stubs, provide: { search: mockSearch } }
+    })
+    await wrapper.vm.onSearch('DE', (fn) => fn(), () => {})
+    expect(wrapper.vm.options[0].description).toBe('Some note')
+  })
+
+  it('apply writes the model value to a target object', () => {
+    const wrapper = mount(KPropertyItemField, { props: makeProps(serviceProps), global: { stubs } })
+    wrapper.vm.fill('XYZ')
+    const obj = {}
+    wrapper.vm.apply(obj, 'test')
+    expect(obj.test).toBe('XYZ')
+  })
 })
 
 describe('KUnitField', () => {
@@ -2408,5 +2507,38 @@ describe('KUnitField', () => {
       global: { stubs, provide: { getUnits: mockGetUnits } }
     })
     expect(wrapper.vm.options.map(o => o.value)).toEqual(['m', 'km'])
+  })
+
+  it('clear resets model to null', () => {
+    const wrapper = mount(KUnitField, { props: makeProps({ field: { options: unitOptions } }), global: { stubs } })
+    wrapper.vm.fill('m')
+    wrapper.vm.clear()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('values prop initializes the model', () => {
+    const wrapper = mount(KUnitField, { props: { ...makeProps({ field: { options: unitOptions } }), values: { test: 'km' } }, global: { stubs } })
+    expect(wrapper.vm.value()).toBe('km')
+  })
+
+  it('values prop change updates the model reactively', async () => {
+    const wrapper = mount(KUnitField, { props: makeProps({ field: { options: unitOptions } }), global: { stubs } })
+    await wrapper.setProps({ values: { test: 'km' } })
+    await nextTick()
+    expect(wrapper.vm.value()).toBe('km')
+  })
+
+  it('field.options value key overrides name', () => {
+    const opts = [{ value: 'meter', name: 'm', label: 'Meter' }]
+    const wrapper = mount(KUnitField, { props: makeProps({ field: { options: opts } }), global: { stubs } })
+    expect(wrapper.vm.options[0].value).toBe('meter')
+  })
+
+  it('apply writes the model value to a target object', () => {
+    const wrapper = mount(KUnitField, { props: makeProps({ field: { options: unitOptions } }), global: { stubs } })
+    wrapper.vm.fill('km')
+    const obj = {}
+    wrapper.vm.apply(obj, 'test')
+    expect(obj.test).toBe('km')
   })
 })

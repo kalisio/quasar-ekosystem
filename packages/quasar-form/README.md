@@ -8,6 +8,15 @@
 
 Detailed documentation is available at the following [link](https://kalisio.github.io/quasar-ekosystem/packages/quasar-form).
 
+## Testing
+
+See [DOCS.md](DOCS.md) for the component API reference and test suite documentation.
+
+```bash
+pnpm test         # run all tests + coverage
+pnpm test --watch # watch mode
+```
+
 ## License
 
 Licensed under the [MIT license](LICENSE).
