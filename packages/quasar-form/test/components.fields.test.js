@@ -619,6 +619,21 @@ describe('KSelectField', () => {
     const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
     expect(wrapper.vm.getId({ value: { nested: 'obj' }, label: 'My Label' })).toBe('my-label')
   })
+
+  it('hasNoOption is false when field.noOption is not set', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
+    expect(wrapper.vm.hasNoOption).toBe(false)
+  })
+
+  it('hasNoOption is true when field.noOption is a string', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options, noOption: 'No results found' } }), global: { stubs } })
+    expect(wrapper.vm.hasNoOption).toBe(true)
+  })
+
+  it('noOption returns the configured string', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options, noOption: 'No results' } }), global: { stubs } })
+    expect(wrapper.vm.noOption).toBe('No results')
+  })
 })
 
 describe('KPhoneField', () => {
@@ -1844,6 +1859,19 @@ describe('KChipsField', () => {
     wrapper.vm.apply(obj, 'test')
     expect(obj.test).toEqual(['tag1', 'tag2'])
   })
+
+  it('onChipClicked emits chip-clicked with the chip payload', () => {
+    const wrapper = mount(KChipsField, { props: makeProps({ field: { icon: true } }), global: { stubs } })
+    const chip = { value: 'hello', icon: { name: 'star', color: 'red' } }
+    wrapper.vm.onChipClicked(chip)
+    expect(wrapper.emitted('chip-clicked')).toBeTruthy()
+    expect(wrapper.emitted('chip-clicked')[0][0]).toEqual(chip)
+  })
+
+  it('onChipClicked does nothing harmful for string chips (non-icon mode)', () => {
+    const wrapper = mount(KChipsField, { props: makeProps(), global: { stubs } })
+    expect(() => wrapper.vm.onChipClicked('hello')).not.toThrow()
+  })
 })
 
 describe('KRoleField', () => {
@@ -2732,6 +2760,24 @@ describe('KFileField', () => {
   it('field.disabled disables the field', () => {
     const wrapper = mount(KFileField, { props: makeProps({ field: { disabled: true } }), global: { stubs } })
     expect(wrapper.vm.disabled).toBe(true)
+  })
+
+  it('filterSelectedFiles returns all files when no filter is set', () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    const files = [{ name: 'a.csv' }, { name: 'b.json' }]
+    expect(wrapper.vm.filterSelectedFiles(files)).toEqual(files)
+  })
+
+  it('filterSelectedFiles keeps only files whose name includes field.filter', () => {
+    const wrapper = mount(KFileField, { props: makeProps({ field: { filter: '.csv' } }), global: { stubs } })
+    const files = [{ name: 'data.csv' }, { name: 'image.png' }]
+    expect(wrapper.vm.filterSelectedFiles(files)).toEqual([{ name: 'data.csv' }])
+  })
+
+  it('filterSelectedFiles returns empty array when no files match', () => {
+    const wrapper = mount(KFileField, { props: makeProps({ field: { filter: '.pdf' } }), global: { stubs } })
+    const files = [{ name: 'data.csv' }, { name: 'image.png' }]
+    expect(wrapper.vm.filterSelectedFiles(files)).toEqual([])
   })
 })
 

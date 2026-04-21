@@ -37,6 +37,10 @@
         </q-item-section>
       </q-item>
     </template>
+    <!-- no-option display -->
+    <template v-if="hasNoOption" v-slot:no-option>
+      <p v-if="typeof noOption === 'string'" class="q-pa-sm text-center">{{ noOption }}</p>
+    </template>
     <!-- selected item display -->
     <template v-slot:selected-item="scope">
       <q-chip v-if="chips && scope.opt.label"
@@ -71,6 +75,8 @@ const dense = computed(() => props.dense)
 const multiple = computed(() => _.get(props.properties, 'multiselect', false))
 const chips = computed(() => _.get(props.properties, 'field.chips', false))
 const isClearable = computed(() => _.get(props.properties, 'field.clearable', true))
+const noOption = computed(() => _.get(props.properties, 'field.noOption', null))
+const hasNoOption = computed(() => !_.isEmpty(noOption.value))
 const selectedClass = computed(() => _.get(props.properties, 'field.selectedClass', 'text-weight-regular'))
 const options = computed(() => {
   let opts = _.map(_.get(props.properties, 'field.options', []), option => {
@@ -84,11 +90,9 @@ const options = computed(() => {
   return opts
 })
 
-const field = useField(props, emit)
+function emptyModel () { return multiple.value ? [] : null }
+const field = useField(props, emit, { emptyModel })
 const { model, label, hasError, errorLabel, hasFocus, disabled, onChanged, fill } = field
-
-// Multiselect starts as [] not null
-if (multiple.value && _.isNil(model.value)) model.value = []
 
 // Auto-fill required single-option fields
 watch(options, (opts) => {
@@ -100,7 +104,6 @@ watch(options, (opts) => {
   }
 }, { immediate: true })
 
-function emptyModel () { return multiple.value ? [] : null }
 function isEmpty () { return multiple.value ? _.isEmpty(model.value) : _.isNil(model.value) }
 function clear () { fill(_.get(props.properties, 'default', emptyModel())) }
 
@@ -124,5 +127,5 @@ function onFilter (pattern, update) {
   update(() => { filter.value = pattern.toLowerCase() })
 }
 
-defineExpose({ properties: props.properties, ...field, dense, multiple, chips, isClearable, selectedClass, options, onFilter, getId, emptyModel, isEmpty, clear })
+defineExpose({ properties: props.properties, ...field, dense, multiple, chips, isClearable, noOption, hasNoOption, selectedClass, options, onFilter, getId, emptyModel, isEmpty, clear })
 </script>

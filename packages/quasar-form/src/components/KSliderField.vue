@@ -36,19 +36,17 @@ import { fieldProps } from '../utils/index.js'
 const props = defineProps(fieldProps)
 const emit = defineEmits(['field-changed'])
 
-const field = useField(props, emit)
-const { model, label, hasError, errorLabel, disabled, fill, onChanged } = field
-
 const min = computed(() => _.get(props.properties, 'field.min', 0))
 const max = computed(() => _.get(props.properties, 'field.max', 100))
 const step = computed(() => _.get(props.properties, 'field.step', 1))
 const markers = computed(() => _.get(props.properties, 'field.markers', false))
 
 function emptyModel () { return min.value }
+const field = useField(props, emit, { emptyModel })
+const { model, label, hasError, errorLabel, disabled, fill, onChanged } = field
+
 function isEmpty () { return model.value === null }
 function clear () { fill(_.get(props.properties, 'default', min.value)) }
-
-if (model.value === null) model.value = min.value
 
 defineExpose({ properties: props.properties, ...field, min, max, step, emptyModel, isEmpty, clear })
 </script>

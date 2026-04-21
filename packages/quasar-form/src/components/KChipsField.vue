@@ -30,6 +30,8 @@
                 :icon="chipIcon(chip)"
                 :color="chipColor(chip)"
                 :label="chipValue(chip)"
+                :clickable="Boolean(icon)"
+                @click="onChipClicked(chip)"
                 @remove="onChipRemoved(chip)"
                 removable
                 outline
@@ -59,23 +61,21 @@ import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
 const props = defineProps(fieldProps)
-const emit = defineEmits(['field-changed'])
+const emit = defineEmits(['field-changed', 'chip-clicked'])
 
 const icon = _.get(props.properties, 'field.icon', false)
 const input = ref('')
 const chips = ref([])
 
-const field = useField(props, emit)
+function emptyModel () { return [] }
+const field = useField(props, emit, { emptyModel })
 const { model, label, hasError, errorLabel, hasFocus, disabled, fill: baseFill, onChanged } = field
-
-if (_.isNil(model.value)) model.value = []
 
 // Keep chips in sync with model for all mutation paths (values prop, fill, updateModel)
 watch(model, (newModel) => {
   chips.value = newModel ? newModel.slice() : []
 }, { immediate: true, flush: 'sync' })
 
-function emptyModel () { return [] }
 function isEmpty () { return _.isEmpty(model.value) }
 function fill (value) { baseFill(value) }
 function clear () { fill(_.get(props.properties, 'default', [])) }
@@ -88,6 +88,12 @@ function chipColor (chip) {
 }
 function chipValue (chip) {
   return icon ? (chip.value || chip.name) : chip
+}
+
+function onChipClicked (chip) {
+  // Placeholder for icon chooser integration — in kdk, this opens KIconChooser
+  // Override via provide('onChipClicked', handler) if icon editing is needed
+  emit('chip-clicked', chip)
 }
 
 function onChipAdded () {
@@ -109,5 +115,5 @@ function updateModel () {
   onChanged()
 }
 
-defineExpose({ properties: props.properties, ...field, input, chips, fill, emptyModel, isEmpty, clear, chipValue, chipIcon, chipColor, onChipAdded, onChipRemoved, updateModel })
+defineExpose({ properties: props.properties, ...field, input, chips, fill, emptyModel, isEmpty, clear, chipValue, chipIcon, chipColor, onChipAdded, onChipClicked, onChipRemoved, updateModel })
 </script>

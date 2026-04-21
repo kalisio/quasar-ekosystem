@@ -43,23 +43,21 @@ const emit = defineEmits(['field-changed'])
 
 const picker = ref(false)
 
-const field = useField(props, emit)
+function emptyModel () { return _.get(props.properties, 'default', '') }
+const field = useField(props, emit, { emptyModel })
 const { model, label, hasError, errorLabel, disabled, fill } = field
 
 const isClearable = computed(() => _.get(props.properties, 'field.clearable', true))
 const color = computed(() => model.value || 'transparent')
 
-function emptyModel () { return '' }
 function isEmpty () { return !model.value }
-function clear () { fill(_.get(props.properties, 'default', '')) }
+function clear () { fill(emptyModel()) }
 
 function onReferenceCreated (ref) {
   if (ref) {
     ref.$el.onclick = () => { picker.value = true }
   }
 }
-
-if (model.value === null) model.value = _.get(props.properties, 'default', '')
 
 defineExpose({ properties: props.properties, ...field, picker, isClearable, color, emptyModel, isEmpty, clear, onReferenceCreated })
 </script>

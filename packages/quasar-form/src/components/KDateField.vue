@@ -32,15 +32,12 @@ import { fieldProps } from '../utils/index.js'
 const props = defineProps(fieldProps)
 const emit = defineEmits(['field-changed'])
 
-const field = useField(props, emit)
-const { model, label, hasError, errorLabel, disabled, onChanged, fill } = field
-
-// Initialize to today if no value provided
-if (!model.value) model.value = emptyModel()
-
 function emptyModel () {
   return new Date().toISOString().slice(0, 10).replace(/-/g, '/')
 }
+const field = useField(props, emit, { emptyModel })
+const { model, label, hasError, errorLabel, disabled, onChanged, fill } = field
+
 function isEmpty () { return false }
 function clear () { fill(_.get(props.properties, 'default', emptyModel())) }
 

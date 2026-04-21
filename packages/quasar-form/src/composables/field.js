@@ -3,9 +3,16 @@ import { ref, computed, watch } from 'vue'
 import { openURL } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
-export function useField (props, emit) {
+// opts.emptyModel — optional function () => <empty value for this field type>
+// Defaults to () => null. Override when the field's natural empty state is not null
+// (e.g. [] for multi-select, '' for text, { width, height } for resolution).
+// Providing it ensures clear() and updateValue(null) reset to the correct value
+// instead of null, even when called from within the composable.
+export function useField (props, emit, opts = {}) {
+  const _emptyModel = opts.emptyModel ?? (() => null)
+
   // State
-  const model = ref(emptyModel())
+  const model = ref(_emptyModel())
   const error = ref('')
 
   // Computed
@@ -37,7 +44,7 @@ export function useField (props, emit) {
 
   // Methods
   function emptyModel () {
-    return null
+    return _emptyModel()
   }
   function isEmpty () {
     return _.isEqual(model.value, emptyModel())
@@ -63,7 +70,7 @@ export function useField (props, emit) {
     error.value = err
   }
   async function onChanged () {
-    // Quasar resets the model to null when clearing but in the schema an empty model might be a different value
+    // Quasar resets the model to null when clearing but the field's emptyModel may differ
     const nullable = _.get(props.properties, 'nullable', false)
     if (_.isNil(model.value) && !nullable) {
       clear()

@@ -33,14 +33,10 @@ import { fieldProps } from '../utils/index.js'
 const props = defineProps(fieldProps)
 const emit = defineEmits(['field-changed'])
 
-const field = useField(props, emit)
+function emptyModel () { return '' }
+const field = useField(props, emit, { emptyModel })
 const { model, label, hasError, errorLabel, hasFocus, disabled, onChanged, fill } = field
 
-// KDK initializes model via emptyModel() = '' (not null like the base useField)
-if (model.value === null) model.value = ''
-
-function emptyModel () { return '' }
-// KDK: _.isEqual(this.model, this.emptyModel()) — strict equality with ''
 function isEmpty () { return model.value === '' }
 function clear () { fill(_.get(props.properties, 'default', '')) }
 

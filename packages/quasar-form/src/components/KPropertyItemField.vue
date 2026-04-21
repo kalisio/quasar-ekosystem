@@ -68,10 +68,10 @@ const search = inject('search', async () => [])
 
 const multiple = computed(() => _.get(props.properties, 'field.multiple', false))
 
-const field = useField(props, emit)
+function emptyModel () { return multiple.value ? [] : null }
+const field = useField(props, emit, { emptyModel })
 const { model, label, hasError, errorLabel, hasFocus, disabled, onChanged } = field
 
-function emptyModel () { return multiple.value ? [] : null }
 function isEmpty () { return multiple.value ? _.isEmpty(model.value) : _.isNil(model.value) }
 function clear () { model.value = _.get(props.properties, 'default', emptyModel()) }
 

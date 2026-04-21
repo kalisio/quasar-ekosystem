@@ -76,7 +76,8 @@ const hasSingleService = computed(() => {
   return services.length === 1
 })
 
-const field = useField(props, emit)
+function emptyModel () { return multiple.value ? [] : null }
+const field = useField(props, emit, { emptyModel })
 const { model, label, hasError, errorLabel, hasFocus, disabled, onChanged } = field
 
 // Keep items in sync with model for all mutation paths (values prop, fill, etc.)
@@ -101,7 +102,6 @@ function getDescription (item) {
 }
 function getIcon (item) { return _.get(item, 'icon.name', _.get(item, 'icon', '')) }
 
-function emptyModel () { return multiple.value ? [] : null }
 function isEmpty () { return multiple.value ? _.isEmpty(model.value) : _.isNil(model.value) }
 function fill (value) { field.fill(value) }
 function clear () { fill(_.get(props.properties, 'default', emptyModel())) }

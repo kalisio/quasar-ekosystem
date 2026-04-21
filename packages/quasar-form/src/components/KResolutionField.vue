@@ -24,6 +24,7 @@
           v-model.number="width"
           type="number"
           min="256" max="4000"
+          mask="(#)###"
           dense
           :borderless="borderless"
           input-class="text-center"
@@ -38,6 +39,7 @@
           v-model.number="height"
           type="number"
           min="256" max="4000"
+          mask="(#)###"
           dense
           :borderless="borderless"
           input-class="text-center"
