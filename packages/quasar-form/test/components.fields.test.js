@@ -23,6 +23,11 @@ import KResolutionField from '../src/components/KResolutionField.vue'
 import KItemField from '../src/components/KItemField.vue'
 import KPropertyItemField from '../src/components/KPropertyItemField.vue'
 import KUnitField from '../src/components/KUnitField.vue'
+import KFileField from '../src/components/KFileField.vue'
+import KTagField from '../src/components/KTagField.vue'
+import KIconField from '../src/components/KIconField.vue'
+import KColorScaleField from '../src/components/KColorScaleField.vue'
+import KDateTimeRangeField from '../src/components/KDateTimeRangeField.vue'
 
 vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (key) => key }) }))
 
@@ -2540,5 +2545,823 @@ describe('KUnitField', () => {
     const obj = {}
     wrapper.vm.apply(obj, 'test')
     expect(obj.test).toBe('km')
+  })
+})
+
+// ─── KFileField ─────────────────────────────────────────────────────────────
+
+describe('KFileField', () => {
+  const fileStub = { template: '<input type="file" />', props: ['modelValue', 'accept', 'multiple'], emits: ['update:modelValue', 'rejected'] }
+  const stubs = { 'q-file': fileStub, 'q-field': fieldStub, 'q-chip': true }
+
+  function makeFile (name = 'test.txt', type = 'text/plain') {
+    return { name, type, size: 100, File: {} }
+  }
+
+  it('renders q-file in edit mode when model is empty', () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.find('input[type="file"]').exists()).toBe(true)
+  })
+
+  it('renders q-field when model already has a file', () => {
+    const wrapper = mount(KFileField, { props: { ...makeProps(), values: { test: makeFile() } }, global: { stubs } })
+    expect(wrapper.find('input[type="file"]').exists()).toBe(false)
+  })
+
+  it('renders chips in readOnly mode for a single file', () => {
+    const wrapper = mount(KFileField, { props: { ...makeProps(), readOnly: true, values: { test: makeFile('photo.jpg') } }, global: { stubs } })
+    expect(wrapper.findAll('q-chip-stub').length).toBe(1)
+  })
+
+  it('renders a chip per file in readOnly mode with multiple=true', () => {
+    const files = [makeFile('a.txt'), makeFile('b.txt')]
+    const wrapper = mount(KFileField, { props: { ...makeProps({ field: { multiple: true } }), readOnly: true, values: { test: files } }, global: { stubs } })
+    expect(wrapper.findAll('q-chip-stub').length).toBe(2)
+  })
+
+  it('emptyModel returns null for single-file mode', () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.emptyModel()).toBeNull()
+  })
+
+  it('emptyModel returns [] for multiple-file mode', () => {
+    const wrapper = mount(KFileField, { props: makeProps({ field: { multiple: true } }), global: { stubs } })
+    expect(wrapper.vm.emptyModel()).toEqual([])
+  })
+
+  it('isEmpty returns true when no file is set', () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('isEmpty returns false after fill', () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill(makeFile())
+    expect(wrapper.vm.isEmpty()).toBe(false)
+  })
+
+  it('fill sets the model', () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    const f = makeFile('doc.pdf')
+    wrapper.vm.fill(f)
+    expect(wrapper.vm.value()).toEqual(f)
+  })
+
+  it('clear resets model to null (single)', () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill(makeFile())
+    wrapper.vm.clear()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('clear resets model to [] (multiple)', () => {
+    const wrapper = mount(KFileField, { props: makeProps({ field: { multiple: true } }), global: { stubs } })
+    wrapper.vm.fill([makeFile()])
+    wrapper.vm.clear()
+    expect(wrapper.vm.value()).toEqual([])
+  })
+
+  it('onFileCleared resets model and files ref', () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill(makeFile())
+    wrapper.vm.onFileCleared()
+    expect(wrapper.vm.files).toBeNull()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('onFilesChanged with no files resets model', async () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.files = null
+    await wrapper.vm.onFilesChanged()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('onFilesChanged builds a single-file model', async () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.files = { name: 'img.png', type: 'image/png', size: 200 }
+    await wrapper.vm.onFilesChanged()
+    expect(wrapper.vm.value()).toMatchObject({ name: 'img.png', type: 'image/png' })
+  })
+
+  it('onFilesChanged builds an array model for multiple', async () => {
+    const wrapper = mount(KFileField, { props: makeProps({ field: { multiple: true } }), global: { stubs } })
+    wrapper.vm.files = [{ name: 'a.txt', type: 'text/plain' }, { name: 'b.txt', type: 'text/plain' }]
+    await wrapper.vm.onFilesChanged()
+    expect(wrapper.vm.value()).toHaveLength(2)
+  })
+
+  it('onFilesChanged emits field-changed', async () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.files = { name: 'x.txt', type: 'text/plain' }
+    await wrapper.vm.onFilesChanged()
+    expect(wrapper.emitted('field-changed')).toBeTruthy()
+  })
+
+  it('displayName returns filename for single file', () => {
+    const wrapper = mount(KFileField, { props: { ...makeProps(), values: { test: makeFile('report.pdf') } }, global: { stubs } })
+    expect(wrapper.vm.displayName).toBe('report.pdf')
+  })
+
+  it('displayName joins names for multiple files', () => {
+    const files = [makeFile('a.txt'), makeFile('b.txt')]
+    const wrapper = mount(KFileField, { props: { ...makeProps({ field: { multiple: true } }), values: { test: files } }, global: { stubs } })
+    expect(wrapper.vm.displayName).toBe('a.txt, b.txt')
+  })
+
+  it('maxFiles defaults to 1 for single-file mode', () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.maxFiles).toBe(1)
+  })
+
+  it('maxFiles defaults to 9 for multiple-file mode', () => {
+    const wrapper = mount(KFileField, { props: makeProps({ field: { multiple: true } }), global: { stubs } })
+    expect(wrapper.vm.maxFiles).toBe(9)
+  })
+
+  it('maxFileSize defaults to 1 MB', () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.maxFileSize).toBe(1048576)
+  })
+
+  it('isClearable defaults to true', () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.isClearable).toBe(true)
+  })
+
+  it('isClearable respects field.clearable', () => {
+    const wrapper = mount(KFileField, { props: makeProps({ field: { clearable: false } }), global: { stubs } })
+    expect(wrapper.vm.isClearable).toBe(false)
+  })
+
+  it('values prop initializes model', () => {
+    const f = makeFile('init.txt')
+    const wrapper = mount(KFileField, { props: { ...makeProps(), values: { test: f } }, global: { stubs } })
+    expect(wrapper.vm.value()).toEqual(f)
+  })
+
+  it('values prop change updates model reactively', async () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    const f = makeFile('new.txt')
+    await wrapper.setProps({ values: { test: f } })
+    await nextTick()
+    expect(wrapper.vm.value()).toEqual(f)
+  })
+
+  it('invalidate sets hasError', () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.invalidate('required')
+    expect(wrapper.vm.hasError).toBe(true)
+  })
+
+  it('validate clears error', () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.invalidate('required')
+    wrapper.vm.validate()
+    expect(wrapper.vm.hasError).toBe(false)
+  })
+
+  it('apply writes model to object', () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    const f = makeFile('upload.csv')
+    wrapper.vm.fill(f)
+    const obj = {}
+    wrapper.vm.apply(obj, 'test')
+    expect(obj.test).toEqual(f)
+  })
+
+  it('field.disabled disables the field', () => {
+    const wrapper = mount(KFileField, { props: makeProps({ field: { disabled: true } }), global: { stubs } })
+    expect(wrapper.vm.disabled).toBe(true)
+  })
+})
+
+// ─── KTagField ──────────────────────────────────────────────────────────────
+
+describe('KTagField', () => {
+  const stubs = { 'q-select': selectStub, 'q-chip': true, 'q-item': true, 'q-item-section': true }
+
+  it('renders a q-select in edit mode', () => {
+    const wrapper = mount(KTagField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.find('select').exists()).toBe(true)
+  })
+
+  it('renders a chip in readOnly mode when model is set', () => {
+    const wrapper = mount(KTagField, { props: { ...makeProps(), readOnly: true, values: { test: { name: 'vue', color: 'green' } } }, global: { stubs } })
+    expect(wrapper.find('q-chip-stub').exists()).toBe(true)
+  })
+
+  it('emptyModel returns null for single-select', () => {
+    const wrapper = mount(KTagField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.emptyModel()).toBeNull()
+  })
+
+  it('emptyModel returns [] for multiselect', () => {
+    const wrapper = mount(KTagField, { props: makeProps({ multiselect: true }), global: { stubs } })
+    expect(wrapper.vm.emptyModel()).toEqual([])
+  })
+
+  it('isEmpty returns true when model is null', () => {
+    const wrapper = mount(KTagField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('isEmpty returns false after fill', () => {
+    const wrapper = mount(KTagField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill({ name: 'vue', color: 'green' })
+    expect(wrapper.vm.isEmpty()).toBe(false)
+  })
+
+  it('fill sets model and syncs items', () => {
+    const wrapper = mount(KTagField, { props: makeProps(), global: { stubs } })
+    const tag = { name: 'typescript', color: 'blue' }
+    wrapper.vm.fill(tag)
+    expect(wrapper.vm.value()).toEqual(tag)
+    expect(wrapper.vm.items).toEqual(tag)
+  })
+
+  it('clear resets model to null (single)', () => {
+    const wrapper = mount(KTagField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill({ name: 'vue', color: 'green' })
+    wrapper.vm.clear()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('clear resets model to [] (multiselect)', () => {
+    const wrapper = mount(KTagField, { props: makeProps({ multiselect: true }), global: { stubs } })
+    wrapper.vm.fill([{ name: 'vue', color: 'green' }])
+    wrapper.vm.clear()
+    expect(wrapper.vm.value()).toEqual([])
+  })
+
+  it('getId returns kebab-cased tag name', () => {
+    const wrapper = mount(KTagField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.getId({ name: 'My Tag' })).toBe('my-tag')
+  })
+
+  it('isClearable defaults to true', () => {
+    const wrapper = mount(KTagField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.isClearable).toBe(true)
+  })
+
+  it('isClearable respects field.clearable', () => {
+    const wrapper = mount(KTagField, { props: makeProps({ field: { clearable: false } }), global: { stubs } })
+    expect(wrapper.vm.isClearable).toBe(false)
+  })
+
+  it('onSearch aborts when pattern is too short', async () => {
+    const wrapper = mount(KTagField, { props: makeProps(), global: { stubs } })
+    const abort = vi.fn()
+    await wrapper.vm.onSearch('a', vi.fn(), abort)
+    expect(abort).toHaveBeenCalled()
+  })
+
+  it('onSearch calls search inject', async () => {
+    const mockSearch = vi.fn().mockResolvedValue([{ name: 'vue', color: 'green' }])
+    const wrapper = mount(KTagField, {
+      props: makeProps({ services: [{ service: 'tags' }] }),
+      global: { stubs, provide: { search: mockSearch } }
+    })
+    const update = vi.fn(fn => fn())
+    await wrapper.vm.onSearch('vue', update, vi.fn())
+    expect(mockSearch).toHaveBeenCalled()
+    expect(wrapper.vm.options).toHaveLength(1)
+  })
+
+  it('onSearch adds create option when pattern not in results', async () => {
+    const mockSearch = vi.fn().mockResolvedValue([])
+    const wrapper = mount(KTagField, {
+      props: makeProps({ services: [{ service: 'tags' }] }),
+      global: { stubs, provide: { search: mockSearch } }
+    })
+    const update = vi.fn(fn => fn())
+    await wrapper.vm.onSearch('newtag', update, vi.fn())
+    expect(wrapper.vm.options.some(o => o.create)).toBe(true)
+  })
+
+  it('onSelected updates model and emits field-changed', async () => {
+    const wrapper = mount(KTagField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.items = { name: 'react', color: 'blue' }
+    await wrapper.vm.onSelected({ name: 'react', color: 'blue' })
+    expect(wrapper.vm.value()).toEqual({ name: 'react', color: 'blue' })
+    expect(wrapper.emitted('field-changed')).toBeTruthy()
+  })
+
+  it('onSelected with null resets model', async () => {
+    const wrapper = mount(KTagField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill({ name: 'vue', color: 'green' })
+    await wrapper.vm.onSelected(null)
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('onSelected calls createTag for new tags', async () => {
+    const mockCreateTag = vi.fn().mockResolvedValue({ _id: '1' })
+    const wrapper = mount(KTagField, {
+      props: makeProps({ field: { service: 'items', property: 'tags' } }),
+      global: { stubs, provide: { createTag: mockCreateTag } }
+    })
+    wrapper.vm.items = [{ name: 'brand-new', color: 'grey', create: true }]
+    await wrapper.vm.onSelected([{ name: 'brand-new', color: 'grey', create: true }])
+    expect(mockCreateTag).toHaveBeenCalled()
+  })
+
+  it('values prop initializes model', () => {
+    const tag = { name: 'vue', color: 'green' }
+    const wrapper = mount(KTagField, { props: { ...makeProps(), values: { test: tag } }, global: { stubs } })
+    expect(wrapper.vm.value()).toEqual(tag)
+  })
+
+  it('values prop change updates model reactively', async () => {
+    const wrapper = mount(KTagField, { props: makeProps(), global: { stubs } })
+    const tag = { name: 'react', color: 'blue' }
+    await wrapper.setProps({ values: { test: tag } })
+    await nextTick()
+    expect(wrapper.vm.value()).toEqual(tag)
+  })
+
+  it('invalidate sets hasError', () => {
+    const wrapper = mount(KTagField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.invalidate('required')
+    expect(wrapper.vm.hasError).toBe(true)
+  })
+
+  it('validate clears error', () => {
+    const wrapper = mount(KTagField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.invalidate('required')
+    wrapper.vm.validate()
+    expect(wrapper.vm.hasError).toBe(false)
+  })
+
+  it('apply writes model to object', () => {
+    const wrapper = mount(KTagField, { props: makeProps(), global: { stubs } })
+    const tag = { name: 'css', color: 'purple' }
+    wrapper.vm.fill(tag)
+    const obj = {}
+    wrapper.vm.apply(obj, 'test')
+    expect(obj.test).toEqual(tag)
+  })
+
+  it('field.disabled disables the field', () => {
+    const wrapper = mount(KTagField, { props: makeProps({ field: { disabled: true } }), global: { stubs } })
+    expect(wrapper.vm.disabled).toBe(true)
+  })
+})
+
+// ─── KIconField ─────────────────────────────────────────────────────────────
+
+describe('KIconField', () => {
+  // Renders both prepend and control slots so the q-btn inside prepend is accessible
+  const iconFieldFieldStub = { template: '<div><slot name="prepend" /><slot name="control" /><slot name="default" /></div>', props: ['modelValue'] }
+  const stubs = { 'q-field': iconFieldFieldStub, 'q-btn': iconStub, 'q-dialog': dialogStub, 'q-card': true, 'q-card-section': true, 'q-card-actions': true, 'q-input': inputStub, 'q-icon': true }
+
+  it('renders a q-field in edit mode', () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.find('div').exists()).toBe(true)
+  })
+
+  it('renders a q-icon in readOnly mode when model is set', () => {
+    const wrapper = mount(KIconField, { props: { ...makeProps(), readOnly: true, values: { test: { name: 'star', color: 'yellow' } } }, global: { stubs } })
+    expect(wrapper.find('q-icon-stub').exists()).toBe(true)
+  })
+
+  it('showPicker starts false', () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.showPicker).toBe(false)
+  })
+
+  it('clicking the button opens the picker', async () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    await wrapper.find('button').trigger('click')
+    expect(wrapper.vm.showPicker).toBe(true)
+  })
+
+  it('emptyModel returns {name, color} when hasColor is true (default)', () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.emptyModel()).toEqual({ name: '', color: '' })
+  })
+
+  it('emptyModel returns empty string when field.color is false', () => {
+    const wrapper = mount(KIconField, { props: makeProps({ field: { color: false } }), global: { stubs } })
+    expect(wrapper.vm.emptyModel()).toBe('')
+  })
+
+  it('isEmpty returns true when icon name is empty', () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('isEmpty returns false after fill with icon object', () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill({ name: 'star', color: 'yellow' })
+    expect(wrapper.vm.isEmpty()).toBe(false)
+  })
+
+  it('iconName computed returns name from object model', () => {
+    const wrapper = mount(KIconField, { props: { ...makeProps(), values: { test: { name: 'home', color: 'blue' } } }, global: { stubs } })
+    expect(wrapper.vm.iconName).toBe('home')
+  })
+
+  it('iconName computed returns string model directly', () => {
+    const wrapper = mount(KIconField, { props: makeProps({ field: { color: false } }), global: { stubs } })
+    wrapper.vm.fill('favorite')
+    expect(wrapper.vm.iconName).toBe('favorite')
+  })
+
+  it('iconColor defaults to dark when no color in model', () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.iconColor).toBe('dark')
+  })
+
+  it('iconColor reads color from model object', () => {
+    const wrapper = mount(KIconField, { props: { ...makeProps(), values: { test: { name: 'star', color: 'red' } } }, global: { stubs } })
+    expect(wrapper.vm.iconColor).toBe('red')
+  })
+
+  it('applyPickerIcon sets model from pickerInput', async () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.pickerInput = 'star'
+    await wrapper.vm.applyPickerIcon()
+    expect(wrapper.vm.iconName).toBe('star')
+    expect(wrapper.vm.pickerInput).toBe('')
+  })
+
+  it('applyPickerIcon does nothing when pickerInput is empty', async () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.pickerInput = ''
+    await wrapper.vm.applyPickerIcon()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('applyPickerIcon emits field-changed', async () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.pickerInput = 'home'
+    await wrapper.vm.applyPickerIcon()
+    expect(wrapper.emitted('field-changed')).toBeTruthy()
+  })
+
+  it('onCleared resets model and emits field-changed', async () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill({ name: 'star', color: 'red' })
+    await wrapper.vm.onCleared()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+    expect(wrapper.emitted('field-changed')).toBeTruthy()
+  })
+
+  it('isClearable defaults to true', () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.isClearable).toBe(true)
+  })
+
+  it('isClearable respects field.clearable', () => {
+    const wrapper = mount(KIconField, { props: makeProps({ field: { clearable: false } }), global: { stubs } })
+    expect(wrapper.vm.isClearable).toBe(false)
+  })
+
+  it('fill sets the model', () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill({ name: 'home', color: 'blue' })
+    expect(wrapper.vm.value()).toEqual({ name: 'home', color: 'blue' })
+  })
+
+  it('clear resets model to emptyModel', () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill({ name: 'star', color: 'red' })
+    wrapper.vm.clear()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('values prop initializes model', () => {
+    const icon = { name: 'home', color: 'blue' }
+    const wrapper = mount(KIconField, { props: { ...makeProps(), values: { test: icon } }, global: { stubs } })
+    expect(wrapper.vm.value()).toEqual(icon)
+  })
+
+  it('values prop change updates model reactively', async () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    const icon = { name: 'search', color: 'green' }
+    await wrapper.setProps({ values: { test: icon } })
+    await nextTick()
+    expect(wrapper.vm.value()).toEqual(icon)
+  })
+
+  it('invalidate sets hasError', () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.invalidate('required')
+    expect(wrapper.vm.hasError).toBe(true)
+  })
+
+  it('validate clears error', () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.invalidate('required')
+    wrapper.vm.validate()
+    expect(wrapper.vm.hasError).toBe(false)
+  })
+
+  it('apply writes model to object', () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    const icon = { name: 'lock', color: 'grey' }
+    wrapper.vm.fill(icon)
+    const obj = {}
+    wrapper.vm.apply(obj, 'test')
+    expect(obj.test).toEqual(icon)
+  })
+
+  it('field.disabled disables the field', () => {
+    const wrapper = mount(KIconField, { props: makeProps({ field: { disabled: true } }), global: { stubs } })
+    expect(wrapper.vm.disabled).toBe(true)
+  })
+})
+
+// ─── KColorScaleField ────────────────────────────────────────────────────────
+
+describe('KColorScaleField', () => {
+  const stubs = { 'q-select': selectStub, 'q-item': true, 'q-item-section': true, 'q-item-label': true }
+
+  const colorScaleOptions = [
+    { label: 'Reds', value: { colors: ['#fee', '#f00'] } },
+    { label: 'Blues', value: { colors: ['#eef', '#00f'] } }
+  ]
+
+  it('renders a q-select in edit mode', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps({ field: { options: colorScaleOptions } }), global: { stubs } })
+    expect(wrapper.find('select').exists()).toBe(true)
+  })
+
+  it('renders text in readOnly mode when model is set', () => {
+    const wrapper = mount(KColorScaleField, {
+      props: { ...makeProps({ field: { options: colorScaleOptions } }), readOnly: true, values: { test: colorScaleOptions[0].value } },
+      global: { stubs }
+    })
+    expect(wrapper.text()).toContain('Reds')
+  })
+
+  it('options computed from field.options', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps({ field: { options: colorScaleOptions } }), global: { stubs } })
+    expect(wrapper.vm.options).toHaveLength(2)
+  })
+
+  it('options defaults to [] when not defined', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.options).toEqual([])
+  })
+
+  it('isClearable defaults to true', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.isClearable).toBe(true)
+  })
+
+  it('isClearable respects field.clearable', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps({ field: { clearable: false } }), global: { stubs } })
+    expect(wrapper.vm.isClearable).toBe(false)
+  })
+
+  it('getId returns kebab-cased label', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.getId({ label: 'Red Scale', value: {} })).toBe('red-scale')
+  })
+
+  it('getLabel finds matching option label by value', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps({ field: { options: colorScaleOptions } }), global: { stubs } })
+    expect(wrapper.vm.getLabel(colorScaleOptions[0].value)).toBe('Reds')
+  })
+
+  it('getLabel returns empty string when value not found', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.getLabel({ colors: ['#000'] })).toBe('')
+  })
+
+  it('getScaleStyle returns background gradient for colors array', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps(), global: { stubs } })
+    const style = wrapper.vm.getScaleStyle({ colors: ['#fee', '#f00'] })
+    expect(style.background).toMatch(/linear-gradient/)
+  })
+
+  it('getScaleStyle returns empty object for null value', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.getScaleStyle(null)).toEqual({})
+  })
+
+  it('getScaleStyle returns empty object when no colors', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.getScaleStyle({})).toEqual({})
+  })
+
+  it('fill sets model', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps({ field: { options: colorScaleOptions } }), global: { stubs } })
+    wrapper.vm.fill(colorScaleOptions[0].value)
+    expect(wrapper.vm.value()).toEqual(colorScaleOptions[0].value)
+  })
+
+  it('clear resets model to null', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps({ field: { options: colorScaleOptions } }), global: { stubs } })
+    wrapper.vm.fill(colorScaleOptions[0].value)
+    wrapper.vm.clear()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('onChanged emits field-changed', async () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps({ field: { options: colorScaleOptions } }), global: { stubs } })
+    wrapper.vm.fill(colorScaleOptions[1].value)
+    await wrapper.vm.onChanged()
+    expect(wrapper.emitted('field-changed')).toBeTruthy()
+    expect(wrapper.emitted('field-changed')[0][0]).toBe('test')
+  })
+
+  it('values prop initializes model', () => {
+    const wrapper = mount(KColorScaleField, {
+      props: { ...makeProps({ field: { options: colorScaleOptions } }), values: { test: colorScaleOptions[1].value } },
+      global: { stubs }
+    })
+    expect(wrapper.vm.value()).toEqual(colorScaleOptions[1].value)
+  })
+
+  it('values prop change updates model reactively', async () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps({ field: { options: colorScaleOptions } }), global: { stubs } })
+    await wrapper.setProps({ values: { test: colorScaleOptions[0].value } })
+    await nextTick()
+    expect(wrapper.vm.value()).toEqual(colorScaleOptions[0].value)
+  })
+
+  it('invalidate sets hasError', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.invalidate('required')
+    expect(wrapper.vm.hasError).toBe(true)
+  })
+
+  it('validate clears error', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.invalidate('required')
+    wrapper.vm.validate()
+    expect(wrapper.vm.hasError).toBe(false)
+  })
+
+  it('apply writes model to object', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps({ field: { options: colorScaleOptions } }), global: { stubs } })
+    wrapper.vm.fill(colorScaleOptions[0].value)
+    const obj = {}
+    wrapper.vm.apply(obj, 'test')
+    expect(obj.test).toEqual(colorScaleOptions[0].value)
+  })
+
+  it('field.disabled disables the field', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps({ field: { disabled: true } }), global: { stubs } })
+    expect(wrapper.vm.disabled).toBe(true)
+  })
+})
+
+// ─── KDateTimeRangeField ────────────────────────────────────────────────────
+
+describe('KDateTimeRangeField', () => {
+  const stubs = { 'q-field': fieldStub }
+
+  it('renders two datetime-local inputs in edit mode', () => {
+    const wrapper = mount(KDateTimeRangeField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.findAll('input[type="datetime-local"]')).toHaveLength(2)
+  })
+
+  it('renders formatted text in readOnly mode', () => {
+    const wrapper = mount(KDateTimeRangeField, {
+      props: { ...makeProps(), readOnly: true, values: { test: { start: '2024-01-01T00:00', end: '2024-01-02T00:00' } } },
+      global: { stubs }
+    })
+    expect(wrapper.text()).toContain('2024-01-01T00:00')
+    expect(wrapper.text()).toContain('2024-01-02T00:00')
+  })
+
+  it('emptyModel returns object with start and end keys', () => {
+    const wrapper = mount(KDateTimeRangeField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.emptyModel()).toEqual({ start: '', end: '' })
+  })
+
+  it('emptyModel respects custom field.start and field.end names', () => {
+    const wrapper = mount(KDateTimeRangeField, { props: makeProps({ field: { start: 'from', end: 'to' } }), global: { stubs } })
+    expect(wrapper.vm.emptyModel()).toEqual({ from: '', to: '' })
+  })
+
+  it('isEmpty returns true when both start and end are empty', () => {
+    const wrapper = mount(KDateTimeRangeField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill({ start: '', end: '' })
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('isEmpty returns false when start is set', () => {
+    const wrapper = mount(KDateTimeRangeField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill({ start: '2024-01-01T00:00', end: '' })
+    expect(wrapper.vm.isEmpty()).toBe(false)
+  })
+
+  it('startValue reads the start field from model', () => {
+    const wrapper = mount(KDateTimeRangeField, {
+      props: { ...makeProps(), values: { test: { start: '2024-06-01T10:00', end: '' } } },
+      global: { stubs }
+    })
+    expect(wrapper.vm.startValue).toBe('2024-06-01T10:00')
+  })
+
+  it('endValue reads the end field from model', () => {
+    const wrapper = mount(KDateTimeRangeField, {
+      props: { ...makeProps(), values: { test: { start: '', end: '2024-06-05T18:00' } } },
+      global: { stubs }
+    })
+    expect(wrapper.vm.endValue).toBe('2024-06-05T18:00')
+  })
+
+  it('startValue reads custom field name from field.start', () => {
+    const wrapper = mount(KDateTimeRangeField, {
+      props: { ...makeProps({ field: { start: 'from', end: 'to' } }), values: { test: { from: '2024-01-01T09:00', to: '' } } },
+      global: { stubs }
+    })
+    expect(wrapper.vm.startValue).toBe('2024-01-01T09:00')
+  })
+
+  it('formattedDateTimeRange shows both values separated by em dash', () => {
+    const wrapper = mount(KDateTimeRangeField, {
+      props: { ...makeProps(), values: { test: { start: '2024-01-01T00:00', end: '2024-01-02T00:00' } } },
+      global: { stubs }
+    })
+    expect(wrapper.vm.formattedDateTimeRange).toMatch(/2024-01-01T00:00.*2024-01-02T00:00/)
+  })
+
+  it('formattedDateTimeRange returns empty string when model is null', () => {
+    const wrapper = mount(KDateTimeRangeField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.formattedDateTimeRange).toBe('')
+  })
+
+  it('onStartChanged updates start in model and emits field-changed', async () => {
+    const wrapper = mount(KDateTimeRangeField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill({ start: '', end: '2024-12-31T00:00' })
+    await wrapper.vm.onStartChanged({ target: { value: '2024-06-01T08:00' } })
+    expect(wrapper.vm.startValue).toBe('2024-06-01T08:00')
+    expect(wrapper.emitted('field-changed')).toBeTruthy()
+  })
+
+  it('onEndChanged updates end in model and emits field-changed', async () => {
+    const wrapper = mount(KDateTimeRangeField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill({ start: '2024-01-01T00:00', end: '' })
+    await wrapper.vm.onEndChanged({ target: { value: '2024-12-31T23:59' } })
+    expect(wrapper.vm.endValue).toBe('2024-12-31T23:59')
+    expect(wrapper.emitted('field-changed')).toBeTruthy()
+  })
+
+  it('fill sets model', () => {
+    const wrapper = mount(KDateTimeRangeField, { props: makeProps(), global: { stubs } })
+    const range = { start: '2024-01-01T00:00', end: '2024-01-07T00:00' }
+    wrapper.vm.fill(range)
+    expect(wrapper.vm.value()).toEqual(range)
+  })
+
+  it('clear resets model to emptyModel', () => {
+    const wrapper = mount(KDateTimeRangeField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill({ start: '2024-01-01T00:00', end: '2024-01-07T00:00' })
+    wrapper.vm.clear()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('clear uses properties.default when defined', () => {
+    const defaultRange = { start: '2020-01-01T00:00', end: '2020-01-31T00:00' }
+    const wrapper = mount(KDateTimeRangeField, { props: makeProps({ default: defaultRange }), global: { stubs } })
+    wrapper.vm.fill({ start: '2024-01-01T00:00', end: '2024-01-07T00:00' })
+    wrapper.vm.clear()
+    expect(wrapper.vm.value()).toEqual(defaultRange)
+  })
+
+  it('values prop initializes model', () => {
+    const range = { start: '2024-03-01T08:00', end: '2024-03-15T17:00' }
+    const wrapper = mount(KDateTimeRangeField, { props: { ...makeProps(), values: { test: range } }, global: { stubs } })
+    expect(wrapper.vm.value()).toEqual(range)
+  })
+
+  it('values prop change updates model reactively', async () => {
+    const wrapper = mount(KDateTimeRangeField, { props: makeProps(), global: { stubs } })
+    const range = { start: '2025-01-01T00:00', end: '2025-01-31T00:00' }
+    await wrapper.setProps({ values: { test: range } })
+    await nextTick()
+    expect(wrapper.vm.value()).toEqual(range)
+  })
+
+  it('invalidate sets hasError', () => {
+    const wrapper = mount(KDateTimeRangeField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.invalidate('invalid range')
+    expect(wrapper.vm.hasError).toBe(true)
+  })
+
+  it('validate clears error', () => {
+    const wrapper = mount(KDateTimeRangeField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.invalidate('invalid range')
+    wrapper.vm.validate()
+    expect(wrapper.vm.hasError).toBe(false)
+  })
+
+  it('apply writes model to object', () => {
+    const wrapper = mount(KDateTimeRangeField, { props: makeProps(), global: { stubs } })
+    const range = { start: '2024-06-01T00:00', end: '2024-06-30T00:00' }
+    wrapper.vm.fill(range)
+    const obj = {}
+    wrapper.vm.apply(obj, 'test')
+    expect(obj.test).toEqual(range)
+  })
+
+  it('field.disabled disables the field', () => {
+    const wrapper = mount(KDateTimeRangeField, { props: makeProps({ field: { disabled: true } }), global: { stubs } })
+    expect(wrapper.vm.disabled).toBe(true)
   })
 })
