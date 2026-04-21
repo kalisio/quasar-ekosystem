@@ -1,38 +1,14 @@
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
-import { defineConfig } from 'vitest/config'
-import vue from '@vitejs/plugin-vue'
+import { defineConfig, mergeConfig } from 'vitest/config'
+import { baseConfig } from '../../vitest.base-config'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-export default defineConfig({
+export default mergeConfig(baseConfig, defineConfig({
   root: __dirname,
-  plugins: [vue()],
-  resolve: {
-    alias: {
-      '@components': path.resolve(__dirname, 'src/components')
-    }
-  },
   test: {
     name: 'quasar-form',
-    environment: 'happy-dom',
-    globals: true,
-    silent: false,
-    testTimeout: 30000,
-    include: ['test/**/*.test.js'],
-    coverage: {
-      provider: 'v8',
-      all: true,
-      clean: true,
-      include: ['src/**/*.{js,vue}'],
-      exclude: [
-        'node_modules/**',
-        'dist/**',
-        'test/**',
-        '*.config.js'
-      ],
-      reporter: ['text', 'html', 'lcov'],
-      reportsDirectory: './coverage'
-    }
+    environment: 'happy-dom'
   }
-})
+}))

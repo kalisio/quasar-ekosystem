@@ -1,21 +1,8 @@
 {
   "name": "quasar-ekosystem",
   "description": "A collection of advanced components for extending the Quasar Framework",
-  "type": "module",
   "packageManager": "pnpm@10.1.0",
-  "standard": {
-    "globals": [
-      "describe",
-      "it",
-      "expect",
-      "beforeEach",
-      "afterEach",
-      "Image"
-    ],
-    "ignore": [
-      "dist/**"
-    ]
-  },
+  "type": "module",
   "scripts": {
     "build": "pnpm -r build",
     "build:quasar-form": "pnpm --filter @kalisio/quasar-form build",
@@ -79,9 +66,6 @@
     "vitepress-plugin-mermaid": "catalog:",
     "vitepress-theme-kalisio": "catalog:",
     "vitest": "catalog:"
-  },
-  "pnpm": {
-    "overrides": {}
   },
   "metaCatalog": {
     "version": "0.7.0",
