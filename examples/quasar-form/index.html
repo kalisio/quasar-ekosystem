@@ -17,12 +17,12 @@
               <q-icon name="dynamic_form" color="white"></q-icon>
             </template>
             <template v-slot:action>
-              <q-btn color="white" label="Champs"
+              <q-btn color="white" label="Edit"
                 :flat="page !== 'fields'"
                 :outline="page === 'fields'"
                 @click="page = 'fields'"
               ></q-btn>
-              <q-btn color="white" label="Lecture seule"
+              <q-btn color="white" label="View"
                 :flat="page !== 'readonly'"
                 :outline="page === 'readonly'"
                 @click="page = 'readonly'"

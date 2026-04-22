@@ -44,13 +44,13 @@ export default {
         name: 'firstName',
         label: 'KTextField',
         component: markRaw(KTextField),
-        properties: { name: 'firstName', field: { label: 'Prénom' } }
+        properties: { name: 'firstName', field: { label: 'First name' } }
       },
       {
         name: 'age',
         label: 'KNumberField',
         component: markRaw(KNumberField),
-        properties: { name: 'age', field: { label: 'Âge' } }
+        properties: { name: 'age', field: { label: 'Age' } }
       },
       {
         name: 'country',
@@ -59,12 +59,12 @@ export default {
         properties: {
           name: 'country',
           field: {
-            label: 'Pays',
+            label: 'Country',
             options: [
               { label: 'France', value: 'fr' },
-              { label: 'Allemagne', value: 'de' },
-              { label: 'Espagne', value: 'es' },
-              { label: 'Italie', value: 'it' }
+              { label: 'Germany', value: 'de' },
+              { label: 'Spain', value: 'es' },
+              { label: 'Italy', value: 'it' }
             ]
           }
         }
@@ -73,7 +73,7 @@ export default {
         name: 'color',
         label: 'KColorField',
         component: markRaw(KColorField),
-        properties: { name: 'color', default: '#1976D2', field: { label: 'Couleur' } }
+        properties: { name: 'color', default: '#1976D2', field: { label: 'Color' } }
       },
       {
         name: 'temperature',
@@ -81,14 +81,14 @@ export default {
         component: markRaw(KSliderField),
         properties: {
           name: 'temperature',
-          field: { label: 'Température (°C)', min: -20, max: 50, step: 1, markers: true }
+          field: { label: 'Temperature (°C)', min: -20, max: 50, step: 1, markers: true }
         }
       },
       {
         name: 'active',
         label: 'KToggleField',
         component: markRaw(KToggleField),
-        properties: { name: 'active', field: { label: 'Actif' } }
+        properties: { name: 'active', field: { label: 'Active' } }
       }
     ]
 

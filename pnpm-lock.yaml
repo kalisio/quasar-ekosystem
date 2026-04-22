@@ -156,9 +156,6 @@ importers:
       '@kalisio/quasar-form':
         specifier: workspace:*
         version: link:../../packages/quasar-form
-      '@vitejs/plugin-vue':
-        specifier: 'catalog:'
-        version: 6.0.4(vite@7.3.2(@types/node@25.3.3)(yaml@2.8.2))(vue@3.5.31)
       quasar:
         specifier: 'catalog:'
         version: 2.18.7
@@ -202,6 +199,8 @@ importers:
       vue-i18n:
         specifier: 'catalog:'
         version: 11.3.0(vue@3.5.31)
+
+  packages/quasar-moment: {}
 
 packages:
 

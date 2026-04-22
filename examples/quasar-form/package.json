@@ -22,7 +22,6 @@
     "@kalisio/quasar-form": "workspace:*",
     "quasar": "catalog:",
     "vue": "catalog:",
-    "vue-i18n": "catalog:",
-    "vite": "catalog:"
+    "vue-i18n": "catalog:"
   }
 }
