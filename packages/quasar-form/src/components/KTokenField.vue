@@ -1,6 +1,6 @@
 <template>
   <div v-if="readOnly" :id="properties.name + '-field'">
-    <div>{{ model }}</div>
+    <div v-html="text" />
   </div>
   <div v-else class="q-pa-md">
     <p :class="labelClass">{{ label }}</p>
@@ -21,58 +21,85 @@
         @update:model-value="updateModel(i)"
         @blur="onChanged"
         @keyup="onKeyUp($event, i - 1)"
-      />
+      >
+        <!-- Helper -->
+        <!-- Missing Component: KAction -->
+        <!--
+        <template v-if="hasHelper" v-slot:append>
+          <k-action
+            :id="properties.name + '-helper'"
+            :label="helperLabel"
+            :icon="helperIcon"
+            :tooltip="helperTooltip"
+            :url="helperUrl"
+            :dialog="helperDialog"
+            :context="helperContext"
+            @dialog-confirmed="onHelperDialogConfirmed"
+            color="primary"
+          />
+        </template>
+        -->
+      </q-input>
     </div>
   </div>
 </template>
 
-<script setup>
+<script>
 import _ from 'lodash'
-import { ref, computed } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
-const props = defineProps(fieldProps)
-const emit = defineEmits(['field-changed'])
-
-const fieldValues = ref([])
-const fields = ref([])
-
-const tokenLength = computed(() => _.get(props.properties, 'field.tokenLength', 6))
-const labelClass = computed(() => ({
-  'row justify-center': true,
-  'text-red': !!errorLabel.value
-}))
-
-const field = useField(props, emit)
-const { model, label, hasError, errorLabel, hasFocus, disabled, onChanged } = field
-
-function updateModel (index) {
-  model.value = _.join(fieldValues.value, '')
-  onChanged()
-  focusNextInput(index)
-}
-
-function updateFieldRef (element, index) {
-  if (element) fields.value[index] = element
-}
-
-function focusNextInput (index) {
-  if (_.inRange(index, 0, tokenLength.value)) fields.value[index]?.select?.()
-}
-
-function clearInput (index) {
-  fieldValues.value[index] = ''
-}
-
-function onKeyUp (event, index) {
-  const key = event.key
-  if (key === 'ArrowLeft' || key === 'Backspace') {
-    focusNextInput(index - 1)
-    clearInput(index - 1)
+export default {
+  // Missing Mixin: baseField
+  // mixins: [baseField],
+  props: fieldProps,
+  emits: ['field-changed'],
+  setup (props, { emit }) {
+    return useField(props, emit)
+  },
+  data () {
+    return {
+      fieldValues: [],
+      fields: []
+    }
+  },
+  computed: {
+    text () {
+      return this.model
+    },
+    tokenLength () {
+      return _.get(this.properties, 'field.tokenLength', _.get(this.properties, 'tokenLength', 6))
+    },
+    labelClass () {
+      return {
+        'row justify-center': true,
+        'text-red': !!this.errorLabel
+      }
+    }
+  },
+  methods: {
+    updateModel (index) {
+      this.model = _.join(this.fieldValues, '')
+      this.onChanged()
+      this.focusNextInput(index)
+    },
+    updateFieldRef (element, index) {
+      if (element) this.fields[index] = element
+    },
+    focusNextInput (index) {
+      if (_.inRange(index, 0, this.tokenLength)) this.fields[index]?.select?.()
+    },
+    clearInput (index) {
+      this.fieldValues[index] = ''
+    },
+    onKeyUp (event, index) {
+      const key = event.key
+      if (key === 'ArrowLeft' || key === 'Backspace') {
+        this.focusNextInput(index - 1)
+        this.clearInput(index - 1)
+      }
+      if (key === 'ArrowRight') this.focusNextInput(index + 1)
+    }
   }
-  if (key === 'ArrowRight') focusNextInput(index + 1)
 }
-
-defineExpose({ properties: props.properties, ...field, fieldValues, tokenLength, labelClass, updateModel, updateFieldRef, focusNextInput, clearInput, onKeyUp })
 </script>

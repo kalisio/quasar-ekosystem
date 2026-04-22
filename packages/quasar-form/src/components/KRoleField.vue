@@ -18,7 +18,7 @@
       <q-option-group
         :id="properties.name + '-field'"
         v-model="model"
-        :options="roles"
+        :options="roles()"
         inline
         @update:model-value="onChanged"
       />
@@ -26,32 +26,50 @@
   </q-field>
 </template>
 
-<script setup>
+<script>
 import _ from 'lodash'
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
+// Missing: RoleNames (KDK permission constant)
+// import { RoleNames } from '../../../common/permissions'
 
-const props = defineProps(fieldProps)
-const emit = defineEmits(['field-changed'])
-
-const defaultRoleNames = ['owner', 'manager', 'member']
-
-const roles = computed(() => {
-  const roleNames = _.get(props.properties, 'field.roles', defaultRoleNames)
-  return _.map(roleNames, role => ({ label: useI18n().t(role.toUpperCase()), value: role }))
-})
-
-const field = useField(props, emit)
-const { model, label, hasError, errorLabel, disabled, fill, onChanged } = field
-
-function emptyModel () { return roles.value.length ? roles.value[0].value : '' }
-function isEmpty () { return false }
-function clear () { fill(_.get(props.properties, 'default', emptyModel())) }
-
-// Initialize with first role if no value
-if (!model.value) model.value = emptyModel()
-
-defineExpose({ properties: props.properties, ...field, roles, emptyModel, isEmpty, clear })
+export default {
+  // Missing Mixin: baseField
+  // mixins: [baseField],
+  props: fieldProps,
+  emits: ['field-changed'],
+  setup (props, { emit }) {
+    function emptyModel () {
+      const defaultRoleNames = ['owner', 'manager', 'member']
+      const roleNames = _.get(props.properties, 'field.roles', defaultRoleNames)
+      return roleNames.length ? roleNames[0] : ''
+    }
+    return { ...useField(props, emit, { emptyModel }), emptyModel }
+  },
+  methods: {
+    roles () {
+      const defaultRoleNames = ['owner', 'manager', 'member']
+      // Missing: RoleNames — using default list
+      // const roleNames = _.get(this.properties, 'field.roles', RoleNames)
+      const roleNames = _.get(this.properties, 'field.roles', defaultRoleNames)
+      return roleNames ? _.map(roleNames, role => { return { label: this.$t(_.upperCase(role)), value: role } }) : []
+    },
+    emptyModel () {
+      const roleNames = _.get(this.properties, 'field.roles', ['owner', 'manager', 'member'])
+      return roleNames ? roleNames[0] : ''
+    },
+    isEmpty () {
+      // Can't actually be
+      return false
+    },
+    clear () {
+      this.fill(_.get(this.properties, 'default', this.emptyModel()))
+    }
+  },
+  created () {
+    // Missing: RoleNames — using default list
+    // this.roleNames = _.get(this.properties, 'field.roles', RoleNames)
+    if (!this.model) this.model = this.emptyModel()
+  }
+}
 </script>

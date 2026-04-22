@@ -1,6 +1,6 @@
 <template>
   <div v-if="readOnly && model" :id="properties.name + '-field'">
-    <q-icon :name="iconName" :color="iconColor" />
+    <q-icon :name="model.name" :color="model.color" />
   </div>
   <div v-else>
     <q-field
@@ -8,38 +8,27 @@
       :id="properties.name + '-field'"
       v-model="model"
       :label="label"
-      :clearable="isClearable"
+      :clearable="isClearable()"
       :error-message="errorLabel"
       :error="hasError"
       :disable="disabled"
       bottom-slots
       @clear="onCleared">
-      <!-- Icon name input -->
+      <!-- Icon chooser -->
       <template v-slot:prepend>
         <q-btn
           id="icon-chooser-button"
           round
           flat
           icon="las la-icons"
-          @click="showPicker = true"
-        />
-        <q-dialog v-model="showPicker">
-          <q-card style="min-width: 320px">
-            <q-card-section>
-              <q-input
-                v-model="pickerInput"
-                label="Icon name"
-                clearable
-                @keyup.enter="applyPickerIcon"
-              />
-              <q-icon v-if="pickerInput" :name="pickerInput" size="lg" class="q-mt-sm" />
-            </q-card-section>
-            <q-card-actions align="right">
-              <q-btn flat label="Cancel" v-close-popup />
-              <q-btn flat label="OK" color="primary" @click="applyPickerIcon" v-close-popup />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
+          @click="onIconClicked" />
+        <!-- Missing Component: KIconChooser -->
+        <!-- <k-icon-chooser
+          id="icon-chooser"
+          ref="iconChooser"
+          :icon-set="iconSet"
+          :palette="color"
+          @icon-choosed="onIconChoosed" /> -->
       </template>
       <!-- Content -->
       <template v-slot:default>
@@ -48,50 +37,98 @@
           size="sm"
           id="choosed-icon"
           :name="iconName"
-          :color="iconColor"
+          :color="iconColor" />
+      </template>
+      <!-- Helper -->
+      <!-- Missing Component: KAction -->
+      <!--
+      <template v-if="hasHelper" v-slot:append>
+        <KAction
+          :id="properties.name + '-helper'"
+          :label="helperLabel"
+          :icon="helperIcon"
+          :tooltip="helperTooltip"
+          :url="helperUrl"
+          :dialog="helperDialog"
+          :context="helperContext"
+          @dialog-confirmed="onHelperDialogConfirmed"
+          color="primary"
         />
       </template>
+      -->
     </q-field>
   </div>
 </template>
 
-<script setup>
+<script>
 import _ from 'lodash'
-import { ref, computed } from 'vue'
 import { useField } from '../composables/index.js'
-import { fieldProps } from '../utils/index.js'
+import { fieldProps, getIconName } from '../utils/index.js'
+// Missing Component: KIconChooser
+// import { KIconChooser } from '../input'
 
-const props = defineProps(fieldProps)
-const emit = defineEmits(['field-changed'])
-
-const showPicker = ref(false)
-const pickerInput = ref('')
-const hasColor = _.get(props.properties, 'field.color', true)
-
-const field = useField(props, emit)
-const { model, label, hasError, errorLabel, disabled, fill: baseFill, onChanged } = field
-
-const isClearable = computed(() => _.get(props.properties, 'field.clearable', true))
-const iconName = computed(() => _.get(model.value, 'name', model.value || ''))
-const iconColor = computed(() => _.get(model.value, 'color', 'dark'))
-
-function emptyModel () { return hasColor ? { name: '', color: '' } : '' }
-function isEmpty () { return hasColor ? !_.get(model.value, 'name') : !model.value }
-function clear () { baseFill(_.get(props.properties, 'default', emptyModel())) }
-
-function onCleared () {
-  model.value = emptyModel()
-  onChanged()
+export default {
+  // Missing Component: KIconChooser
+  // components: { KIconChooser },
+  // Missing Mixin: baseField
+  // mixins: [baseField],
+  props: fieldProps,
+  emits: ['field-changed'],
+  setup (props, { emit }) {
+    // emptyModel depends on this.color (data), so we read from props here
+    function emptyModel () {
+      const color = _.get(props.properties, 'field.color', true)
+      return color ? { name: '', color: '' } : ''
+    }
+    return { ...useField(props, emit, { emptyModel }), emptyModel }
+  },
+  computed: {
+    hasIcon () {
+      return !this.isEmpty()
+    },
+    iconName () {
+      return getIconName(this.model, 'name')
+    },
+    iconColor () {
+      // We support icon without a color
+      return _.get(this.model, 'color', 'dark')
+    }
+  },
+  data () {
+    return {
+      iconSet: _.get(this.properties.field, 'iconSet', 'font-awesome'),
+      color: _.get(this.properties.field, 'color', true),
+      inverted: _.get(this.properties.field, 'inverted', false)
+    }
+  },
+  methods: {
+    emptyModel () {
+      // We support icon without a color, in this case we have a string as model
+      return (this.color ? { name: '', color: '' } : '')
+    },
+    isEmpty () {
+      return this.color ? !_.get(this.model, 'name') : !this.model
+    },
+    clear () {
+      this.fill(_.get(this.properties, 'default', this.emptyModel()))
+    },
+    isClearable () {
+      return _.get(this.properties, 'field.clearable', true)
+    },
+    onCleared () {
+      this.model = this.emptyModel()
+      this.onChanged()
+    },
+    onIconClicked () {
+      // Missing Component: KIconChooser
+      // this.$refs.iconChooser.open(this.model)
+    },
+    onIconChoosed (icon) {
+      // We support icon without a color, in this case we have a string as model
+      // Missing Component: KIconChooser
+      // this.model = (this.color ? Object.assign({}, icon) : icon)
+      // this.onChanged()
+    }
+  }
 }
-
-function applyPickerIcon () {
-  if (!pickerInput.value) return
-  model.value = hasColor
-    ? { name: pickerInput.value, color: _.get(model.value, 'color', 'dark') }
-    : pickerInput.value
-  pickerInput.value = ''
-  onChanged()
-}
-
-defineExpose({ properties: props.properties, ...field, showPicker, pickerInput, isClearable, iconName, iconColor, emptyModel, isEmpty, clear, onCleared, applyPickerIcon })
 </script>

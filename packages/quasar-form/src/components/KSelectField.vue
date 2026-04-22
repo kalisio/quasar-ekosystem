@@ -15,7 +15,7 @@
     map-options
     use-input
     :dense="dense"
-    :clearable="isClearable"
+    :clearable="isClearable()"
     :error="hasError"
     :error-message="errorLabel"
     :disable="disabled"
@@ -37,9 +37,14 @@
         </q-item-section>
       </q-item>
     </template>
-    <!-- no-option display -->
+    <!-- no options display -->
     <template v-if="hasNoOption" v-slot:no-option>
-      <p v-if="typeof noOption === 'string'" class="q-pa-sm text-center">{{ noOption }}</p>
+      <p v-if="typeof noOption === 'string'" class="noOptionText">{{ noOption }}</p>
+      <!-- Missing: loadComponent (KDK) — dynamic component not supported
+      <Suspense v-else>
+        <component v-if="noOptionComponent" :is="noOptionComponent" v-bind="noOptionsAttributes" />
+      </Suspense>
+      -->
     </template>
     <!-- selected item display -->
     <template v-slot:selected-item="scope">
@@ -51,81 +56,146 @@
         :tabindex="scope.tabindex"
         @remove="scope.removeAtIndex(scope.index)"
       >
-        <span :class="selectedClass">{{ scope.opt.label }}</span>
+        <span :class="selectedClass()">
+          {{ scope.opt.label }}
+        </span>
       </q-chip>
-      <span v-else :class="selectedClass">{{ scope.opt.label }}</span>
+      <span v-else :class="selectedClass()">
+        {{ scope.opt.label }}
+      </span>
     </template>
+    <!-- Helper -->
+    <!-- Missing Component: KAction -->
+    <!--
+    <template v-if="hasHelper" v-slot:append>
+      <k-action
+        :id="properties.name + '-helper'"
+        :label="helperLabel"
+        :icon="helperIcon"
+        :tooltip="helperTooltip"
+        :url="helperUrl"
+        :dialog="helperDialog"
+        :context="helperContext"
+        @dialog-confirmed="onHelperDialogConfirmed"
+        color="primary"
+      />
+    </template>
+    -->
   </q-select>
 </template>
 
-<script setup>
+<script>
 import _ from 'lodash'
-import { ref, computed, watch, nextTick } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 import { makeDiacriticPattern } from '../utils/diacritics.js'
 
-const props = defineProps(fieldProps)
-const emit = defineEmits(['field-changed'])
-
-const filter = ref(null)
-
-const dense = computed(() => props.dense)
-const multiple = computed(() => _.get(props.properties, 'multiselect', false))
-const chips = computed(() => _.get(props.properties, 'field.chips', false))
-const isClearable = computed(() => _.get(props.properties, 'field.clearable', true))
-const noOption = computed(() => _.get(props.properties, 'field.noOption', null))
-const hasNoOption = computed(() => !_.isEmpty(noOption.value))
-const selectedClass = computed(() => _.get(props.properties, 'field.selectedClass', 'text-weight-regular'))
-const options = computed(() => {
-  let opts = _.map(_.get(props.properties, 'field.options', []), option => {
-    return Object.assign({}, option, { label: useI18n().t(_.get(option, 'label', '')) })
-  })
-  if (filter.value) {
-    opts = _.filter(opts, option => {
-      return new RegExp(makeDiacriticPattern(filter.value)).test(option.label.toLowerCase())
-    })
+export default {
+  // Missing Mixin: baseField
+  // mixins: [baseField],
+  props: fieldProps,
+  emits: ['field-changed'],
+  setup (props, { emit }) {
+    function emptyModel () {
+      return _.get(props.properties, 'multiselect', false) ? [] : null
+    }
+    return { ...useField(props, emit, { emptyModel }), emptyModel }
+  },
+  data () {
+    return {
+      filter: null
+    }
+  },
+  watch: {
+    options: {
+      immediate: true,
+      handler (opts) {
+        if (_.isEmpty(this.filter) && opts.length === 1 && this.required) {
+          this.$nextTick(() => {
+            this.fill(opts[0].value)
+            this.onChanged(opts[0].value)
+          })
+        }
+      }
+    }
+  },
+  computed: {
+    dense () {
+      return this.$props.dense
+    },
+    multiple () {
+      return this.isMultiselect()
+    },
+    chips () {
+      return this.hasChips()
+    },
+    options () {
+      let opts = _.map(_.get(this.properties, 'field.options', []), option => {
+        const label = this.$t(_.get(option, 'label', ''))
+        return Object.assign({}, option, { label })
+      })
+      if (this.filter) {
+        opts = _.filter(opts, option => {
+          const regExp = new RegExp(makeDiacriticPattern(this.filter))
+          return regExp.test(option.label.toLowerCase())
+        })
+      }
+      return opts
+    },
+    hasNoOption () {
+      return !_.isEmpty(_.get(this.properties, 'field.noOption', {}))
+    },
+    noOption () {
+      return _.get(this.properties, 'field.noOption', null)
+    }
+    // Missing: noOptionComponent, noOptionsAttributes (require loadComponent from KDK)
+    // noOptionComponent () { return loadComponent(this.properties.field.noOption.component) },
+    // noOptionsAttributes () { return _.omit(this.properties.field.noOption, 'component') }
+  },
+  methods: {
+    isMultiselect () {
+      return _.get(this.properties, 'multiselect', false)
+    },
+    isClearable () {
+      return _.get(this.properties, 'field.clearable', true)
+    },
+    hasChips () {
+      return _.get(this.properties, 'field.chips', false)
+    },
+    getId (option) {
+      let id = option.value
+      // Complex object ?
+      if (typeof id === 'object') {
+        // Extract value property or use label if none
+        const valueField = _.get(this.properties, 'field.valueField')
+        if (valueField) id = _.get(id, valueField)
+        else id = option.label
+      } else {
+        // Ensure string not eg number
+        id = id.toString()
+      }
+      return _.kebabCase(id)
+    },
+    isEmpty () {
+      return this.multiple ? _.isEmpty(this.model) : _.isNil(this.model)
+    },
+    clear () {
+      this.fill(_.get(this.properties, 'default', this.emptyModel()))
+    },
+    selectedClass () {
+      return _.get(this.properties, 'field.selectedClass', 'text-weight-regular')
+    },
+    onFilter (pattern, update) {
+      if (pattern === '') {
+        update(() => {
+          this.filter = null
+        })
+        return
+      }
+      update(() => {
+        this.filter = pattern.toLowerCase()
+      })
+    }
   }
-  return opts
-})
-
-function emptyModel () { return multiple.value ? [] : null }
-const field = useField(props, emit, { emptyModel })
-const { model, label, hasError, errorLabel, hasFocus, disabled, onChanged, fill } = field
-
-// Auto-fill required single-option fields
-watch(options, (opts) => {
-  if (_.isEmpty(filter.value) && opts.length === 1 && props.required) {
-    nextTick(() => {
-      fill(opts[0].value)
-      onChanged()
-    })
-  }
-}, { immediate: true })
-
-function isEmpty () { return multiple.value ? _.isEmpty(model.value) : _.isNil(model.value) }
-function clear () { fill(_.get(props.properties, 'default', emptyModel())) }
-
-function getId (option) {
-  let id = option.value
-  if (typeof id === 'object') {
-    const valueField = _.get(props.properties, 'field.valueField')
-    if (valueField) id = _.get(id, valueField)
-    else id = option.label
-  } else {
-    id = id.toString()
-  }
-  return _.kebabCase(id)
 }
-
-function onFilter (pattern, update) {
-  if (pattern === '') {
-    update(() => { filter.value = null })
-    return
-  }
-  update(() => { filter.value = pattern.toLowerCase() })
-}
-
-defineExpose({ properties: props.properties, ...field, dense, multiple, chips, isClearable, noOption, hasNoOption, selectedClass, options, onFilter, getId, emptyModel, isEmpty, clear })
 </script>

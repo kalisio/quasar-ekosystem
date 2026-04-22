@@ -13,6 +13,7 @@
     :disable="disabled"
     bottom-slots
   >
+    <!-- Control -->
     <template v-slot:control>
       <q-toggle
         :id="properties.name + '-field'"
@@ -20,25 +21,53 @@
         @blur="onChanged"
       />
     </template>
+    <!-- Helper -->
+    <!-- Missing Component: KAction -->
+    <!--
+    <template v-if="hasHelper" v-slot:append>
+      <k-action
+        :id="properties.name + '-helper'"
+        :label="helperLabel"
+        :icon="helperIcon"
+        :tooltip="helperTooltip"
+        :url="helperUrl"
+        :dialog="helperDialog"
+        :context="helperContext"
+        @dialog-confirmed="onHelperDialogConfirmed"
+        color="primary"
+      />
+    </template>
+    -->
   </q-field>
 </template>
 
-<script setup>
+<script>
 import _ from 'lodash'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
-const props = defineProps(fieldProps)
-const emit = defineEmits(['field-changed'])
-
-const field = useField(props, emit)
-const { model, label, hasError, errorLabel, disabled, onChanged, fill } = field
-
-// Booleans are never "empty" — default is false, not null
-if (_.isNil(model.value)) model.value = false
-function emptyModel () { return false }
-function isEmpty () { return false }
-function clear () { fill(_.get(props.properties, 'default', false)) }
-
-defineExpose({ properties: props.properties, ...field, emptyModel, isEmpty, clear })
+export default {
+  // Missing Mixin: baseField
+  // mixins: [baseField],
+  props: fieldProps,
+  emits: ['field-changed'],
+  setup (props, { emit }) {
+    return useField(props, emit)
+  },
+  created () {
+    // Booleans are never "empty" — default is false, not null
+    if (_.isNil(this.model)) this.model = false
+  },
+  methods: {
+    emptyModel () {
+      return false
+    },
+    isEmpty () {
+      return false
+    },
+    clear () {
+      this.fill(_.get(this.properties, 'default', false))
+    }
+  }
+}
 </script>

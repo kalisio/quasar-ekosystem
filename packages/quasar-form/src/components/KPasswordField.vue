@@ -28,20 +28,33 @@
   </q-input>
 </template>
 
-<script setup>
+<script>
 import _ from 'lodash'
-import { ref } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
-const props = defineProps(fieldProps)
-const emit = defineEmits(['field-changed'])
-
-const showPassword = ref(true)
-const autocomplete = _.get(props.properties, 'field.autocomplete', 'on')
-
-const field = useField(props, emit)
-const { model, label, hasError, errorLabel, hasFocus, disabled, onChanged } = field
-
-defineExpose({ properties: props.properties, ...field, showPassword, autocomplete })
+export default {
+  // Missing Mixin: baseField
+  // mixins: [baseField],
+  props: fieldProps,
+  emits: ['field-changed'],
+  setup (props, { emit }) {
+    return useField(props, emit)
+  },
+  data () {
+    return {
+      showPassword: true,
+      autocomplete: _.get(this.properties, 'field.autocomplete', 'on')
+    }
+  },
+  created () {
+    // generate a default password if required
+    // Missing: generateRandomPassword
+    // if (_.get(this.properties, 'field.suggest')) {
+    //   const length = _.get(this.properties.field.suggest, 'length', 12)
+    //   const rules = _.get(this.properties.field.suggest, 'rules', /[\w\d?-]/)
+    //   _.set(this.properties, 'default', generateRandomPassword(length, false, rules))
+    // }
+  }
+}
 </script>

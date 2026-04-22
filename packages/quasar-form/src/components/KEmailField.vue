@@ -17,18 +17,38 @@
     bottom-slots
     @blur="onChanged"
     @update:model-value="onChanged"
-  />
+  >
+    <!-- Helper -->
+    <!-- Missing Component: KAction -->
+    <!--
+    <template v-if="hasHelper" v-slot:append>
+      <k-action
+        :id="properties.name + '-helper'"
+        :label="helperLabel"
+        :icon="helperIcon"
+        :tooltip="helperTooltip"
+        :url="helperUrl"
+        :dialog="helperDialog"
+        :context="helperContext"
+        @dialog-confirmed="onHelperDialogConfirmed"
+        color="primary"
+      />
+    </template>
+    -->
+  </q-input>
 </template>
 
-<script setup>
+<script>
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
-const props = defineProps(fieldProps)
-const emit = defineEmits(['field-changed'])
-
-const field = useField(props, emit)
-const { model, label, hasError, errorLabel, hasFocus, disabled, onChanged } = field
-
-defineExpose({ properties: props.properties, ...field })
+export default {
+  // Missing Mixin: baseField
+  // mixins: [baseField],
+  props: fieldProps,
+  emits: ['field-changed'],
+  setup (props, { emit }) {
+    return useField(props, emit)
+  }
+}
 </script>

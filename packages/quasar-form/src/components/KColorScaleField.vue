@@ -1,5 +1,7 @@
 <template>
   <div v-if="readOnly">
+    <!-- Missing Component: KColorScale -->
+    <!-- <KColorScale v-bind="model" style="max-height: 46px" /> -->
     <div :id="properties.name + '-field'" class="k-color-scale-preview">
       <span v-if="model">{{ getLabel(model) }}</span>
     </div>
@@ -9,11 +11,11 @@
     :id="properties.name + '-field'"
     v-model="model"
     :label="label"
-    :options="options"
+    :options="getOptions()"
     options-selected-class="hidden"
     emit-value
     map-options
-    :clearable="isClearable"
+    :clearable="isClearable()"
     :error="hasError"
     :error-message="errorLabel"
     :disable="disabled"
@@ -26,6 +28,8 @@
       <q-item class="full-width">
         <q-item-section>
           <q-item-label>
+            <!-- Missing Component: KColorScale -->
+            <!-- <KColorScale :key="scope.opt.label" v-bind="scope.opt.value" style="max-height: 46px;" /> -->
             <div class="k-color-scale-bar" :style="getScaleStyle(scope.opt.value)" />
           </q-item-label>
         </q-item-section>
@@ -39,45 +43,74 @@
       >
         <q-item-section>
           <q-item-label>
+            <!-- Missing Component: KColorScale -->
+            <!-- <KColorScale v-bind="scope.opt.value" style="max-height: 46px;" /> -->
             <div class="k-color-scale-bar" :style="getScaleStyle(scope.opt.value)" />
           </q-item-label>
         </q-item-section>
       </q-item>
     </template>
+    <!-- Helper -->
+    <!-- Missing Component: KAction -->
+    <!--
+    <template v-if="hasHelper" v-slot:append>
+      <k-action
+        :id="properties.name + '-helper'"
+        :label="helperLabel"
+        :icon="helperIcon"
+        :tooltip="helperTooltip"
+        :url="helperUrl"
+        :dialog="helperDialog"
+        :context="helperContext"
+        @dialog-confirmed="onHelperDialogConfirmed"
+        color="primary"
+      />
+    </template>
+    -->
   </q-select>
 </template>
 
-<script setup>
+<script>
 import _ from 'lodash'
-import { computed } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
+// Missing Component: KColorScale
+// import { KColorScale } from '../media'
 
-const props = defineProps(fieldProps)
-const emit = defineEmits(['field-changed'])
-
-const field = useField(props, emit)
-const { model, label, hasError, errorLabel, disabled, onChanged } = field
-
-const options = computed(() => _.get(props.properties, 'field.options', []))
-const isClearable = computed(() => _.get(props.properties, 'field.clearable', true))
-
-function getId (option) { return _.kebabCase(option.label) }
-
-function getLabel (value) {
-  const opt = _.find(options.value, o => _.isEqual(o.value, value))
-  return opt?.label || ''
+export default {
+  // Missing Component: KColorScale
+  // components: { KColorScale },
+  // Missing Mixin: baseField
+  // mixins: [baseField],
+  props: fieldProps,
+  emits: ['field-changed'],
+  setup (props, { emit }) {
+    return useField(props, emit)
+  },
+  methods: {
+    getId (option) {
+      return _.kebabCase(option.label)
+    },
+    getOptions () {
+      return _.get(this.properties, 'field.options', [])
+    },
+    isClearable () {
+      return _.get(this.properties, 'field.clearable', true)
+    },
+    getLabel (value) {
+      const options = this.getOptions()
+      const opt = _.find(options, o => _.isEqual(o.value, value))
+      return opt?.label || ''
+    },
+    getScaleStyle (value) {
+      if (!value) return {}
+      const colors = _.get(value, 'colors', _.get(value, 'scale', []))
+      if (_.isEmpty(colors)) return {}
+      const stops = colors.map((c, i) => `${_.isString(c) ? c : c.color} ${Math.round((i / (colors.length - 1)) * 100)}%`)
+      return { background: `linear-gradient(to right, ${stops.join(', ')})`, height: '16px', borderRadius: '4px', width: '100%' }
+    }
+  }
 }
-
-function getScaleStyle (value) {
-  if (!value) return {}
-  const colors = _.get(value, 'colors', _.get(value, 'scale', []))
-  if (_.isEmpty(colors)) return {}
-  const stops = colors.map((c, i) => `${_.isString(c) ? c : c.color} ${Math.round((i / (colors.length - 1)) * 100)}%`)
-  return { background: `linear-gradient(to right, ${stops.join(', ')})`, height: '16px', borderRadius: '4px', width: '100%' }
-}
-
-defineExpose({ properties: props.properties, ...field, options, isClearable, getId, getLabel, getScaleStyle })
 </script>
 
 <style scoped>

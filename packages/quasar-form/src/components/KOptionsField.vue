@@ -34,27 +34,31 @@
   </q-field>
 </template>
 
-<script setup>
+<script>
 import _ from 'lodash'
-import { useI18n } from 'vue-i18n'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
-const props = defineProps(fieldProps)
-const emit = defineEmits(['field-changed'])
-
-function options () {
-  return _.map(_.get(props.properties, 'field.options', []), option => {
-    return Object.assign({}, option, { label: useI18n().t(_.get(option, 'label', '')) })
-  })
+export default {
+  // Missing Mixin: baseField
+  // mixins: [baseField],
+  props: fieldProps,
+  emits: ['field-changed'],
+  setup (props, { emit }) {
+    return useField(props, emit)
+  },
+  methods: {
+    options () {
+      const options = _.get(this.properties, 'field.options', [])
+      return options.map(option => {
+        // Check if we have a translation key or directly the label content
+        const label = _.get(option, 'label', '')
+        return Object.assign({}, option, { label: this.$t(label) })
+      })
+    },
+    selectedClass () {
+      return _.get(this.properties, 'field.selectedClass', 'text-weight-regular')
+    }
+  }
 }
-
-function selectedClass () {
-  return _.get(props.properties, 'field.selectedClass', 'text-weight-regular')
-}
-
-const field = useField(props, emit)
-const { model, label, hasError, errorLabel, disabled, onChanged } = field
-
-defineExpose({ properties: props.properties, ...field, options, selectedClass })
 </script>

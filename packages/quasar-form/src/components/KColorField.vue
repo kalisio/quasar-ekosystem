@@ -13,7 +13,7 @@
       :error-message="errorLabel"
       :error="hasError"
       :disable="disabled"
-      :clearable="isClearable"
+      :clearable="isClearable()"
       bottom-slots
       @clear="model = ''">
       <!-- Control -->
@@ -28,38 +28,69 @@
           />
         </q-dialog>
       </template>
+      <!-- Helper -->
+      <!-- Missing Component: KAction -->
+      <!--
+      <template v-if="hasHelper" v-slot:append>
+        <KAction
+          :id="properties.name + '-helper'"
+          :label="helperLabel"
+          :icon="helperIcon"
+          :tooltip="helperTooltip"
+          :url="helperUrl"
+          :dialog="helperDialog"
+          :context="helperContext"
+          @dialog-confirmed="onHelperDialogConfirmed"
+          color="primary"
+        />
+      </template>
+      -->
     </q-field>
   </div>
 </template>
 
-<script setup>
+<script>
 import _ from 'lodash'
-import { ref, computed } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
-const props = defineProps(fieldProps)
-const emit = defineEmits(['field-changed'])
-
-const picker = ref(false)
-
-function emptyModel () { return _.get(props.properties, 'default', '') }
-const field = useField(props, emit, { emptyModel })
-const { model, label, hasError, errorLabel, disabled, fill } = field
-
-const isClearable = computed(() => _.get(props.properties, 'field.clearable', true))
-const color = computed(() => model.value || 'transparent')
-
-function isEmpty () { return !model.value }
-function clear () { fill(emptyModel()) }
-
-function onReferenceCreated (ref) {
-  if (ref) {
-    ref.$el.onclick = () => { picker.value = true }
+export default {
+  // Missing Mixin: baseField
+  // mixins: [baseField],
+  props: fieldProps,
+  emits: ['field-changed'],
+  setup (props, { emit }) {
+    function emptyModel () { return _.get(props.properties, 'default', '') }
+    return { ...useField(props, emit, { emptyModel }), emptyModel }
+  },
+  data () {
+    return {
+      picker: false
+    }
+  },
+  computed: {
+    color () {
+      return this.model || 'transparent'
+    }
+  },
+  methods: {
+    isEmpty () {
+      return !this.model
+    },
+    clear () {
+      this.fill(this.emptyModel())
+    },
+    onReferenceCreated (ref) {
+      // https://github.com/quasarframework/quasar/issues/8956
+      if (ref) {
+        ref.$el.onclick = () => { this.picker = true }
+      }
+    },
+    isClearable () {
+      return _.get(this.properties, 'field.clearable', true)
+    }
   }
 }
-
-defineExpose({ properties: props.properties, ...field, picker, isClearable, color, emptyModel, isEmpty, clear, onReferenceCreated })
 </script>
 
 <style scoped>

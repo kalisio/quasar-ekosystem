@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, getCurrentInstance } from 'vue'
 import { openURL } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
@@ -91,7 +91,10 @@ export function useField (props, emit, opts = {}) {
   // Initialize model from values if provided
   if (props.values) updateValue(_.get(props.values, props.properties.name))
 
-  return {
+  // Don't expose functions that the component already defines in its own methods —
+  // setup() wins over methods in Vue 3, so we must yield to avoid shadowing them.
+  const componentMethods = getCurrentInstance()?.type?.methods || {}
+  const expose = {
     model,
     error,
     label,
@@ -106,11 +109,7 @@ export function useField (props, emit, opts = {}) {
     hasError,
     errorLabel,
     disabled,
-    emptyModel,
-    isEmpty,
     value,
-    fill,
-    clear,
     updateValue,
     validate,
     invalidate,
@@ -119,4 +118,9 @@ export function useField (props, emit, opts = {}) {
     submitted,
     onHelperDialogConfirmed
   }
+  if (!componentMethods.emptyModel) expose.emptyModel = emptyModel
+  if (!componentMethods.isEmpty) expose.isEmpty = isEmpty
+  if (!componentMethods.fill) expose.fill = fill
+  if (!componentMethods.clear) expose.clear = clear
+  return expose
 }

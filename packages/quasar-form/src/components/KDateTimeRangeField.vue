@@ -13,7 +13,10 @@
     bottom-slots
     stack-label
   >
+    <!-- Prepend icons -->
     <template v-slot:control>
+      <!-- Missing Component: KDateTimeRange -->
+      <!-- <KDateTimeRange v-model="model" v-bind="fieldProps" dense @update:modelValue="onChanged" /> -->
       <div class="row q-gutter-sm full-width">
         <input
           type="datetime-local"
@@ -31,50 +34,89 @@
         />
       </div>
     </template>
+    <!-- Helper -->
+    <!-- Missing Component: KAction -->
+    <!--
+    <template v-if="hasHelper" v-slot:append>
+      <KAction
+        :id="properties.name + '-helper'"
+        :label="helperLabel"
+        :icon="helperIcon"
+        :tooltip="helperTooltip"
+        :url="helperUrl"
+        :dialog="helperDialog"
+        :context="helperContext"
+        @dialog-confirmed="onHelperDialogConfirmed"
+        color="primary"
+      />
+    </template>
+    -->
   </q-field>
 </template>
 
-<script setup>
+<script>
 import _ from 'lodash'
-import { computed } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
-const props = defineProps(fieldProps)
-const emit = defineEmits(['field-changed'])
-
-const startField = computed(() => _.get(props.properties, 'field.start', 'start'))
-const endField = computed(() => _.get(props.properties, 'field.end', 'end'))
-
-function emptyModel () { return { [startField.value]: '', [endField.value]: '' } }
-const field = useField(props, emit, { emptyModel })
-const { model, label, hasError, errorLabel, disabled, onChanged, fill } = field
-
-const minStart = computed(() => _.get(props.properties, 'field.minStart', ''))
-const maxStart = computed(() => endValue.value || _.get(props.properties, 'field.maxStart', ''))
-const minEnd = computed(() => startValue.value || _.get(props.properties, 'field.minEnd', ''))
-const maxEnd = computed(() => _.get(props.properties, 'field.maxEnd', ''))
-
-const startValue = computed(() => _.get(model.value, startField.value, ''))
-const endValue = computed(() => _.get(model.value, endField.value, ''))
-
-const formattedDateTimeRange = computed(() => {
-  if (!startValue.value && !endValue.value) return ''
-  return `${startValue.value} — ${endValue.value}`
-})
-
-function isEmpty () { return !startValue.value && !endValue.value }
-function clear () { fill(_.get(props.properties, 'default', emptyModel())) }
-
-function onStartChanged (event) {
-  model.value = { ...emptyModel(), ...model.value, [startField.value]: event.target.value }
-  onChanged()
+export default {
+  // Missing Mixin: baseField
+  // mixins: [baseField],
+  props: fieldProps,
+  emits: ['field-changed'],
+  setup (props, { emit }) {
+    function emptyModel () {
+      const startField = _.get(props.properties, 'field.start', 'start')
+      const endField = _.get(props.properties, 'field.end', 'end')
+      return { [startField]: '', [endField]: '' }
+    }
+    return { ...useField(props, emit, { emptyModel }), emptyModel }
+  },
+  computed: {
+    startField () {
+      return _.get(this.properties, 'field.start', 'start')
+    },
+    endField () {
+      return _.get(this.properties, 'field.end', 'end')
+    },
+    startValue () {
+      return _.get(this.model, this.startField, '')
+    },
+    endValue () {
+      return _.get(this.model, this.endField, '')
+    },
+    minStart () {
+      return _.get(this.properties, 'field.minStart', '')
+    },
+    maxStart () {
+      return this.endValue || _.get(this.properties, 'field.maxStart', '')
+    },
+    minEnd () {
+      return this.startValue || _.get(this.properties, 'field.minEnd', '')
+    },
+    maxEnd () {
+      return _.get(this.properties, 'field.maxEnd', '')
+    },
+    formattedDateTimeRange () {
+      if (!this.startValue && !this.endValue) return ''
+      return `${this.startValue} — ${this.endValue}`
+    }
+  },
+  methods: {
+    isEmpty () {
+      return !this.startValue && !this.endValue
+    },
+    clear () {
+      this.fill(_.get(this.properties, 'default', this.emptyModel()))
+    },
+    onStartChanged (event) {
+      this.model = { ...this.emptyModel(), ...this.model, [this.startField]: event.target.value }
+      this.onChanged()
+    },
+    onEndChanged (event) {
+      this.model = { ...this.emptyModel(), ...this.model, [this.endField]: event.target.value }
+      this.onChanged()
+    }
+  }
 }
-
-function onEndChanged (event) {
-  model.value = { ...emptyModel(), ...model.value, [endField.value]: event.target.value }
-  onChanged()
-}
-
-defineExpose({ properties: props.properties, ...field, startValue, endValue, formattedDateTimeRange, emptyModel, isEmpty, clear, onStartChanged, onEndChanged })
 </script>

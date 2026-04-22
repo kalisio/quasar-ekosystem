@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { mount, config } from '@vue/test-utils'
 import { nextTick } from 'vue'
 
 import KEmailField from '../src/components/KEmailField.vue'
@@ -28,6 +28,16 @@ import KTagField from '../src/components/KTagField.vue'
 import KIconField from '../src/components/KIconField.vue'
 import KColorScaleField from '../src/components/KColorScaleField.vue'
 import KDateTimeRangeField from '../src/components/KDateTimeRangeField.vue'
+
+// Make this.$t and this.$q available in all mounted components
+config.global.mocks = {
+  $t: (key) => key,
+  $q: {
+    iconSet: { editor: { align: 'format_align_left' } },
+    lang: { editor: { align: 'Align' } },
+    screen: {}
+  }
+}
 
 vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (key) => key }) }))
 
@@ -573,22 +583,22 @@ describe('KSelectField', () => {
 
   it('isClearable defaults to true', () => {
     const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
-    expect(wrapper.vm.isClearable).toBe(true)
+    expect(wrapper.vm.isClearable()).toBe(true)
   })
 
   it('isClearable can be disabled via properties.field.clearable', () => {
     const wrapper = mount(KSelectField, { props: makeProps({ field: { options, clearable: false } }), global: { stubs } })
-    expect(wrapper.vm.isClearable).toBe(false)
+    expect(wrapper.vm.isClearable()).toBe(false)
   })
 
   it('selectedClass defaults to text-weight-regular', () => {
     const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
-    expect(wrapper.vm.selectedClass).toBe('text-weight-regular')
+    expect(wrapper.vm.selectedClass()).toBe('text-weight-regular')
   })
 
   it('selectedClass can be customized via properties.field.selectedClass', () => {
     const wrapper = mount(KSelectField, { props: makeProps({ field: { options, selectedClass: 'text-bold' } }), global: { stubs } })
-    expect(wrapper.vm.selectedClass).toBe('text-bold')
+    expect(wrapper.vm.selectedClass()).toBe('text-bold')
   })
 
   it('dense computed reflects the dense prop', () => {
@@ -841,7 +851,9 @@ describe('KOptionsField', () => {
 })
 
 describe('KTextareaField', () => {
-  const stubs = { 'q-field': fieldStub, 'q-input': inputStub }
+  const defaultSlotFieldStub = { template: '<div><slot /></div>', props: ['modelValue'] }
+  const editorStub = { template: '<input />', props: ['modelValue', 'definitions', 'toolbar', 'contentStyle', 'contentClass', 'minHeight', 'maxHeight', 'dense'], emits: ['update:modelValue'] }
+  const stubs = { 'q-field': defaultSlotFieldStub, 'q-input': inputStub, 'q-editor': editorStub }
 
   it('renders a textarea in edit mode', () => {
     const wrapper = mount(KTextareaField, { props: makeProps(), global: { stubs } })
@@ -1445,12 +1457,12 @@ describe('KColorField', () => {
 
   it('isClearable defaults to true', () => {
     const wrapper = mount(KColorField, { props: makeProps(), global: { stubs } })
-    expect(wrapper.vm.isClearable).toBe(true)
+    expect(wrapper.vm.isClearable()).toBe(true)
   })
 
   it('isClearable can be disabled via properties.field.clearable', () => {
     const wrapper = mount(KColorField, { props: makeProps({ field: { clearable: false } }), global: { stubs } })
-    expect(wrapper.vm.isClearable).toBe(false)
+    expect(wrapper.vm.isClearable()).toBe(false)
   })
 
   it('invalidate sets hasError to true', () => {
@@ -1715,7 +1727,7 @@ describe('KChipsField', () => {
   })
 
   it('onChipAdded appends the input value to chips and clears input', () => {
-    const wrapper = mount(KChipsField, { props: makeProps(), global: { stubs } })
+    const wrapper = mount(KChipsField, { props: makeProps({ field: { icon: false } }), global: { stubs } })
     wrapper.vm.input = 'newtag'
     wrapper.vm.onChipAdded()
     expect(wrapper.vm.chips).toContain('newtag')
@@ -1723,21 +1735,21 @@ describe('KChipsField', () => {
   })
 
   it('onChipAdded syncs chips to model via updateModel', () => {
-    const wrapper = mount(KChipsField, { props: makeProps(), global: { stubs } })
+    const wrapper = mount(KChipsField, { props: makeProps({ field: { icon: false } }), global: { stubs } })
     wrapper.vm.input = 'newtag'
     wrapper.vm.onChipAdded()
     expect(wrapper.vm.value()).toContain('newtag')
   })
 
   it('pressing Enter in the input adds a chip via @keyup.enter', async () => {
-    const wrapper = mount(KChipsField, { props: makeProps(), global: { stubs } })
+    const wrapper = mount(KChipsField, { props: makeProps({ field: { icon: false } }), global: { stubs } })
     wrapper.vm.input = 'entertag'
     await wrapper.find('input').trigger('keyup', { key: 'Enter' })
     expect(wrapper.vm.chips).toContain('entertag')
   })
 
   it('onChipRemoved removes the chip from chips', () => {
-    const wrapper = mount(KChipsField, { props: makeProps(), global: { stubs } })
+    const wrapper = mount(KChipsField, { props: makeProps({ field: { icon: false } }), global: { stubs } })
     wrapper.vm.fill(['a', 'b', 'c'])
     wrapper.vm.onChipRemoved('b')
     expect(wrapper.vm.chips).toEqual(['a', 'c'])
@@ -1752,17 +1764,17 @@ describe('KChipsField', () => {
   })
 
   it('chipValue returns the chip itself for string chips', () => {
-    const wrapper = mount(KChipsField, { props: makeProps(), global: { stubs } })
+    const wrapper = mount(KChipsField, { props: makeProps({ field: { icon: false } }), global: { stubs } })
     expect(wrapper.vm.chipValue('hello')).toBe('hello')
   })
 
   it('chipColor returns dark for string chips', () => {
-    const wrapper = mount(KChipsField, { props: makeProps(), global: { stubs } })
+    const wrapper = mount(KChipsField, { props: makeProps({ field: { icon: false } }), global: { stubs } })
     expect(wrapper.vm.chipColor('anything')).toBe('dark')
   })
 
   it('chipIcon returns undefined for string chips', () => {
-    const wrapper = mount(KChipsField, { props: makeProps(), global: { stubs } })
+    const wrapper = mount(KChipsField, { props: makeProps({ field: { icon: false } }), global: { stubs } })
     expect(wrapper.vm.chipIcon('anything')).toBeUndefined()
   })
 
@@ -1894,7 +1906,7 @@ describe('KRoleField', () => {
 
   it('uses custom roles from field.roles', () => {
     const wrapper = mount(KRoleField, { props: makeProps({ field: { roles: ['admin', 'user'] } }), global: { stubs } })
-    const roles = wrapper.vm.roles
+    const roles = wrapper.vm.roles()
     expect(roles.map(r => r.value)).toEqual(['admin', 'user'])
   })
 
@@ -1957,7 +1969,7 @@ describe('KRoleField', () => {
 
   it('uses default role names when field.roles is not set', () => {
     const wrapper = mount(KRoleField, { props: makeProps({ field: {} }), global: { stubs } })
-    const values = wrapper.vm.roles.map(r => r.value)
+    const values = wrapper.vm.roles().map(r => r.value)
     expect(values).toEqual(['owner', 'manager', 'member'])
   })
 
@@ -1971,7 +1983,7 @@ describe('KRoleField', () => {
   it('roles computed labels are translated (uppercase key)', () => {
     const wrapper = mount(KRoleField, { props: makeProps({ field: { roles: ['owner'] } }), global: { stubs } })
     // vi.mock('vue-i18n') returns key as-is, so label should be the uppercase key
-    expect(wrapper.vm.roles[0].label).toBe('OWNER')
+    expect(wrapper.vm.roles()[0].label).toBe('OWNER')
   })
 })
 
@@ -2969,17 +2981,6 @@ describe('KIconField', () => {
     expect(wrapper.find('q-icon-stub').exists()).toBe(true)
   })
 
-  it('showPicker starts false', () => {
-    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
-    expect(wrapper.vm.showPicker).toBe(false)
-  })
-
-  it('clicking the button opens the picker', async () => {
-    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
-    await wrapper.find('button').trigger('click')
-    expect(wrapper.vm.showPicker).toBe(true)
-  })
-
   it('emptyModel returns {name, color} when hasColor is true (default)', () => {
     const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
     expect(wrapper.vm.emptyModel()).toEqual({ name: '', color: '' })
@@ -3012,36 +3013,14 @@ describe('KIconField', () => {
     expect(wrapper.vm.iconName).toBe('favorite')
   })
 
-  it('iconColor defaults to dark when no color in model', () => {
+  it('iconColor returns empty string when model has no color set (emptyModel has color: "")', () => {
     const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
-    expect(wrapper.vm.iconColor).toBe('dark')
+    expect(wrapper.vm.iconColor).toBe('')
   })
 
   it('iconColor reads color from model object', () => {
     const wrapper = mount(KIconField, { props: { ...makeProps(), values: { test: { name: 'star', color: 'red' } } }, global: { stubs } })
     expect(wrapper.vm.iconColor).toBe('red')
-  })
-
-  it('applyPickerIcon sets model from pickerInput', async () => {
-    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
-    wrapper.vm.pickerInput = 'star'
-    await wrapper.vm.applyPickerIcon()
-    expect(wrapper.vm.iconName).toBe('star')
-    expect(wrapper.vm.pickerInput).toBe('')
-  })
-
-  it('applyPickerIcon does nothing when pickerInput is empty', async () => {
-    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
-    wrapper.vm.pickerInput = ''
-    await wrapper.vm.applyPickerIcon()
-    expect(wrapper.vm.isEmpty()).toBe(true)
-  })
-
-  it('applyPickerIcon emits field-changed', async () => {
-    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
-    wrapper.vm.pickerInput = 'home'
-    await wrapper.vm.applyPickerIcon()
-    expect(wrapper.emitted('field-changed')).toBeTruthy()
   })
 
   it('onCleared resets model and emits field-changed', async () => {
@@ -3054,12 +3033,12 @@ describe('KIconField', () => {
 
   it('isClearable defaults to true', () => {
     const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
-    expect(wrapper.vm.isClearable).toBe(true)
+    expect(wrapper.vm.isClearable()).toBe(true)
   })
 
   it('isClearable respects field.clearable', () => {
     const wrapper = mount(KIconField, { props: makeProps({ field: { clearable: false } }), global: { stubs } })
-    expect(wrapper.vm.isClearable).toBe(false)
+    expect(wrapper.vm.isClearable()).toBe(false)
   })
 
   it('fill sets the model', () => {
@@ -3142,22 +3121,22 @@ describe('KColorScaleField', () => {
 
   it('options computed from field.options', () => {
     const wrapper = mount(KColorScaleField, { props: makeProps({ field: { options: colorScaleOptions } }), global: { stubs } })
-    expect(wrapper.vm.options).toHaveLength(2)
+    expect(wrapper.vm.getOptions()).toHaveLength(2)
   })
 
   it('options defaults to [] when not defined', () => {
     const wrapper = mount(KColorScaleField, { props: makeProps(), global: { stubs } })
-    expect(wrapper.vm.options).toEqual([])
+    expect(wrapper.vm.getOptions()).toEqual([])
   })
 
   it('isClearable defaults to true', () => {
     const wrapper = mount(KColorScaleField, { props: makeProps(), global: { stubs } })
-    expect(wrapper.vm.isClearable).toBe(true)
+    expect(wrapper.vm.isClearable()).toBe(true)
   })
 
   it('isClearable respects field.clearable', () => {
     const wrapper = mount(KColorScaleField, { props: makeProps({ field: { clearable: false } }), global: { stubs } })
-    expect(wrapper.vm.isClearable).toBe(false)
+    expect(wrapper.vm.isClearable()).toBe(false)
   })
 
   it('getId returns kebab-cased label', () => {

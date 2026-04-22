@@ -8,7 +8,7 @@
     type="text"
     v-model="model"
     :label="label"
-    :input-class="inputClass"
+    :input-class="inputClass()"
     clearable
     :disable="disabled"
     :error="hasError"
@@ -17,30 +17,57 @@
     bottom-slots
     :debounce="debounce"
     @blur="onChanged"
-    @update:model-value="onChanged"
-  />
+    @update:model-value='onChanged'
+  >
+    <!-- Helper -->
+    <!-- Missing Component: KAction -->
+    <!--
+    <template v-if="hasHelper" v-slot:append>
+      <k-action
+        :id="properties.name + '-helper'"
+        :label="helperLabel"
+        :icon="helperIcon"
+        :tooltip="helperTooltip"
+        :url="helperUrl"
+        :dialog="helperDialog"
+        :context="helperContext"
+        @dialog-confirmed="onHelperDialogConfirmed"
+        color="primary"
+      />
+    </template>
+    -->
+  </q-input>
 </template>
 
-<script setup>
+<script>
 import _ from 'lodash'
-import { computed } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
-const props = defineProps(fieldProps)
-const emit = defineEmits(['field-changed'])
-
-const field = useField(props, emit)
-const { model, label, hasError, errorLabel, hasFocus, disabled, onChanged } = field
-
-const text = computed(() => {
-  if (_.startsWith(model.value, 'http://') || _.startsWith(model.value, 'https://')) {
-    return `<a href='${model.value}' target="_blank">${model.value}</a>`
+export default {
+  // Missing Mixin: baseField
+  // mixins: [baseField],
+  props: fieldProps,
+  emits: ['field-changed'],
+  setup (props, { emit }) {
+    return useField(props, emit)
+  },
+  computed: {
+    text () {
+      if (_.startsWith(this.model, 'http://') || _.startsWith(this.model, 'https://')) {
+        return `<a href='${this.model}' target="_blank">${this.model}</a>`
+      } else {
+        return this.model
+      }
+    },
+    debounce () {
+      return _.get(this.properties, 'field.debounce', 0)
+    }
+  },
+  methods: {
+    inputClass () {
+      return _.get(this.properties, 'field.inputClass', 'text-weight-regular')
+    }
   }
-  return model.value
-})
-const debounce = computed(() => _.get(props.properties, 'field.debounce', 0))
-const inputClass = computed(() => _.get(props.properties, 'field.inputClass', 'text-weight-regular'))
-
-defineExpose({ properties: props.properties, ...field })
+}
 </script>
