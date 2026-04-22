@@ -1,0 +1,46 @@
+{
+  "name": "@kalisio/quasar-moment",
+  "description": "Time components powered by Moment.js",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "development": "./src/index.js",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "standard": {
+    "ignore": [
+      "dist/**"
+    ]
+  },
+  "scripts": {
+    "build": "vite build",
+    "lint": "standard --fix",
+    "test": "vitest run --coverage"
+  },
+  "keywords": [
+    "kalisio"
+  ],
+  "author": {
+    "name": "KALISIO <contact@kalisio.com>",
+    "url": "https://github.com/kalisio"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kalisio/quasar-ekosystem.git",
+    "directory": "packages/quasar-moment"
+  },
+  "bugs": {
+    "url": "https://github.com/kalisio/quasar-ekosystem/issues"
+  },
+  "homepage": "https://github.com/kalisio/quasar-ekosystem/tree/main/packages/quasar-moment",
+  "dependencies": {},
+  "devDependencies": {}
+}
