@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet" type="text/css">
+    <link href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" rel="stylesheet" type="text/css">
+  </head>
+
+  <body>
+    <!-- HTML -->
+    <div id="q-app">
+      <q-layout view="lhh LpR lff">
+        <q-header class="q-pa-md">
+          <q-banner class="bg-primary text-white">
+            <span class="text-h4">quasar-form</span>
+            <template v-slot:avatar>
+              <q-icon name="dynamic_form" color="white"></q-icon>
+            </template>
+            <template v-slot:action>
+              <q-btn color="white" label="Champs"
+                :flat="page !== 'fields'"
+                :outline="page === 'fields'"
+                @click="page = 'fields'"
+              ></q-btn>
+              <q-btn color="white" label="Lecture seule"
+                :flat="page !== 'readonly'"
+                :outline="page === 'readonly'"
+                @click="page = 'readonly'"
+              ></q-btn>
+            </template>
+          </q-banner>
+        </q-header>
+        <q-page-container>
+          <q-page padding>
+            <fields-page v-if="page === 'fields'"></fields-page>
+            <fields-page v-if="page === 'readonly'" :read-only="true"></fields-page>
+          </q-page>
+        </q-page-container>
+      </q-layout>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script type="module">
+      import { createApp, ref } from 'vue'
+      import {
+        Quasar,
+        QLayout, QHeader, QBanner, QIcon, QBtn, QPageContainer, QPage,
+        QCard, QCardSection, QSeparator,
+        QInput, QSelect, QField, QSlider, QToggle, QColor, QDialog,
+        QChip, QItem, QItemSection, QItemLabel
+      } from 'quasar'
+      import { createI18n } from 'vue-i18n'
+      import 'quasar/dist/quasar.css'
+      import FieldsPage from './components/fields-page.js'
+
+      const i18n = createI18n({
+        legacy: false,
+        locale: 'en',
+        messages: { en: {} },
+        missingWarn: false,
+        fallbackWarn: false
+      })
+
+      const app = createApp({
+        components: { FieldsPage },
+        setup () {
+          const page = ref('fields')
+          return { page }
+        }
+      })
+      app.use(Quasar, {
+        plugins: {},
+        components: {
+          QLayout, QHeader, QBanner, QIcon, QBtn, QPageContainer, QPage,
+          QCard, QCardSection, QSeparator,
+          QInput, QSelect, QField, QSlider, QToggle, QColor, QDialog,
+          QChip, QItem, QItemSection, QItemLabel
+        }
+      })
+      app.use(i18n)
+      app.mount('#q-app')
+    </script>
+  </body>
+</html>

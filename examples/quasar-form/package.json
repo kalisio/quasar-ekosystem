@@ -12,9 +12,17 @@
     "url": "https://github.com/kalisio"
   },
   "contributors": [],
+  "standard": {
+    "ignore": [
+      "dist/**"
+    ]
+  },
   "license": "MIT",
   "devDependencies": {
     "@kalisio/quasar-form": "workspace:*",
+    "quasar": "catalog:",
+    "vue": "catalog:",
+    "vue-i18n": "catalog:",
     "vite": "catalog:"
   }
 }
