@@ -20,6 +20,7 @@
   "license": "MIT",
   "devDependencies": {
     "@kalisio/quasar-form": "workspace:*",
+    "@vitejs/plugin-vue": "catalog:",
     "quasar": "catalog:",
     "vue": "catalog:",
     "vue-i18n": "catalog:"

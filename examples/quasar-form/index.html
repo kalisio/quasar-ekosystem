@@ -27,6 +27,11 @@
                 :outline="page === 'readonly'"
                 @click="page = 'readonly'"
               ></q-btn>
+              <q-btn color="white" label="KForm"
+                :flat="page !== 'form'"
+                :outline="page === 'form'"
+                @click="page = 'form'"
+              ></q-btn>
             </template>
           </q-banner>
         </q-header>
@@ -34,6 +39,7 @@
           <q-page padding>
             <fields-page v-if="page === 'fields'"></fields-page>
             <fields-page v-if="page === 'readonly'" :read-only="true"></fields-page>
+            <form-fields-page v-if="page === 'form'"></form-fields-page>
           </q-page>
         </q-page-container>
       </q-layout>
@@ -41,17 +47,21 @@
 
     <!-- SCRIPTS -->
     <script type="module">
-      import { createApp, ref } from 'vue'
+      import { createApp, ref, defineComponent } from 'vue'
       import {
         Quasar,
-        QLayout, QHeader, QBanner, QIcon, QBtn, QPageContainer, QPage,
-        QCard, QCardSection, QSeparator,
+        QLayout, QHeader, QBanner, QIcon, QBtn, QBtnToggle, QPageContainer, QPage,
+        QCard, QCardSection, QSeparator, QForm, QExpansionItem,
         QInput, QSelect, QField, QSlider, QToggle, QColor, QDialog,
         QChip, QItem, QItemSection, QItemLabel
       } from 'quasar'
       import { createI18n } from 'vue-i18n'
       import 'quasar/dist/quasar.css'
+      import { schemaRegistry } from '@kalisio/quasar-form'
       import FieldsPage from './components/fields-page.js'
+      import FormFieldsPage from './components/form-fields-page.js'
+
+      schemaRegistry.initialize()
 
       const i18n = createI18n({
         legacy: false,
@@ -62,17 +72,18 @@
       })
 
       const app = createApp({
-        components: { FieldsPage },
+        components: { FieldsPage, FormFieldsPage },
         setup () {
           const page = ref('fields')
           return { page }
         }
       })
+      app.component('KAction', defineComponent({ template: '<span></span>' }))
       app.use(Quasar, {
         plugins: {},
         components: {
-          QLayout, QHeader, QBanner, QIcon, QBtn, QPageContainer, QPage,
-          QCard, QCardSection, QSeparator,
+          QLayout, QHeader, QBanner, QIcon, QBtn, QBtnToggle, QPageContainer, QPage,
+          QCard, QCardSection, QSeparator, QForm, QExpansionItem,
           QInput, QSelect, QField, QSlider, QToggle, QColor, QDialog,
           QChip, QItem, QItemSection, QItemLabel
         }
