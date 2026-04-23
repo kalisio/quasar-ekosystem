@@ -135,8 +135,8 @@ export default {
       </div>
 
       <div v-if="!readOnly" class="row q-gutter-sm">
-        <q-btn color="primary" label="Valider" :disable="!ready" @click="onValidate" />
-        <q-btn flat label="Réinitialiser" :disable="!ready" @click="onClear" />
+        <q-btn color="primary" label="Validate" :disable="!ready" @click="onValidate" />
+        <q-btn flat label="Reset" :disable="!ready" @click="onClear" />
       </div>
 
       <q-card v-if="submitted" flat bordered>
