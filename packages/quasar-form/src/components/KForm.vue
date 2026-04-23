@@ -101,6 +101,10 @@ const props = defineProps({
   dense: {
     type: Boolean,
     default: false
+  },
+  readOnly: {
+    type: Boolean,
+    default: false
   }
 })
 

@@ -18,28 +18,22 @@
             </template>
             <template v-slot:action>
               <q-btn color="white" label="Edit"
-                :flat="page !== 'fields'"
-                :outline="page === 'fields'"
-                @click="page = 'fields'"
+                :flat="page !== 'edit'"
+                :outline="page === 'edit'"
+                @click="page = 'edit'"
               ></q-btn>
               <q-btn color="white" label="View"
-                :flat="page !== 'readonly'"
-                :outline="page === 'readonly'"
-                @click="page = 'readonly'"
-              ></q-btn>
-              <q-btn color="white" label="KForm"
-                :flat="page !== 'form'"
-                :outline="page === 'form'"
-                @click="page = 'form'"
+                :flat="page !== 'view'"
+                :outline="page === 'view'"
+                @click="page = 'view'"
               ></q-btn>
             </template>
           </q-banner>
         </q-header>
         <q-page-container>
           <q-page padding>
-            <fields-page v-if="page === 'fields'"></fields-page>
-            <fields-page v-if="page === 'readonly'" :read-only="true"></fields-page>
-            <form-fields-page v-if="page === 'form'"></form-fields-page>
+            <form-fields-page v-if="page === 'edit'"></form-fields-page>
+            <form-fields-page v-if="page === 'view'" :read-only="true"></form-fields-page>
           </q-page>
         </q-page-container>
       </q-layout>
@@ -58,7 +52,6 @@
       import { createI18n } from 'vue-i18n'
       import 'quasar/dist/quasar.css'
       import { schemaRegistry } from '@kalisio/quasar-form'
-      import FieldsPage from './components/fields-page.js'
       import FormFieldsPage from './components/form-fields-page.js'
 
       schemaRegistry.initialize()
@@ -72,9 +65,9 @@
       })
 
       const app = createApp({
-        components: { FieldsPage, FormFieldsPage },
+        components: { FormFieldsPage },
         setup () {
-          const page = ref('fields')
+          const page = ref('edit')
           return { page }
         }
       })

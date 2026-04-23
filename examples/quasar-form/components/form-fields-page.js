@@ -1,4 +1,4 @@
-import { ref, computed, watch } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 import { KForm } from '@kalisio/quasar-form'
 
 const schemas = {
@@ -95,13 +95,18 @@ const schemas = {
   }
 }
 
-const initialValues = {
+// Singleton partagé entre les instances Edit et View
+const currentValues = reactive({
   user: { name: 'Alice', email: 'alice@example.com', role: 'editor', color: '#1976D2', active: true },
   event: { title: 'Sprint planning', type: 'meeting', color: '#1976D2', duration: 60, public: true }
-}
+})
 
 export default {
   components: { KForm },
+
+  props: {
+    readOnly: { type: Boolean, default: false }
+  },
 
   template: `
     <div class="column q-gutter-md" style="max-width: 480px">
@@ -119,15 +124,17 @@ export default {
         ]"
       />
 
-      <k-form
-        ref="formRef"
-        :schema="schema"
-        :values="values"
-        @form-ready="onFormReady"
-        @field-changed="onFieldChanged"
-      />
+      <div :style="readOnly ? 'pointer-events: none; user-select: none' : ''">
+        <k-form
+          ref="formRef"
+          :schema="schema"
+          :values="values"
+          @form-ready="onFormReady"
+          @field-changed="onFieldChanged"
+        />
+      </div>
 
-      <div class="row q-gutter-sm">
+      <div v-if="!readOnly" class="row q-gutter-sm">
         <q-btn color="primary" label="Valider" :disable="!ready" @click="onValidate" />
         <q-btn flat label="Réinitialiser" :disable="!ready" @click="onClear" />
       </div>
@@ -147,7 +154,7 @@ export default {
     const submitted = ref(null)
 
     const schema = computed(() => schemas[activeKey.value])
-    const values = computed(() => initialValues[activeKey.value])
+    const values = computed(() => currentValues[activeKey.value])
 
     watch(activeKey, () => {
       ready.value = false
@@ -158,7 +165,8 @@ export default {
       ready.value = true
     }
 
-    function onFieldChanged () {
+    function onFieldChanged (name, val) {
+      currentValues[activeKey.value][name] = val
       submitted.value = null
     }
 
