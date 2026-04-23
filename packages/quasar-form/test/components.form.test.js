@@ -1,18 +1,21 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { mount, flushPromises } from '@vue/test-utils'
+import { mount, flushPromises, config } from '@vue/test-utils'
 
 import KForm from '../src/components/KForm.vue'
 import { schemaRegistry } from '../src/utils/index.js'
 
-// logtape is a platform concern (like global.document in graphiks): silence noise
 vi.mock('@logtape/logtape', () => ({
   getLogger: () => ({ debug: vi.fn(), error: vi.fn(), warn: vi.fn(), info: vi.fn() })
 }))
 
-// vue-i18n is a platform concern: provide identity translator
 vi.mock('vue-i18n', () => ({
   useI18n: () => ({ t: (key) => key })
 }))
+
+config.global.mocks = {
+  $t: (key) => key,
+  $q: { iconSet: {}, lang: {}, screen: {} }
+}
 
 // Quasar component stubs — render slots so child fields mount properly
 const quasarStubs = {
@@ -160,7 +163,6 @@ describe('KForm', () => {
 
     it('returns isValid false when a required field is missing', async () => {
       const wrapper = await mountReady(userSchema)
-      // name is required and empty → AJV should detect it
       const { isValid } = wrapper.vm.validate()
       expect(isValid).toBe(false)
     })
@@ -168,13 +170,11 @@ describe('KForm', () => {
     it('invalidates the field that has the matching AJV error', async () => {
       const wrapper = await mountReady(userSchema)
       wrapper.vm.validate()
-      // name is required and missing → field should be invalidated
       expect(wrapper.vm.getField('name').reference.hasError).toBe(true)
     })
 
     it('validates (clears error on) fields that have no error', async () => {
       const wrapper = await mountReady(userSchema)
-      // First invalidate age manually, then validate — age has no AJV error so it should be cleared
       wrapper.vm.getField('age').reference.invalidate('test error')
       wrapper.vm.validate()
       expect(wrapper.vm.getField('age').reference.hasError).toBe(false)
@@ -195,5 +195,50 @@ describe('KForm', () => {
       const wrapper = await mountReady(userSchema)
       await expect(wrapper.vm.submitted({})).resolves.toBeUndefined()
     })
+  })
+})
+
+// exemple KForm testing with schema
+const Schema = {
+  $schema: 'http://json-schema.org/draft-07/schema#',
+  $id: 'http://kalisio.xyz/schemas/user.create.json#',
+  title: 'Create user',
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      minLength: 2,
+      field: { component: 'form/KTextField', label: 'Name' }
+    }
+  },
+  required: ['name']
+}
+
+describe('KForm — KDK-style schema', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    schemaRegistry.initialize()
+  })
+
+  it('builds and marks required', async () => {
+    const wrapper = mount(KForm, { props: { schema: Schema } })
+    await flushPromises()
+    expect(wrapper.vm.isReady).toBe(true)
+    expect(wrapper.vm.getField('name').required).toBe(true)
+  })
+
+  it('fills and returns values', async () => {
+    const wrapper = mount(KForm, { props: { schema: Schema } })
+    await flushPromises()
+    wrapper.vm.fill({ name: 'Alice' })
+    expect(wrapper.vm.values()).toEqual({ name: 'Alice' })
+  })
+
+  it('validates required field', async () => {
+    const wrapper = mount(KForm, { props: { schema: Schema } })
+    await flushPromises()
+    expect(wrapper.vm.validate().isValid).toBe(false)
+    wrapper.vm.fill({ name: 'Alice' })
+    expect(wrapper.vm.validate().isValid).toBe(true)
   })
 })

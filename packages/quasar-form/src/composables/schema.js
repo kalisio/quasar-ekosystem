@@ -4,25 +4,25 @@ import { schemaRegistry as registry } from '../utils/index.js'
 
 export function useSchema () {
   const validator = ref(null)
-  const schemaRegistry = ref(null)
+  const schema = ref(null)
 
   async function compile (schemaNameOrObject, propertiesFilter) {
     if (typeof schemaNameOrObject === 'string') {
       const schemaModule = await import(`@schemas/${schemaNameOrObject}.json`)
-      schemaRegistry.value = _.cloneDeep(schemaModule.default)
+      schema.value = _.cloneDeep(schemaModule.default)
     } else {
-      schemaRegistry.value = _.cloneDeep(schemaNameOrObject)
+      schema.value = _.cloneDeep(schemaNameOrObject)
     }
     if (propertiesFilter) {
       let properties = propertiesFilter
       if (typeof propertiesFilter === 'string') properties = _.split(propertiesFilter, ',')
-      _.forOwn(schemaRegistry.value.properties, (_value, key) => {
-        if (!properties.includes(key)) delete schemaRegistry.value.properties[key]
+      _.forOwn(schema.value.properties, (_value, key) => {
+        if (!properties.includes(key)) delete schema.value.properties[key]
       })
-      schemaRegistry.value.$id += properties.join()
-      schemaRegistry.value.required = _.intersection(schemaRegistry.value.required, properties)
+      schema.value.$id += properties.join()
+      schema.value.required = _.intersection(schema.value.required, properties)
     }
-    validator.value = registry.register(schemaRegistry.value)
+    validator.value = registry.register(schema.value)
   }
 
   function validate (values) {
@@ -32,7 +32,7 @@ export function useSchema () {
   }
 
   return {
-    schemaRegistry: readonly(schemaRegistry),
+    schema: readonly(schema),
     compile,
     validate
   }
