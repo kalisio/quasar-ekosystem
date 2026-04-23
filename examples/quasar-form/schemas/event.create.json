@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://kalisio.xyz/schemas/event.create.json#",
+  "title": "Create event",
+  "description": "Event creation form",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 128,
+      "field": {
+        "component": "form/KTextField",
+        "label": "Name"
+      }
+    },
+    "type": {
+      "type": "string",
+      "field": {
+        "component": "form/KSelectField",
+        "label": "Type",
+        "options": [
+          { "label": "Meeting", "value": "meeting" },
+          { "label": "Task", "value": "task" },
+          { "label": "Reminder", "value": "reminder" }
+        ],
+        "clearable": false
+      }
+    },
+    "color": {
+      "type": "string",
+      "default": "#1976D2",
+      "field": {
+        "component": "form/KColorField",
+        "label": "Color",
+        "clearable": false
+      }
+    },
+    "duration": {
+      "type": "integer",
+      "default": 30,
+      "minimum": 5,
+      "maximum": 180,
+      "field": {
+        "component": "form/KSliderField",
+        "label": "Duration (min)",
+        "min": 5,
+        "max": 180,
+        "step": 5
+      }
+    },
+    "public": {
+      "type": "boolean",
+      "field": {
+        "component": "form/KToggleField",
+        "label": "Public"
+      }
+    }
+  },
+  "required": ["name", "type"]
+}
