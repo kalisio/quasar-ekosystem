@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://kalisio.xyz/schemas/user.create.json#",
+  "title": "Create user",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 128,
+      "field": { "component": "form/KTextField", "label": "Name" }
+    },
+    "email": {
+      "type": "string",
+      "field": { "component": "form/KEmailField", "label": "Email" }
+    },
+    "password": {
+      "type": "string",
+      "minLength": 8,
+      "field": { "component": "form/KPasswordField", "label": "Password" }
+    },
+    "role": {
+      "type": "string",
+      "field": {
+        "component": "form/KSelectField",
+        "label": "Role",
+        "options": [
+          { "label": "Admin", "value": "admin" },
+          { "label": "Editor", "value": "editor" },
+          { "label": "Viewer", "value": "viewer" }
+        ],
+        "clearable": false
+      }
+    },
+    "color": {
+      "type": "string",
+      "default": "#1976D2",
+      "field": { "component": "form/KColorField", "label": "Color", "clearable": false }
+    },
+    "active": {
+      "type": "boolean",
+      "field": { "component": "form/KToggleField", "label": "Active" }
+    }
+  },
+  "required": ["name", "email", "role"]
+}

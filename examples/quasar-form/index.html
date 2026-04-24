@@ -27,13 +27,19 @@
                 :outline="page === 'view'"
                 @click="page = 'view'"
               ></q-btn>
+              <q-btn color="white" label="Design"
+                :flat="page !== 'design'"
+                :outline="page === 'design'"
+                @click="page = 'design'"
+              ></q-btn>
             </template>
           </q-banner>
         </q-header>
         <q-page-container>
           <q-page padding>
-            <form-fields-page v-if="page === 'edit'"></form-fields-page>
-            <form-fields-page v-if="page === 'view'" :read-only="true"></form-fields-page>
+            <form-page v-if="page === 'edit'"></form-page>
+            <form-page v-if="page === 'view'" :read-only="true"></form-page>
+            <design-page v-if="page === 'design'"></design-page>
           </q-page>
         </q-page-container>
       </q-layout>
@@ -43,7 +49,7 @@
     <script type="module">
       import { createApp, ref, defineComponent } from 'vue'
       import {
-        Quasar,
+        Quasar, Notify,
         QLayout, QHeader, QBanner, QIcon, QBtn, QBtnToggle, QPageContainer, QPage,
         QCard, QCardSection, QSeparator, QForm, QExpansionItem,
         QInput, QSelect, QField, QSlider, QToggle, QColor, QDialog,
@@ -52,7 +58,8 @@
       import { createI18n } from 'vue-i18n'
       import 'quasar/dist/quasar.css'
       import { schemaRegistry } from '@kalisio/quasar-form'
-      import FormFieldsPage from './components/form-fields-page.js'
+      import FormPage from './components/form-page.js'
+      import DesignPage from './components/design-page.js'
 
       schemaRegistry.initialize()
 
@@ -65,7 +72,7 @@
       })
 
       const app = createApp({
-        components: { FormFieldsPage },
+        components: { FormPage, DesignPage },
         setup () {
           const page = ref('edit')
           return { page }
@@ -73,7 +80,7 @@
       })
       app.component('KAction', defineComponent({ template: '<span></span>' }))
       app.use(Quasar, {
-        plugins: {},
+        plugins: { Notify },
         components: {
           QLayout, QHeader, QBanner, QIcon, QBtn, QBtnToggle, QPageContainer, QPage,
           QCard, QCardSection, QSeparator, QForm, QExpansionItem,

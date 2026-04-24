@@ -1,0 +1,24 @@
+{
+  "$id": "http://kalisio.xyz/schemas/design.json#",
+  "title": "My form",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 2,
+      "field": { "component": "form/KTextField", "label": "Name" }
+    },
+    "role": {
+      "type": "string",
+      "field": {
+        "component": "form/KSelectField",
+        "label": "Role",
+        "options": [
+          { "label": "Admin", "value": "admin" },
+          { "label": "Member", "value": "member" }
+        ]
+      }
+    }
+  },
+  "required": ["name"]
+}
