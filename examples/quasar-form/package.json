@@ -3,6 +3,7 @@
   "description": "quasar-form example",
   "packageManager": "pnpm@10.1.0",
   "type": "module",
+  "private:": false,
   "scripts": {
     "dev": "vite",
     "lint": "standard --fix"
