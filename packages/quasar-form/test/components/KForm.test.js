@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { mount, flushPromises, config } from '@vue/test-utils'
+import { mount, flushPromises } from '@vue/test-utils'
 
 import KForm from '../../src/components/KForm.vue'
 import { schemaRegistry } from '../../src/utils/index.js'
@@ -7,15 +7,6 @@ import { schemaRegistry } from '../../src/utils/index.js'
 vi.mock('@logtape/logtape', () => ({
   getLogger: () => ({ debug: vi.fn(), error: vi.fn(), warn: vi.fn(), info: vi.fn() })
 }))
-
-vi.mock('vue-i18n', () => ({
-  useI18n: () => ({ t: (key) => key })
-}))
-
-config.global.mocks = {
-  $t: (key) => key,
-  $q: { iconSet: {}, lang: {}, screen: {} }
-}
 
 // Quasar component stubs — render slots so child fields mount properly
 const quasarStubs = {

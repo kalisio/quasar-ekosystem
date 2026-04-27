@@ -1,19 +1,8 @@
-import { describe, it, expect, vi } from 'vitest'
-import { mount, config } from '@vue/test-utils'
+import { describe, it, expect } from 'vitest'
+import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 
 import KNumberField from '../../../src/components/KNumberField.vue'
-
-config.global.mocks = {
-  $t: (key) => key,
-  $q: {
-    iconSet: { editor: { align: 'format_align_left' } },
-    lang: { editor: { align: 'Align' } },
-    screen: {}
-  }
-}
-
-vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (key) => key }) }))
 
 const inputStub = { template: '<input />', props: ['modelValue'], emits: ['update:modelValue', 'blur'] }
 

@@ -1,19 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
-import { mount, config } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 
 import KItemField from '../../../src/components/KItemField.vue'
-
-config.global.mocks = {
-  $t: (key) => key,
-  $q: {
-    iconSet: { editor: { align: 'format_align_left' } },
-    lang: { editor: { align: 'Align' } },
-    screen: {}
-  }
-}
-
-vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (key) => key }) }))
 
 const selectStub = { template: '<select />', props: ['modelValue', 'options'], emits: ['update:modelValue', 'blur'] }
 
@@ -22,7 +11,7 @@ function makeProps (propertiesOverride = {}) {
 }
 
 describe('KItemField', () => {
-  const stubs = { 'q-select': selectStub, 'q-chip': { template: '<span><slot /></span>' } }
+  const stubs = { 'q-select': selectStub, 'q-chip': true }
 
   // If there is a q-select in edit mode
   it('renders a q-select in edit mode', () => {
@@ -33,7 +22,7 @@ describe('KItemField', () => {
   // If there is a chip in readOnly mode with a value provided
   it('renders a chip in readOnly mode', () => {
     const wrapper = mount(KItemField, { props: { ...makeProps({ services: [{ service: 'users', field: 'name' }] }), readOnly: true, values: { test: { name: 'Alice' } } }, global: { stubs } })
-    expect(wrapper.find('span').exists()).toBe(true)
+    expect(wrapper.find('q-chip-stub').exists()).toBe(true)
   })
 
   // onSearch delegates to the injected search function provided by a parent

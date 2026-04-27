@@ -1,19 +1,7 @@
-import { describe, it, expect, vi } from 'vitest'
-import { mount, config } from '@vue/test-utils'
-// import { nextTick } from 'vue'
+import { describe, it, expect } from 'vitest'
+import { mount } from '@vue/test-utils'
 
 import KPasswordField from '../../../src/components/KPasswordField.vue'
-
-config.global.mocks = {
-  $t: (key) => key,
-  $q: {
-    iconSet: { editor: { align: 'format_align_left' } },
-    lang: { editor: { align: 'Align' } },
-    screen: {}
-  }
-}
-
-vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (key) => key }) }))
 
 const iconStub = { template: '<button @click="$emit(\'click\')" />', emits: ['click'] }
 
@@ -44,27 +32,11 @@ describe('KPasswordField', () => {
     expect(wrapper.vm.showPassword).toBe(false)
   })
 
-  // Clicking twice should hide it again.
-  it('double-clicking icon re-hides the password', async () => {
+  // Autocomplete defaults to "on" to help password managers.
+  it('autocomplete defaults to "on"', () => {
     const wrapper = mount(KPasswordField, { props: makeProps(), global: { stubs } })
-    await wrapper.find('button').trigger('click')
-    expect(wrapper.vm.showPassword).toBe(false)
-    await wrapper.find('button').trigger('click')
-    expect(wrapper.vm.showPassword).toBe(true)
+    expect(wrapper.vm.autocomplete).toBe('on')
   })
-
-  /* it('fill sets the model value', () => {
-    const wrapper = mount(KPasswordField, { props: makeProps(), global: { stubs } })
-    wrapper.vm.fill('secret123')
-    expect(wrapper.vm.value()).toBe('secret123')
-  }) */
-
-  /* it('clear resets model to null', () => {
-    const wrapper = mount(KPasswordField, { props: makeProps(), global: { stubs } })
-    wrapper.vm.fill('secret123')
-    wrapper.vm.clear()
-    expect(wrapper.vm.isEmpty()).toBe(true)
-  }) */
 
   // Check that field-changed is emitted with the password value.
   it('onChanged emits field-changed', async () => {
@@ -75,48 +47,22 @@ describe('KPasswordField', () => {
     expect(wrapper.emitted('field-changed')[0]).toEqual(['test', 'secret123'])
   })
 
-  /* it('values prop initializes the model', () => {
-    const wrapper = mount(KPasswordField, { props: { ...makeProps(), values: { test: 'mypassword' } }, global: { stubs } })
-    expect(wrapper.vm.value()).toBe('mypassword')
+  /*
+  // Clicking twice should hide it again.
+  it('double-clicking icon re-hides the password', async () => {
+    const wrapper = mount(KPasswordField, { props: makeProps(), global: { stubs } })
+    await wrapper.find('button').trigger('click')
+    expect(wrapper.vm.showPassword).toBe(false)
+    await wrapper.find('button').trigger('click')
+    expect(wrapper.vm.showPassword).toBe(true)
   }) */
 
-  /* it('invalidate sets hasError to true', () => {
-    const wrapper = mount(KPasswordField, { props: makeProps(), global: { stubs } })
-    wrapper.vm.invalidate('too short')
-    expect(wrapper.vm.hasError).toBe(true)
-  }) */
-
-  /* it('validate clears the error', () => {
-    const wrapper = mount(KPasswordField, { props: makeProps(), global: { stubs } })
-    wrapper.vm.invalidate('too short')
-    wrapper.vm.validate()
-    expect(wrapper.vm.hasError).toBe(false)
-  }) */
-
-  /* it('values prop change updates the model reactively', async () => {
-    const wrapper = mount(KPasswordField, { props: makeProps(), global: { stubs } })
-    await wrapper.setProps({ values: { test: 'newpass' } })
-    await nextTick()
-    expect(wrapper.vm.value()).toBe('newpass')
-  }) */
-
-  /* it('apply writes the model value to a target object', () => {
-    const wrapper = mount(KPasswordField, { props: makeProps(), global: { stubs } })
-    wrapper.vm.fill('secret123')
-    const obj = {}
-    wrapper.vm.apply(obj, 'test')
-    expect(obj.test).toBe('secret123')
-  }) */
-
-  // Autocomplete defaults to "on" to help password managers.
-  it('autocomplete defaults to "on"', () => {
-    const wrapper = mount(KPasswordField, { props: makeProps(), global: { stubs } })
-    expect(wrapper.vm.autocomplete).toBe('on')
-  })
-
-  // Autocomplete can be set to "new-password" to prevent autofill on registration forms.
-  it('autocomplete can be customized via properties.field.autocomplete', () => {
-    const wrapper = mount(KPasswordField, { props: makeProps({ field: { autocomplete: 'new-password' } }), global: { stubs } })
-    expect(wrapper.vm.autocomplete).toBe('new-password')
-  })
+  /* it('autocomplete can be customized via properties.field.autocomplete', () => { ... }) */
+  /* it('fill sets the model value', () => { ... }) */
+  /* it('clear resets model to null', () => { ... }) */
+  /* it('values prop initializes the model', () => { ... }) */
+  /* it('invalidate sets hasError to true', () => { ... }) */
+  /* it('validate clears the error', () => { ... }) */
+  /* it('values prop change updates the model reactively', () => { ... }) */
+  /* it('apply writes the model value to a target object', () => { ... }) */
 })

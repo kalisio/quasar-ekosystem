@@ -11,6 +11,7 @@ export default mergeConfig(baseConfig, defineConfig({
   root: __dirname,
   test: {
     name: 'quasar-form',
-    environment: 'happy-dom'
+    environment: 'happy-dom',
+    setupFiles: ['./test/setup.js']
   }
 }))

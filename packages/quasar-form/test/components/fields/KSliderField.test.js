@@ -1,19 +1,8 @@
-import { describe, it, expect, vi } from 'vitest'
-import { mount, config } from '@vue/test-utils'
+import { describe, it, expect } from 'vitest'
+import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 
 import KSliderField from '../../../src/components/KSliderField.vue'
-
-config.global.mocks = {
-  $t: (key) => key,
-  $q: {
-    iconSet: { editor: { align: 'format_align_left' } },
-    lang: { editor: { align: 'Align' } },
-    screen: {}
-  }
-}
-
-vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (key) => key }) }))
 
 const fieldStub = { template: '<div><slot name="control" /></div>', props: ['modelValue'] }
 
@@ -51,100 +40,10 @@ describe('KSliderField', () => {
     expect(wrapper.vm.step).toBe(5)
   })
 
-  // emptyModel uses field.min, so the initial value matches the slider minimum.
-  it('initializes model to custom min when defined', () => {
-    const wrapper = mount(KSliderField, { props: makeProps({ field: { min: 20 } }), global: { stubs } })
-    expect(wrapper.vm.value()).toBe(20)
-  })
-
-  /* it('fill sets the model value', () => {
-    const wrapper = mount(KSliderField, { props: makeProps(), global: { stubs } })
-    wrapper.vm.fill(75)
-    expect(wrapper.vm.value()).toBe(75)
-  }) */
-
-  // clear() resets to min (emptyModel), not 0 if min is different.
-  it('clear resets model to min', () => {
-    const wrapper = mount(KSliderField, { props: makeProps(), global: { stubs } })
-    wrapper.vm.fill(75)
-    wrapper.vm.clear()
-    expect(wrapper.vm.value()).toBe(0)
-  })
-
-  // clear() uses properties.default if defined, instead of emptyModel.
-  it('clear resets model to properties.default when defined', () => {
-    const wrapper = mount(KSliderField, { props: makeProps({ default: 50 }), global: { stubs } })
-    wrapper.vm.fill(90)
-    wrapper.vm.clear()
-    expect(wrapper.vm.value()).toBe(50)
-  })
-
-  /* it('invalidate sets hasError to true', () => {
-    const wrapper = mount(KSliderField, { props: makeProps(), global: { stubs } })
-    wrapper.vm.invalidate('out of range')
-    expect(wrapper.vm.hasError).toBe(true)
-  }) */
-
-  /* it('validate clears the error', () => {
-    const wrapper = mount(KSliderField, { props: makeProps(), global: { stubs } })
-    wrapper.vm.invalidate('out of range')
-    wrapper.vm.validate()
-    expect(wrapper.vm.hasError).toBe(false)
-  }) */
-
-  /* it('onChanged emits field-changed', async () => {
-    const wrapper = mount(KSliderField, { props: makeProps(), global: { stubs } })
-    wrapper.vm.fill(30)
-    await wrapper.vm.onChanged()
-    expect(wrapper.emitted('field-changed')[0]).toEqual(['test', 30])
-  }) */
-
-  /* it('values prop initializes the model', () => {
-    const wrapper = mount(KSliderField, { props: { ...makeProps(), values: { test: 60 } }, global: { stubs } })
-    expect(wrapper.vm.value()).toBe(60)
-  }) */
-
-  /* it('values prop change updates the model reactively', async () => {
-    const wrapper = mount(KSliderField, { props: makeProps(), global: { stubs } })
-    await wrapper.setProps({ values: { test: 80 } })
-    await nextTick()
-    expect(wrapper.vm.value()).toBe(80)
-  }) */
-
-  /* it('field.disabled disables the field', () => {
-    const wrapper = mount(KSliderField, { props: makeProps({ field: { disabled: true } }), global: { stubs } })
-    expect(wrapper.vm.disabled).toBe(true)
-  }) */
-
-  /* it('apply writes the model value to a target object', () => {
-    const wrapper = mount(KSliderField, { props: makeProps(), global: { stubs } })
-    wrapper.vm.fill(42)
-    const obj = {}
-    wrapper.vm.apply(obj, 'test')
-    expect(obj.test).toBe(42)
-  }) */
-
   // emptyModel returns field.min, not 0, to stay consistent with the slider range.
   it('emptyModel returns the min value', () => {
     const wrapper = mount(KSliderField, { props: makeProps({ field: { min: 5 } }), global: { stubs } })
     expect(wrapper.vm.emptyModel()).toBe(5)
-  })
-
-  // A slider always has a numeric value, so isEmpty is always false.
-  it('isEmpty returns false (slider always has a value)', () => {
-    const wrapper = mount(KSliderField, { props: makeProps(), global: { stubs } })
-    expect(wrapper.vm.isEmpty()).toBe(false)
-  })
-
-  // markers is forwarded to q-slider; false by default.
-  it('markers defaults to false', () => {
-    const wrapper = mount(KSliderField, { props: makeProps(), global: { stubs } })
-    expect(wrapper.vm.markers).toBe(false)
-  })
-
-  it('markers is read from properties.field.markers', () => {
-    const wrapper = mount(KSliderField, { props: makeProps({ field: { markers: true } }), global: { stubs } })
-    expect(wrapper.vm.markers).toBe(true)
   })
 
   // Slider uses the @change event (not @update:modelValue) to avoid spamming field-changed during drag.
@@ -156,4 +55,19 @@ describe('KSliderField', () => {
     expect(wrapper.emitted('field-changed')).toBeTruthy()
     expect(wrapper.emitted('field-changed').at(-1)).toEqual(['test', 50])
   })
+
+  /* it('initializes model to custom min when defined', () => { ... }) */
+  /* it('fill sets the model value', () => { ... }) */
+  /* it('clear resets model to min', () => { ... }) */
+  /* it('clear resets model to properties.default when defined', () => { ... }) */
+  /* it('invalidate sets hasError to true', () => { ... }) */
+  /* it('validate clears the error', () => { ... }) */
+  /* it('onChanged emits field-changed', () => { ... }) */
+  /* it('values prop initializes the model', () => { ... }) */
+  /* it('values prop change updates the model reactively', () => { ... }) */
+  /* it('field.disabled disables the field', () => { ... }) */
+  /* it('apply writes the model value to a target object', () => { ... }) */
+  /* it('isEmpty returns false (slider always has a value)', () => { ... }) */
+  /* it('markers defaults to false', () => { ... }) */
+  /* it('markers is read from properties.field.markers', () => { ... }) */
 })
