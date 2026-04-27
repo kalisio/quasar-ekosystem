@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { schemaRegistry } from '../src/utils/index.js'
+import { schemaRegistry } from '../../src/utils/index.js'
 
 const userschemaRegistry = {
   $id: 'user',

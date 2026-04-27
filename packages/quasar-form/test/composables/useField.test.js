@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { reactive, nextTick } from 'vue'
-import { useField } from '../src/composables/field.js'
+import { useField } from '../../src/composables/field.js'
 
 vi.mock('quasar', () => ({ openURL: vi.fn() }))
 vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (key) => key }) }))

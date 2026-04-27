@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount, flushPromises, config } from '@vue/test-utils'
 
-import KForm from '../src/components/KForm.vue'
-import { schemaRegistry } from '../src/utils/index.js'
+import KForm from '../../src/components/KForm.vue'
+import { schemaRegistry } from '../../src/utils/index.js'
 
 vi.mock('@logtape/logtape', () => ({
   getLogger: () => ({ debug: vi.fn(), error: vi.fn(), warn: vi.fn(), info: vi.fn() })
