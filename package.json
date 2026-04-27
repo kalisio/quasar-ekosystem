@@ -8,7 +8,7 @@
     "build:quasar-form": "pnpm --filter @kalisio/quasar-form build",
     "build:quasar-moment": "pnpm --filter @kalisio/quasar-moment build",
     "changeset": "changeset",
-    "changeset:release": "pnpm build && changeset publish",
+    "changeset:publish": "pnpm build && changeset publish",
     "changeset:status": "changeset status",
     "changeset:version": "changeset version",
     "clear": "pnpm -r exec rimraf node_modules dist coverage",
