@@ -4,7 +4,7 @@ import KTree from '../../src/KTree.vue'
 
 describe('KTree', () => {
   it('accepts a nodes prop', () => {
-    const wrapper = mount(KTree, { props: { nodes: [{ id: '1', label: 'Root' }] } })
+    const wrapper = mount(KTree, { props: { nodes: [{ id: '1', label: 'Root' }], onLazyLoad: () => {} } })
     expect(wrapper.vm.nodes).toHaveLength(1)
   })
 })
