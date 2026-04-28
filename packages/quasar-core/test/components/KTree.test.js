@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import KTree from '../../src/KTree.vue'
+import KTree from '../../src/components/KTree.vue'
 
 describe('KTree', () => {
   it('accepts a nodes prop', () => {

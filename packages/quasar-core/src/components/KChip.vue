@@ -38,7 +38,7 @@ import { ref, computed } from 'vue'
 import { uid } from 'quasar'
 import { i18n } from '../i18n.js'
 import { Document } from '../document.js'
-import { getHtmlColor, getContrastColor } from '../utils'
+import { getHtmlColor, getContrastColor } from '../utils/index.js'
 
 // Props
 const props = defineProps({

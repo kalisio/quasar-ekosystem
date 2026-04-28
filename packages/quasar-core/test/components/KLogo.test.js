@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import KLogo from '../../src/KLogo.vue'
+import KLogo from '../../src/components/KLogo.vue'
 
 describe('KLogo', () => {
   it('resolves a logo path from config', () => {

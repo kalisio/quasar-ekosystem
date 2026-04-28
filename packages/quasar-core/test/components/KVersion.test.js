@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import KVersion from '../../src/KVersion.vue'
+import KVersion from '../../src/components/KVersion.vue'
 
 describe('KVersion', () => {
   it('exposes client version name from composable', () => {

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import KTab from '../../src/KTab.vue'
+import KTab from '../../src/components/KTab.vue'
 
 describe('KTab', () => {
   it('derives tab list from content keys', () => {

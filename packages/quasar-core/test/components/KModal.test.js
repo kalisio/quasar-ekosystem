@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import KModal from '../../src/KModal.vue'
+import KModal from '../../src/components/KModal.vue'
 
 describe('KModal', () => {
   it('exposes the title prop', () => {

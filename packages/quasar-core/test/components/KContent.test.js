@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import KContent from '../../src/KContent.vue'
+import KContent from '../../src/components/KContent.vue'
 
 describe('KContent', () => {
   it('builds component list from content array', () => {

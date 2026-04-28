@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import KToggleFullscreenAction from '../../../src/action/KToggleFullscreenAction.vue'
+import KToggleFullscreenAction from '../../../src/components/action/KToggleFullscreenAction.vue'
 
 // Missing: Fullscreen (ref), toggleFullscreen(), actionProps.
 

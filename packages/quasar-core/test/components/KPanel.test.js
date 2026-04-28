@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import KPanel from '../../src/KPanel.vue'
+import KPanel from '../../src/components/KPanel.vue'
 
 describe('KPanel', () => {
   it('reports hasContent when content is provided', () => {

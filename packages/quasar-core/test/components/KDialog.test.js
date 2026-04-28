@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import KDialog from '../../src/KDialog.vue'
+import KDialog from '../../src/components/KDialog.vue'
 
 describe('KDialog', () => {
   it('includes an ok-action button by default', () => {

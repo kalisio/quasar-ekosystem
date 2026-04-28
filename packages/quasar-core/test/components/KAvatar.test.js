@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import KAvatar from '../../src/KAvatar.vue'
+import KAvatar from '../../src/components/KAvatar.vue'
 
 describe('KAvatar', () => {
   it('computes initials from subject name', async () => {

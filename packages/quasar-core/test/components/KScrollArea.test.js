@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import KScrollArea from '../../src/KScrollArea.vue'
+import KScrollArea from '../../src/components/KScrollArea.vue'
 
 describe('KScrollArea', () => {
   it('initializes height at zero before any scroll', () => {

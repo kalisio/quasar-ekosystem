@@ -184,7 +184,7 @@ import { useQuasar, openURL } from 'quasar'
 import { i18n } from '../../i18n.js'
 import { actionProps } from '../../utils/utils.actions'
 import { bindParams, bindProperties } from '../../utils/utils.content.js'
-import KIcon from '../graphics/KIcon.vue'
+import KIcon from '../../graphics/KIcon.vue'
 
 // Props
 const props = defineProps(actionProps)

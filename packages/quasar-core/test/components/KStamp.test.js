@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import KStamp from '../../src/KStamp.vue'
+import KStamp from '../../src/components/KStamp.vue'
 
 describe('KStamp', () => {
   it('reports canShowIcon when icon prop is provided', () => {

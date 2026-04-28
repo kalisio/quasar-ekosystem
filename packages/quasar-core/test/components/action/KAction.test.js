@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
-import KAction from '../../../src/action/KAction.vue'
+import KAction from '../../../src/components/action/KAction.vue'
 
 const stubs = {
   'q-btn': { template: '<button class="q-btn" @click="$emit(\'click\')"><slot /></button>', emits: ['click'] },

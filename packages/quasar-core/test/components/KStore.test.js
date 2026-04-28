@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import KStore from '../../src/KStore.vue'
+import KStore from '../../src/components/KStore.vue'
 
 // Missing: Store (reactive KDK store), Events (app event bus).
 

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import KEditor from '../../src/KEditor.vue'
+import KEditor from '../../src/components/KEditor.vue'
 
 // KEditor uses KForm without importing it — must be registered as a global component.
 // Missing: api (Feathers service client), Context (app context).

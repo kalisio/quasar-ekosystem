@@ -2,6 +2,7 @@ import { vi } from 'vitest'
 import { config } from '@vue/test-utils'
 
 vi.mock('quasar', () => {
+  const EventBus = class { on () {}; off () {}; emit () {} }
   const useDialogPluginComponent = () => ({
     dialogRef: { value: { show: vi.fn(), hide: vi.fn() } },
     onDialogOK: vi.fn(),
@@ -18,7 +19,8 @@ vi.mock('quasar', () => {
     openURL: vi.fn(),
     getCssVar: vi.fn(() => '#1976D2'),
     useDialogPluginComponent,
-    Notify: { create: vi.fn() }
+    Notify: { create: vi.fn() },
+    EventBus
   }
 })
 

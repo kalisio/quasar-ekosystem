@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import KBugReportAction from '../../../src/action/KBugReportAction.vue'
+import KBugReportAction from '../../../src/components/action/KBugReportAction.vue'
 
 // Missing: Platform (platform info), useVersion (client/api versions), config (npm).
 

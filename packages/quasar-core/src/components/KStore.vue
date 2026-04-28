@@ -5,7 +5,7 @@
 <script setup>
 import _ from 'lodash'
 import moment from 'moment'
-import { Store, i18n } from '..'
+import { Store, i18n } from '../index.js'
 import { ref } from 'vue'
 import KTree from './KTree.vue'
 import { Events } from '../events.js'

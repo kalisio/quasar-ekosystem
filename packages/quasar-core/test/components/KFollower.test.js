@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import KFollower from '../../src/KFollower.vue'
+import KFollower from '../../src/components/KFollower.vue'
 
 describe('KFollower', () => {
   it('computes top-right position style', () => {

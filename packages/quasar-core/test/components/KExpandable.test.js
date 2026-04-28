@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import KExpandable from '../../src/KExpandable.vue'
+import KExpandable from '../../src/components/KExpandable.vue'
 
 describe('KExpandable', () => {
   it('applies collapsed class when isExpanded is false', () => {
