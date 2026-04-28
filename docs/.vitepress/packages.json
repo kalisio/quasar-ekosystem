@@ -1,4 +1,5 @@
 [
   "quasar-form",
-  "quasar-moment"
+  "quasar-moment",
+  "quasar-core"
 ]

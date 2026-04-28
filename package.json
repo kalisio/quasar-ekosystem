@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "pnpm -r build",
+    "build:quasar-core": "pnpm --filter @kalisio/quasar-core build",
     "build:quasar-form": "pnpm --filter @kalisio/quasar-form build",
     "build:quasar-moment": "pnpm --filter @kalisio/quasar-moment build",
     "changeset": "changeset",
@@ -15,12 +16,14 @@
     "docs:build": "vitepress build docs",
     "docs:dev": "vitepress dev docs",
     "lint": "pnpm -r lint",
+    "lint:quasar-core": "pnpm --filter @kalisio/quasar-core lint",
     "lint:quasar-form": "pnpm --filter @kalisio/quasar-form lint",
     "lint:quasar-moment": "pnpm --filter @kalisio/quasar-moment lint",
     "posttest": "pnpm lcov-result-merger --prepend-source-files 'packages/*/coverage/lcov.info' coverage/lcov.info",
     "prepare": "husky",
     "pretest": "mkdir -p coverage",
     "test": "pnpm -r test",
+    "test:quasar-core": "pnpm --filter @kalisio/quasar-core test",
     "test:quasar-form": "pnpm --filter @kalisio/quasar-form test",
     "test:quasar-moment": "pnpm --filter @kalisio/quasar-moment test --coverage"
   },
