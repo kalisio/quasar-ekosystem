@@ -6,11 +6,21 @@ import KEditor from '../../src/components/KEditor.vue'
 // Missing: api (Feathers service client), Context (app context).
 
 describe('KEditor', () => {
+  // Without an object prop, mode is set to creation at initialization
   it('initializes in creation mode', () => {
     const wrapper = mount(KEditor, {
       props: { service: 'users' },
       global: { components: { KForm: { template: '<form />' } } }
     })
     expect(wrapper.vm.getContext().mode).toBe('creation')
+  })
+
+  // When an existing object is passed, mode switches to edition
+  it('initializes in edition mode when object is provided', () => {
+    const wrapper = mount(KEditor, {
+      props: { service: 'users', object: { _id: '123', name: 'Alice' } },
+      global: { components: { KForm: { template: '<form />' } } }
+    })
+    expect(wrapper.vm.getContext().mode).toBe('edition')
   })
 })
