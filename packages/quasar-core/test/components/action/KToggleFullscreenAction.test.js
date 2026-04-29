@@ -1,14 +1,24 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import KToggleFullscreenAction from '../../../src/components/action/KToggleFullscreenAction.vue'
-
-// Missing: Fullscreen (ref), toggleFullscreen(), actionProps.
-
-const stubs = { 'k-action': { template: '<button class="k-action" />' } }
+import KAction from '../../../src/components/action/KAction.vue'
 
 describe('KToggleFullscreenAction', () => {
-  it('renders a KAction', () => {
-    const wrapper = mount(KToggleFullscreenAction, { global: { stubs } })
-    expect(wrapper.find('.k-action').exists()).toBe(true)
+  // KAction is rendered as the inner action component
+  it('renders a KAction child', () => {
+    const wrapper = mount(KToggleFullscreenAction, { props: { id: 'test' } })
+    expect(wrapper.findComponent(KAction).exists()).toBe(true)
+  })
+
+  // The toggled prop on KAction reflects the Fullscreen reactive ref (false at startup)
+  it('KAction receives Fullscreen state as toggled', () => {
+    const wrapper = mount(KToggleFullscreenAction, { props: { id: 'test' } })
+    expect(wrapper.findComponent(KAction).props('toggled')).toBe(false)
+  })
+
+  // The handler prop on KAction is the toggleFullscreen function
+  it('KAction receives toggleFullscreen as handler', () => {
+    const wrapper = mount(KToggleFullscreenAction, { props: { id: 'test' } })
+    expect(typeof wrapper.findComponent(KAction).props('handler')).toBe('function')
   })
 })
