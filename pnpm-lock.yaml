@@ -191,6 +191,12 @@ importers:
       happy-dom:
         specifier: 'catalog:'
         version: 20.3.9
+      lodash:
+        specifier: 'catalog:'
+        version: 4.18.1
+      moment:
+        specifier: 'catalog:'
+        version: 2.30.1
       sass:
         specifier: ^1.99.0
         version: 1.99.0

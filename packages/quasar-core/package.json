@@ -44,6 +44,8 @@
   "devDependencies": {
     "@vue/test-utils": "catalog:",
     "happy-dom": "catalog:",
+    "lodash": "catalog:",
+    "moment": "catalog:",
     "sass": "^1.99.0",
     "vue": "catalog:"
   }
