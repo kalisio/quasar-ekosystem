@@ -11,7 +11,7 @@ function makeProps (propertiesOverride = {}) {
 }
 
 describe('KTagField', () => {
-  const stubs = { 'q-select': selectStub, 'q-chip': true, 'q-item': true, 'q-item-section': true }
+  const stubs = { 'q-select': selectStub, KChip: true, 'q-item': true, 'q-item-section': true }
 
   // If there is a q-select in edit mode
   it('renders a q-select in edit mode', () => {
@@ -22,7 +22,7 @@ describe('KTagField', () => {
   // If there is a chip in readOnly mode with a value provided
   it('renders a chip in readOnly mode when model is set', () => {
     const wrapper = mount(KTagField, { props: { ...makeProps(), readOnly: true, values: { test: { name: 'vue', color: 'green' } } }, global: { stubs } })
-    expect(wrapper.find('q-chip-stub').exists()).toBe(true)
+    expect(wrapper.find('k-chip-stub').exists()).toBe(true)
   })
 
   // fill also syncs the items local state — the select needs items to display the selected option

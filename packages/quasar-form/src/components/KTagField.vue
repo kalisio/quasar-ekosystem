@@ -1,10 +1,6 @@
 <template>
   <div v-if="readOnly && model" :id="properties.name + '-field'">
-    <!-- Missing Component: KChip -->
-    <!-- <KChip v-bind="model" :label="model.name" /> -->
-    <q-chip :color="model.color" dense>
-      {{ model.name }}
-    </q-chip>
+    <KChip v-bind="model" :label="model.name" />
   </div>
   <q-select v-else
     ref="select"
@@ -27,15 +23,7 @@
     @update:model-value="onSelected">
     <!-- Value display -->
     <template v-slot:selected-item="scope">
-      <!-- Missing Component: KChip -->
-      <!-- <KChip v-bind="scope.opt" :label="scope.opt.name" square removable @remove="scope.removeAtIndex(scope.index)" /> -->
-      <q-chip
-        square
-        removable
-        :color="scope.opt.color"
-        :label="scope.opt.name"
-        @remove="scope.removeAtIndex(scope.index)"
-      />
+      <KChip v-bind="scope.opt" :label="scope.opt.name" square removable @remove="scope.removeAtIndex(scope.index)" />
     </template>
     <!-- Options display -->
     <template v-slot:option="scope">
@@ -47,16 +35,8 @@
           {{ scope.opt.name }}
         </q-item-section>
         <q-item-section v-else>
-          <!-- Missing Component: KChip -->
-          <!-- <KChip v-bind="scope.opt" :label="scope.opt.name" /> -->
-          <q-chip :color="scope.opt.color" square dense :label="scope.opt.name" />
+          <KChip v-bind="scope.opt" :label="scope.opt.name" />
         </q-item-section>
-        <!-- Missing Component: KPanel -->
-        <!--
-        <q-item-section v-if="!scope.opt.create" class="col-auto">
-          <KPanel id="tag-actions" :content="getActions(scope.opt)" />
-        </q-item-section>
-        -->
       </q-item>
     </template>
   </q-select>
@@ -65,14 +45,12 @@
 <script>
 import _ from 'lodash'
 import { inject } from 'vue'
+import { load } from '@kalisio/quasar-core'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
-// Missing Component: KChip
-// import KChip from '../KChip.vue'
 
 export default {
-  // Missing Component: KChip
-  // components: { KChip },
+  components: { KChip: load('KChip') },
   // Missing Mixin: baseField
   // mixins: [baseField],
   props: fieldProps,

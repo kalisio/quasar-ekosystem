@@ -41,6 +41,10 @@
     "url": "https://github.com/kalisio/quasar-ekosystem/issues"
   },
   "homepage": "https://github.com/kalisio/quasar-ekosystem/tree/main/packages/quasar-moment",
-  "dependencies": {},
+  "dependencies": {
+    "@kalisio/quasar-core": "workspace:*",
+    "lodash": "catalog:",
+    "moment": "catalog:"
+  },
   "devDependencies": {}
 }

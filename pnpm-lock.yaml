@@ -185,6 +185,12 @@ importers:
 
   packages/quasar-core:
     devDependencies:
+      '@kalisio/quasar-form':
+        specifier: workspace:*
+        version: link:../quasar-form
+      '@kalisio/quasar-moment':
+        specifier: workspace:*
+        version: link:../quasar-moment
       '@vue/test-utils':
         specifier: 'catalog:'
         version: 2.4.6
@@ -206,6 +212,9 @@ importers:
 
   packages/quasar-form:
     dependencies:
+      '@kalisio/quasar-core':
+        specifier: workspace:*
+        version: link:../quasar-core
       '@logtape/logtape':
         specifier: 'catalog:'
         version: 0.7.2
@@ -222,6 +231,9 @@ importers:
         specifier: 'catalog:'
         version: 4.18.1
     devDependencies:
+      '@kalisio/quasar-moment':
+        specifier: workspace:*
+        version: link:../quasar-moment
       '@vue/test-utils':
         specifier: 'catalog:'
         version: 2.4.6
@@ -235,7 +247,17 @@ importers:
         specifier: 'catalog:'
         version: 11.3.0(vue@3.5.31)
 
-  packages/quasar-moment: {}
+  packages/quasar-moment:
+    dependencies:
+      '@kalisio/quasar-core':
+        specifier: workspace:*
+        version: link:../quasar-core
+      lodash:
+        specifier: 'catalog:'
+        version: 4.18.1
+      moment:
+        specifier: 'catalog:'
+        version: 2.30.1
 
 packages:
 

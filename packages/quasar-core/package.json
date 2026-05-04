@@ -42,6 +42,8 @@
   },
   "homepage": "https://github.com/kalisio/quasar-ekosystem/tree/main/packages/quasar-core",
   "devDependencies": {
+    "@kalisio/quasar-form": "workspace:*",
+    "@kalisio/quasar-moment": "workspace:*",
     "@vue/test-utils": "catalog:",
     "happy-dom": "catalog:",
     "lodash": "catalog:",
