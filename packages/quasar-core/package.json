@@ -41,6 +41,9 @@
     "url": "https://github.com/kalisio/quasar-ekosystem/issues"
   },
   "homepage": "https://github.com/kalisio/quasar-ekosystem/tree/main/packages/quasar-core",
+  "dependencies": {
+    "@logtape/logtape": "catalog:"
+  },
   "devDependencies": {
     "@kalisio/quasar-form": "workspace:*",
     "@kalisio/quasar-moment": "workspace:*",
