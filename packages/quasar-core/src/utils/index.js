@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 export { actionProps } from './utils.actions.js'
-export { load, register } from './registry.js'
+export { load, register } from '../registry.js'
 
 export function getHtmlColor (color) { return color }
 export function getContrastColor () { return 'white' }

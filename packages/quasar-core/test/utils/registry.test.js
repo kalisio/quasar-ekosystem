@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { load, register } from '../../src/utils/registry.js'
+import { load, register } from '../../src/registry.js'
 import '@kalisio/quasar-moment'
 import '@kalisio/quasar-form'
 

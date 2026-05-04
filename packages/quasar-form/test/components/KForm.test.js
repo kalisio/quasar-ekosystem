@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 
+import '../../src/index.js'
 import KForm from '../../src/components/KForm.vue'
 import { schemaRegistry } from '../../src/utils/index.js'
 

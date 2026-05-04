@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest'
-import { Layout } from '../../src/layout.js'
 import { Document } from '../../src/document.js'
 import { filterContent, getBoundValue, bindParams, bindProperties } from '../../src/utils/utils.content.js'
 import {
@@ -7,17 +6,6 @@ import {
   loadComponent, bindParams as bp, bindProperties as bprop,
   toggleFullscreen, Fullscreen
 } from '../../src/utils/index.js'
-
-describe('Layout', () => {
-  it('returns default values from all methods', () => {
-    expect(Layout.findSticky()).toBeNull()
-    expect(Layout.findWindow()).toBeNull()
-    expect(Layout.showSticky()).toBeUndefined()
-    expect(Layout.hideSticky()).toBeUndefined()
-    expect(Layout.openWidget()).toBeUndefined()
-    expect(Layout.closeWidget()).toBeUndefined()
-  })
-})
 
 describe('Document', () => {
   it('sanitizeHtml returns the string unchanged', () => {

@@ -7,7 +7,7 @@ export const baseConfig = {
       provider: 'v8',
       all: true,
       clean: true,
-      include: ['src/**/*.js'],
+      include: ['src/**/*.js', 'src/**/*.vue'],
       exclude: [
         'node_modules/**',
         'dist/**',
