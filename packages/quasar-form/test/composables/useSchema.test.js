@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { schemaRegistry } from '../../src/utils/index.js'
+import { useSchema } from '../../src/composables/schema.js'
 
 const userschemaRegistry = {
   $id: 'user',
@@ -70,6 +71,33 @@ describe('schemaRegistry', () => {
     it('rejects an integer below minimum', () => {
       const validate = schemaRegistry.register(userschemaRegistry)
       expect(validate({ name: 'Alice', age: -1 })).toBe(false)
+    })
+  })
+
+  describe('useSchema', () => {
+    it('validate returns isValid false when compile has not been called', () => {
+      const { validate } = useSchema()
+      expect(validate({}).isValid).toBe(false)
+    })
+
+    it('compile and validate with an object schema', async () => {
+      const { compile, validate } = useSchema()
+      await compile(userschemaRegistry)
+      expect(validate({ name: 'Alice' }).isValid).toBe(true)
+    })
+
+    it('compile with array propertiesFilter keeps only listed properties', async () => {
+      const { compile, schema } = useSchema()
+      await compile(userschemaRegistry, ['name'])
+      expect(schema.value.properties).toHaveProperty('name')
+      expect(schema.value.properties).not.toHaveProperty('age')
+    })
+
+    it('compile with string propertiesFilter splits on comma', async () => {
+      const { compile, schema } = useSchema()
+      await compile(userschemaRegistry, 'name')
+      expect(schema.value.properties).toHaveProperty('name')
+      expect(schema.value.properties).not.toHaveProperty('age')
     })
   })
 
