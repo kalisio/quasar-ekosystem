@@ -31,4 +31,18 @@ describe('KTab', () => {
     await wrapper.setProps({ content: { info: [], settings: [], advanced: [] } })
     expect(wrapper.vm.tabs).toEqual(['info', 'settings', 'advanced'])
   })
+
+  // getLabel returns the translated label from the labels prop array at the given index
+  it('returns label from labels array at given index', () => {
+    const content = { info: [], settings: [] }
+    const wrapper = mount(KTab, { props: { content, mode: 'info', labels: ['Information', 'Settings'] } })
+    expect(wrapper.vm.getLabel(0)).toBe('Information')
+  })
+
+  // onTabChanged emits the tab-changed event with the new tab value
+  it('emits tab-changed when onTabChanged is called', () => {
+    const wrapper = mount(KTab, { props: { content: { info: [], settings: [] }, mode: 'info' } })
+    wrapper.vm.onTabChanged('settings')
+    expect(wrapper.emitted('tab-changed')[0]).toEqual(['settings'])
+  })
 })

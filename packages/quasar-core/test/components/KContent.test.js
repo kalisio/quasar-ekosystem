@@ -30,4 +30,18 @@ describe('KContent', () => {
     await wrapper.setProps({ content: [{ component: 'q-btn' }, { component: 'q-btn' }] })
     expect(wrapper.vm.filteredComponents).toHaveLength(2)
   })
+
+  // a visible property that is a function is called with the context to determine visibility
+  it('calls a function-type visible property with context', () => {
+    const content = [{ component: 'q-btn', visible: () => true }]
+    const wrapper = mount(KContent, { props: { content, context: {} } })
+    expect(wrapper.vm.filteredComponents[0].isVisible).toBe(true)
+  })
+
+  // onTriggered forwards the event payload to the parent via the triggered emit
+  it('emits triggered with params when onTriggered is called', () => {
+    const wrapper = mount(KContent, { props: { content: [] } })
+    wrapper.vm.onTriggered({ action: 'save' })
+    expect(wrapper.emitted('triggered')[0]).toEqual([{ action: 'save' }])
+  })
 })

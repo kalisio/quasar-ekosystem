@@ -43,4 +43,40 @@ describe('KChip', () => {
     await wrapper.setProps({ hideIcon: true })
     expect(wrapper.vm.computedIcon).toBeUndefined()
   })
+
+  // tooltipBehavior='never' prevents computedTooltip from returning any value
+  it('computedTooltip is undefined when tooltipBehavior is never', () => {
+    const wrapper = mount(KChip, { props: { label: 'Hello', tooltipBehavior: 'never' } })
+    expect(wrapper.vm.computedTooltip).toBeUndefined()
+  })
+
+  // tooltipBehavior='always' returns the label as the tooltip regardless of truncation state
+  it('computedTooltip returns label when tooltipBehavior is always', () => {
+    const wrapper = mount(KChip, { props: { label: 'Hello', tooltipBehavior: 'always' } })
+    expect(wrapper.vm.computedTooltip).toBe('Hello')
+  })
+
+  // outline=true makes the chip background transparent
+  it('computedColor is transparent when outline is true', () => {
+    const wrapper = mount(KChip, { props: { outline: true } })
+    expect(wrapper.vm.computedColor).toBe('transparent')
+  })
+
+  // outline=true sets the border to the chip color
+  it('computedBorderColor uses chip color when outline is true', () => {
+    const wrapper = mount(KChip, { props: { outline: true, color: 'grey-7' } })
+    expect(wrapper.vm.computedBorderColor).toBe('grey-7')
+  })
+
+  // outline=false hides the border by making it transparent
+  it('computedBorderColor is transparent when outline is false', () => {
+    const wrapper = mount(KChip)
+    expect(wrapper.vm.computedBorderColor).toBe('transparent')
+  })
+
+  // an explicit textColor prop bypasses contrast calculation
+  it('computedTextColor uses explicit textColor when provided', () => {
+    const wrapper = mount(KChip, { props: { textColor: 'red' } })
+    expect(wrapper.vm.computedTextColor).toBe('red')
+  })
 })

@@ -47,4 +47,24 @@ describe('KModal', () => {
     expect(wrapper.vm.computedClass).toContain('bg-grey-2')
     expect(wrapper.vm.computedClass).not.toContain('bg-white')
   })
+
+  // scrollable=false renders the default slot directly without a KScrollArea wrapper
+  it('renders slot directly when scrollable is false', () => {
+    const wrapper = mount(KModal, { props: { scrollable: false }, slots: { default: '<p class="direct-slot">content</p>' } })
+    expect(wrapper.find('.direct-slot').exists()).toBe(true)
+  })
+
+  // onHeaderResized stores the new header height when the size changes
+  it('onHeaderResized updates headerHeight', () => {
+    const wrapper = mount(KModal, { props: { scrollable: false } })
+    wrapper.vm.onHeaderResized({ height: 60 })
+    expect(wrapper.vm.headerHeight).toBe(60)
+  })
+
+  // onFooterResized stores the new footer height when the size changes
+  it('onFooterResized updates footerHeight', () => {
+    const wrapper = mount(KModal, { props: { scrollable: false } })
+    wrapper.vm.onFooterResized({ height: 48 })
+    expect(wrapper.vm.footerHeight).toBe(48)
+  })
 })

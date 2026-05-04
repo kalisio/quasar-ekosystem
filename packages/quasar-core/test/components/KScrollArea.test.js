@@ -50,4 +50,26 @@ describe('KScrollArea', () => {
     await wrapper.setProps({ visible: false })
     expect(wrapper.vm.cssThumbStyle.width).toBe('0px')
   })
+
+  // onScrolled updates cssHeight to the verticalSize when it is within maxHeight
+  it('onScrolled updates cssHeight from scroll event', () => {
+    const wrapper = mount(KScrollArea, { props: { maxHeight: 300 } })
+    wrapper.vm.onScrolled({ verticalSize: 150 })
+    expect(wrapper.vm.cssHeight).toBe('150px')
+  })
+
+  // onScrolled caps the height at maxHeight when verticalSize exceeds it
+  it('onScrolled caps cssHeight at maxHeight', () => {
+    const wrapper = mount(KScrollArea, { props: { maxHeight: 100 } })
+    wrapper.vm.onScrolled({ verticalSize: 500 })
+    expect(wrapper.vm.cssHeight).toBe('100px')
+  })
+
+  // onScrolled emits a scrolled event with the scroll info object
+  it('emits scrolled event when onScrolled is called', () => {
+    const wrapper = mount(KScrollArea, { props: { maxHeight: 300 } })
+    const info = { verticalSize: 200 }
+    wrapper.vm.onScrolled(info)
+    expect(wrapper.emitted('scrolled')[0][0]).toBe(info)
+  })
 })
