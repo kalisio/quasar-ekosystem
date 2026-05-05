@@ -67,11 +67,35 @@ describe('KResolutionField', () => {
     expect(wrapper.vm.width).toBe(256)
   })
 
-  /* it('model is an object with width and height', () => { ... }) */
-  /* it('borderless defaults to false', () => { ... }) */
-  /* it('borderless can be set via field.borderless', () => { ... }) */
-  /* it('onChanged emits field-changed', () => { ... }) */
-  /* it('width above 4000 is clamped to 4000', () => { ... }) */
-  /* it('height below 256 is clamped to 256', () => { ... }) */
-  /* it('field.disabled disables the field', () => { ... }) */
+  // height below 256 is clamped to 256 (minimum allowed value)
+  it('height below 256 is clamped to 256', async () => {
+    const wrapper = mount(KResolutionField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.resolution = wrapper.vm.resolutions.find(r => !r.readonly)
+    await nextTick()
+    wrapper.vm.height = 10
+    await nextTick()
+    expect(wrapper.vm.height).toBe(256)
+  })
+
+  // width above 4000 is clamped to 4000 (maximum allowed value)
+  it('width above 4000 is clamped to 4000', async () => {
+    const wrapper = mount(KResolutionField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.resolution = wrapper.vm.resolutions.find(r => !r.readonly)
+    await nextTick()
+    wrapper.vm.width = 9999
+    await nextTick()
+    expect(wrapper.vm.width).toBe(4000)
+  })
+
+  // borderless defaults to false when not configured in field
+  it('borderless defaults to false', () => {
+    const wrapper = mount(KResolutionField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.borderless).toBe(false)
+  })
+
+  // borderless can be enabled via field.borderless property
+  it('borderless is true when field.borderless is set', () => {
+    const wrapper = mount(KResolutionField, { props: makeProps({ field: { borderless: true } }), global: { stubs } })
+    expect(wrapper.vm.borderless).toBe(true)
+  })
 })

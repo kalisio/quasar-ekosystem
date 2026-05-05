@@ -63,21 +63,44 @@ describe('KSelectField', () => {
     expect(wrapper.vm.value()).toBe('b')
   })
 
-  /* it('options are computed from properties.field.options', () => { ... }) */
-  /* it('fill sets the model value', () => { ... }) */
-  /* it('clear resets model to null for single-select', () => { ... }) */
-  /* it('model initializes to [] for multiselect', () => { ... }) */
-  /* it('isEmpty checks array emptiness for multiselect', () => { ... }) */
-  /* it('onChanged emits field-changed', () => { ... }) */
-  /* it('dense prop is forwarded to q-select', () => { ... }) */
-  /* it('values prop initializes the model', () => { ... }) */
-  /* it('clear resets model to [] for multiselect', () => { ... }) */
-  /* it('invalidate sets hasError to true', () => { ... }) */
-  /* it('validate clears the error', () => { ... }) */
-  /* it('apply writes the model value to a target object', () => { ... }) */
-  /* it('isClearable defaults to true', () => { ... }) */
-  /* it('isClearable can be disabled via properties.field.clearable', () => { ... }) */
-  /* it('onFilter with empty string resets the filter', () => { ... }) */
-  /* it('getId returns kebab-case id for string values', () => { ... }) */
-  /* it('getId falls back to label for object values', () => { ... }) */
+  // isClearable returns true by default when field.clearable is not specified
+  it('isClearable defaults to true', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
+    expect(wrapper.vm.isClearable()).toBe(true)
+  })
+
+  // field.clearable=false disables the clear button
+  it('isClearable returns false when field.clearable is false', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options, clearable: false } }), global: { stubs } })
+    expect(wrapper.vm.isClearable()).toBe(false)
+  })
+
+  // clear() resets single-select model to null
+  it('clear resets model to null for single-select', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
+    wrapper.vm.fill('a')
+    wrapper.vm.clear()
+    expect(wrapper.vm.value()).toBeNull()
+  })
+
+  // onFilter with empty string removes the filter and restores all options
+  it('onFilter with empty string resets the filter', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
+    wrapper.vm.onFilter('option a', (fn) => fn())
+    expect(wrapper.vm.options.length).toBe(1)
+    wrapper.vm.onFilter('', (fn) => fn())
+    expect(wrapper.vm.options.length).toBe(2)
+  })
+
+  // getId converts a string value to a kebab-case element id
+  it('getId returns kebab-case id for string value', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
+    expect(wrapper.vm.getId({ value: 'my option', label: 'My Option' })).toBe('my-option')
+  })
+
+  // isEmpty returns true for single-select when the model is null (default)
+  it('isEmpty returns true when model is null', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
 })

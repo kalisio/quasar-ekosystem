@@ -75,15 +75,31 @@ describe('KTokenField', () => {
     expect(wrapper.vm.value()).toBe('999999')
   })
 
-  /* it('tokenLength computed returns field.tokenLength', () => { ... }) */
-  /* it('updateModel emits field-changed', () => { ... }) */
-  /* it('onKeyUp ArrowLeft clears the previous input cell', () => { ... }) */
-  /* it('labelClass does not include text-red without error', () => { ... }) */
-  /* it('fill sets the model value', () => { ... }) */
-  /* it('values prop initializes the model', () => { ... }) */
-  /* it('invalidate sets hasError to true', () => { ... }) */
-  /* it('validate clears the error', () => { ... }) */
-  /* it('field.disabled disables the field', () => { ... }) */
-  /* it('apply writes the model value to a target object', () => { ... }) */
-  /* it('onChanged emits field-changed', () => { ... }) */
+  // tokenLength computed reads field.tokenLength from the properties descriptor
+  it('tokenLength computed returns field.tokenLength', () => {
+    const wrapper = mount(KTokenField, { props: makeProps({ field: { tokenLength: 4 } }), global: { stubs } })
+    expect(wrapper.vm.tokenLength).toBe(4)
+  })
+
+  // clearInput sets the cell at the given index to an empty string
+  it('clearInput empties the cell at the given index', () => {
+    const wrapper = mount(KTokenField, { props: makeProps({ field: { tokenLength: 4 } }), global: { stubs } })
+    wrapper.vm.fieldValues[2] = '9'
+    wrapper.vm.clearInput(2)
+    expect(wrapper.vm.fieldValues[2]).toBe('')
+  })
+
+  // Backspace on cell N moves focus and clears cell N-1 to allow re-entry
+  it('onKeyUp Backspace clears the previous cell', () => {
+    const wrapper = mount(KTokenField, { props: makeProps({ field: { tokenLength: 4 } }), global: { stubs } })
+    wrapper.vm.fieldValues[0] = '5'
+    wrapper.vm.onKeyUp({ key: 'Backspace' }, 1)
+    expect(wrapper.vm.fieldValues[0]).toBe('')
+  })
+
+  // labelClass does not include text-red when the field has no error
+  it('labelClass does not include text-red without error', () => {
+    const wrapper = mount(KTokenField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.labelClass['text-red']).toBeFalsy()
+  })
 })
