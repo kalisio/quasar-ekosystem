@@ -1,7 +1,10 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import { nextTick } from 'vue'
 import { mount } from '@vue/test-utils'
+import { openURL } from 'quasar'
 import KAction from '../../../src/components/action/KAction.vue'
+
+afterEach(() => vi.restoreAllMocks())
 
 describe('KAction', () => {
   // isToggled is false at startup when no toggled prop is given
@@ -81,5 +84,62 @@ describe('KAction', () => {
   it('item renderer renders q-item', () => {
     const wrapper = mount(KAction, { props: { id: 'test', renderer: 'item' } })
     expect(wrapper.find('q-item').exists()).toBe(true)
+  })
+
+  // computedTooltip returns undefined when the action is disabled (hides tooltip on disabled button)
+  it('computedTooltip is undefined when disabled', () => {
+    const wrapper = mount(KAction, { props: { id: 'test', disabled: true, tooltip: 'some tip' } })
+    expect(wrapper.vm.computedTooltip).toBeUndefined()
+  })
+
+  // computedTooltip returns toggle.tooltip when toggled and toggle declares a tooltip
+  it('computedTooltip uses toggle.tooltip when toggled', () => {
+    const wrapper = mount(KAction, { props: { id: 'test', tooltip: 'Normal', toggle: { tooltip: 'Toggled tip' } } })
+    wrapper.vm.toggle()
+    expect(wrapper.vm.computedTooltip).toBe('Toggled tip')
+  })
+
+  // computedBadgeLabel reads badge.label through i18n.tie
+  it('computedBadgeLabel returns badge label when set', () => {
+    const wrapper = mount(KAction, { props: { id: 'test', badge: { label: 'new' } } })
+    expect(wrapper.vm.computedBadgeLabel).toBe('new')
+  })
+
+  // computedBadgeLabel returns undefined when badge has no label property
+  it('computedBadgeLabel returns undefined when badge has no label', () => {
+    const wrapper = mount(KAction, { props: { id: 'test', badge: { color: 'red' } } })
+    expect(wrapper.vm.computedBadgeLabel).toBeUndefined()
+  })
+
+  // url prop causes openURL to be called when the button is clicked
+  it('url prop calls openURL on click', async () => {
+    const wrapper = mount(KAction, { props: { id: 'test', renderer: 'button', url: 'https://example.com' } })
+    await wrapper.find('q-btn').trigger('click')
+    expect(openURL).toHaveBeenCalledWith('https://example.com')
+  })
+
+  // dialog prop causes $q.dialog to open and emits dialog-confirmed via mock's onOk callback
+  it('dialog prop emits dialog-confirmed when $q.dialog onOk fires', async () => {
+    const wrapper = mount(KAction, { props: { id: 'test', renderer: 'button', dialog: {} } })
+    await wrapper.find('q-btn').trigger('click')
+    expect(wrapper.emitted('dialog-confirmed')).toBeTruthy()
+  })
+
+  // form-button renderer renders a q-btn element
+  it('form-button renderer renders q-btn', () => {
+    const wrapper = mount(KAction, { props: { id: 'test', renderer: 'form-button', label: 'Submit' } })
+    expect(wrapper.find('q-btn').exists()).toBe(true)
+  })
+
+  // fab renderer renders a q-btn with the k-fab CSS class
+  it('fab renderer renders q-btn with k-fab class', () => {
+    const wrapper = mount(KAction, { props: { id: 'test', renderer: 'fab' } })
+    expect(wrapper.find('q-btn.k-fab').exists()).toBe(true)
+  })
+
+  // tab renderer renders a q-btn element
+  it('tab renderer renders q-btn', () => {
+    const wrapper = mount(KAction, { props: { id: 'test', renderer: 'tab', label: 'Tab 1' } })
+    expect(wrapper.find('q-btn').exists()).toBe(true)
   })
 })

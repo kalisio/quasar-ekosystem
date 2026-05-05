@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import KDialog from '../../src/components/KDialog.vue'
 
@@ -50,5 +50,18 @@ describe('KDialog', () => {
     const handlers = { change: () => {} }
     const wrapper = mount(KDialog, { props: { handlers } })
     expect(wrapper.vm.computedHandlers).toStrictEqual(handlers)
+  })
+
+  // When cancelAction is an object, the else branch executes but the button is not pushed
+  it('cancelAction as object executes the object branch without pushing a cancel button', () => {
+    const wrapper = mount(KDialog, { props: { cancelAction: { label: 'Cancel', handler: vi.fn() } } })
+    expect(wrapper.vm.computedButtons.some(b => b.id === 'cancel-action')).toBe(false)
+  })
+
+  // computedAttrs strips the 'component.' prefix from fallthrough attribute keys
+  it('computedAttrs strips component. prefix from attribute keys', () => {
+    const wrapper = mount(KDialog, { attrs: { 'component.foo': 'bar' } })
+    expect(wrapper.vm.computedAttrs.foo).toBe('bar')
+    expect(wrapper.vm.computedAttrs['component.foo']).toBeUndefined()
   })
 })
