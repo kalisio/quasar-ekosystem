@@ -23,4 +23,31 @@ describe('KEditor', () => {
     })
     expect(wrapper.vm.getContext().mode).toBe('edition')
   })
+
+  // getContext returns the full props object including service name
+  it('getContext includes service in props', () => {
+    const wrapper = mount(KEditor, {
+      props: { service: 'events' },
+      global: { components: { KForm: { template: '<form />' } } }
+    })
+    expect(wrapper.vm.getContext().props.service).toBe('events')
+  })
+
+  // dense prop defaults to false when not explicitly provided
+  it('dense prop defaults to false', () => {
+    const wrapper = mount(KEditor, {
+      props: { service: 'users' },
+      global: { components: { KForm: { template: '<form />' } } }
+    })
+    expect(wrapper.vm.getContext().props.dense).toBe(false)
+  })
+
+  // filter prop value is accessible from getContext when set
+  it('getContext reflects filter prop', () => {
+    const wrapper = mount(KEditor, {
+      props: { service: 'users', filter: ['name'] },
+      global: { components: { KForm: { template: '<form />' } } }
+    })
+    expect(wrapper.vm.getContext().props.filter).toEqual(['name'])
+  })
 })

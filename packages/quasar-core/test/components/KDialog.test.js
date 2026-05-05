@@ -30,4 +30,25 @@ describe('KDialog', () => {
     await wrapper.setProps({ cancelAction: 'Cancel' })
     expect(wrapper.vm.computedButtons.some(b => b.id === 'cancel-action')).toBe(true)
   })
+
+  // When okAction is an object, its properties are merged into the button pushed to computedButtons
+  it('okAction as object includes custom properties in button', () => {
+    const wrapper = mount(KDialog, { props: { okAction: { id: 'custom-ok', label: 'Save', renderer: 'form-button' } } })
+    const okButton = wrapper.vm.computedButtons.find(b => b.id === 'custom-ok')
+    expect(okButton).toBeDefined()
+    expect(okButton.label).toBe('Save')
+  })
+
+  // computedHandlers returns empty object when handlers prop is null (default)
+  it('computedHandlers returns empty object when handlers is null', () => {
+    const wrapper = mount(KDialog)
+    expect(wrapper.vm.computedHandlers).toEqual({})
+  })
+
+  // computedHandlers returns the handlers object when a non-empty one is provided
+  it('computedHandlers returns handlers when provided', () => {
+    const handlers = { change: () => {} }
+    const wrapper = mount(KDialog, { props: { handlers } })
+    expect(wrapper.vm.computedHandlers).toStrictEqual(handlers)
+  })
 })

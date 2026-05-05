@@ -51,4 +51,41 @@ describe('KTextArea', () => {
     await wrapper.setProps({ text: 'Second' })
     expect(wrapper.vm.scrollAreaKey).toBe(initialKey + 1)
   })
+
+  // onScrolled sets isExpandable to true when verticalSize exceeds minHeight
+  it('onScrolled sets isExpandable when verticalSize exceeds minHeight', () => {
+    const wrapper = mount(KTextArea, { props: { text: 'Hello', minHeight: 64 } })
+    expect(wrapper.vm.isExpandable).toBe(false)
+    wrapper.vm.onScrolled({ verticalSize: 100 })
+    expect(wrapper.vm.isExpandable).toBe(true)
+  })
+
+  // cssCursor is default when the text area is not expandable
+  it('cssCursor is default when not expandable', () => {
+    const wrapper = mount(KTextArea, { props: { text: 'Hello' } })
+    expect(wrapper.vm.cssCursor).toBe('default')
+  })
+
+  // cssCursor becomes pointer once onScrolled marks the area as expandable
+  it('cssCursor is pointer when expandable', () => {
+    const wrapper = mount(KTextArea, { props: { text: 'Hello', minHeight: 64 } })
+    wrapper.vm.onScrolled({ verticalSize: 100 })
+    expect(wrapper.vm.cssCursor).toBe('pointer')
+  })
+
+  // onClick does not expand when the text area is not yet expandable
+  it('onClick does nothing when not expandable', () => {
+    const wrapper = mount(KTextArea, { props: { text: 'Hello' } })
+    wrapper.vm.onClick()
+    expect(wrapper.vm.isExpanded).toBe(false)
+  })
+
+  // Changing text prop resets isExpandable to false even if it was set to true
+  it('resets isExpandable when text prop changes', async () => {
+    const wrapper = mount(KTextArea, { props: { text: 'Hello', minHeight: 64 } })
+    wrapper.vm.onScrolled({ verticalSize: 100 })
+    expect(wrapper.vm.isExpandable).toBe(true)
+    await wrapper.setProps({ text: 'Changed' })
+    expect(wrapper.vm.isExpandable).toBe(false)
+  })
 })
