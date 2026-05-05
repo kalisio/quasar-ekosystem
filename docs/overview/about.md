@@ -4,6 +4,6 @@
 
 This repository contains the following packages:
 
-- **[@kalisio/quasar-form](../packages/quasar-form)**
-- **[@kalisio/quasar-moment](../packages/quasar-moment)**
-
+- **[@kalisio/quasar-core](../packages/quasar-core/)** — Core components and component registry for the Kalisio ekosystem
+- **[@kalisio/quasar-form](../packages/quasar-form/)** — JSON Schema-driven form builder for Quasar
+- **[@kalisio/quasar-moment](../packages/quasar-moment/)** — Time and date components powered by Moment.js
