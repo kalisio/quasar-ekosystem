@@ -42,16 +42,14 @@
   },
   "homepage": "https://github.com/kalisio/quasar-ekosystem/tree/main/packages/quasar-core",
   "dependencies": {
-    "@logtape/logtape": "catalog:"
+    "@kalisio/common-core": "catalog:",
+    "@logtape/logtape": "catalog:",
+    "lodash": "catalog:",
+    "moment": "catalog:"
   },
   "devDependencies": {
-    "@kalisio/quasar-form": "workspace:*",
-    "@kalisio/quasar-moment": "workspace:*",
     "@vue/test-utils": "catalog:",
     "happy-dom": "catalog:",
-    "lodash": "catalog:",
-    "moment": "catalog:",
-    "sass": "^1.99.0",
-    "vue": "catalog:"
+    "sass": "^1.99.0"
   }
 }
