@@ -65,18 +65,57 @@ describe('KIconField', () => {
     expect(wrapper.vm.value()).toEqual(icon)
   })
 
-  /* it('renders a q-field in edit mode', () => { ... }) */
-  /* it('isEmpty returns true when icon name is empty', () => { ... }) */
-  /* it('isEmpty returns false after fill with icon object', () => { ... }) */
-  /* it('iconName computed returns string model directly', () => { ... }) */
-  /* it('iconColor returns empty string when model has no color set', () => { ... }) */
-  /* it('isClearable defaults to true', () => { ... }) */
-  /* it('isClearable respects field.clearable', () => { ... }) */
-  /* it('fill sets the model', () => { ... }) */
-  /* it('clear resets model to emptyModel', () => { ... }) */
-  /* it('values prop initializes model', () => { ... }) */
-  /* it('invalidate sets hasError', () => { ... }) */
-  /* it('validate clears error', () => { ... }) */
-  /* it('apply writes model to object', () => { ... }) */
-  /* it('field.disabled disables the field', () => { ... }) */
+  it('hasIcon returns true when model has a name', () => {
+    const wrapper = mount(KIconField, { props: { ...makeProps(), values: { test: { name: 'star', color: 'yellow' } } }, global: { stubs } })
+    expect(wrapper.vm.hasIcon).toBe(true)
+  })
+
+  it('hasIcon returns false when model is empty', () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.hasIcon).toBe(false)
+  })
+
+  it('isClearable defaults to true', () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.isClearable()).toBe(true)
+  })
+
+  it('isClearable respects field.clearable', () => {
+    const wrapper = mount(KIconField, { props: makeProps({ field: { clearable: false } }), global: { stubs } })
+    expect(wrapper.vm.isClearable()).toBe(false)
+  })
+
+  it('isEmpty returns true when icon name is empty', () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('isEmpty returns false after filling with an icon object', () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill({ name: 'home', color: 'blue' })
+    expect(wrapper.vm.isEmpty()).toBe(false)
+  })
+
+  it('isEmpty with color=false uses string model', () => {
+    const wrapper = mount(KIconField, { props: makeProps({ field: { color: false } }), global: { stubs } })
+    expect(wrapper.vm.isEmpty()).toBe(true)
+    wrapper.vm.fill('home')
+    expect(wrapper.vm.isEmpty()).toBe(false)
+  })
+
+  it('clear resets model to emptyModel', () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill({ name: 'star', color: 'red' })
+    wrapper.vm.clear()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('apply writes model to a target object', () => {
+    const wrapper = mount(KIconField, { props: makeProps(), global: { stubs } })
+    const icon = { name: 'check', color: 'green' }
+    wrapper.vm.fill(icon)
+    const obj = {}
+    wrapper.vm.apply(obj, 'test')
+    expect(obj.test).toEqual(icon)
+  })
 })

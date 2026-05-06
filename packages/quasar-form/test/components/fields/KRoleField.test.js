@@ -61,13 +61,21 @@ describe('KRoleField', () => {
     expect(wrapper.vm.value()).toBe('manager')
   })
 
-  /* it('onChanged emits field-changed', () => { ... }) */
-  /* it('values prop initializes the model', () => { ... }) */
-  /* it('uses default role names when field.roles is not set', () => { ... }) */
-  /* it('roles computed labels are translated (uppercase key)', () => { ... }) */
-  /* it('fill sets the model value', () => { ... }) */
-  /* it('field.disabled disables the field', () => { ... }) */
-  /* it('apply writes the model value to a target object', () => { ... }) */
-  /* it('invalidate sets hasError to true', () => { ... }) */
-  /* it('validate clears the error', () => { ... }) */
+  it('apply writes model value to a target object', () => {
+    const wrapper = mount(KRoleField, { props: makeProps({ field: { roles: ['owner', 'manager'] } }), global: { stubs } })
+    const obj = {}
+    wrapper.vm.apply(obj, 'test')
+    expect(obj.test).toBe('owner')
+  })
+
+  it('roles returns empty array when field.roles is empty', () => {
+    const wrapper = mount(KRoleField, { props: makeProps({ field: { roles: [] } }), global: { stubs } })
+    expect(wrapper.vm.roles()).toEqual([])
+  })
+
+  it('fill sets the model value', () => {
+    const wrapper = mount(KRoleField, { props: makeProps({ field: { roles: ['owner', 'manager'] } }), global: { stubs } })
+    wrapper.vm.fill('manager')
+    expect(wrapper.vm.value()).toBe('manager')
+  })
 })

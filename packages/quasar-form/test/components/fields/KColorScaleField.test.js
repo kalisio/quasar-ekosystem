@@ -54,20 +54,65 @@ describe('KColorScaleField', () => {
     expect(wrapper.vm.value()).toEqual(colorScaleOptions[0].value)
   })
 
-  /* it('options computed from field.options', () => { ... }) */
-  /* it('options defaults to [] when not defined', () => { ... }) */
-  /* it('isClearable defaults to true', () => { ... }) */
-  /* it('isClearable respects field.clearable', () => { ... }) */
-  /* it('getId returns kebab-cased label', () => { ... }) */
-  /* it('getLabel returns empty string when value not found', () => { ... }) */
-  /* it('getScaleStyle returns empty object for null value', () => { ... }) */
-  /* it('getScaleStyle returns empty object when no colors', () => { ... }) */
-  /* it('onChanged emits field-changed', () => { ... }) */
-  /* it('fill sets model', () => { ... }) */
-  /* it('clear resets model to null', () => { ... }) */
-  /* it('values prop initializes model', () => { ... }) */
-  /* it('invalidate sets hasError', () => { ... }) */
-  /* it('validate clears error', () => { ... }) */
-  /* it('apply writes model to object', () => { ... }) */
-  /* it('field.disabled disables the field', () => { ... }) */
+  it('getOptions returns field.options array', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps({ field: { options: colorScaleOptions } }), global: { stubs } })
+    expect(wrapper.vm.getOptions()).toHaveLength(2)
+  })
+
+  it('getOptions returns [] when not defined', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.getOptions()).toEqual([])
+  })
+
+  it('isClearable defaults to true', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.isClearable()).toBe(true)
+  })
+
+  it('isClearable respects field.clearable', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps({ field: { clearable: false } }), global: { stubs } })
+    expect(wrapper.vm.isClearable()).toBe(false)
+  })
+
+  it('getId returns kebab-cased label', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.getId({ label: 'Red Scale' })).toBe('red-scale')
+  })
+
+  it('getLabel returns empty string when value not found in options', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps({ field: { options: colorScaleOptions } }), global: { stubs } })
+    expect(wrapper.vm.getLabel({ colors: ['#000'] })).toBe('')
+  })
+
+  it('getScaleStyle returns empty object for null value', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.getScaleStyle(null)).toEqual({})
+  })
+
+  it('getScaleStyle returns empty object when colors array is empty', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.getScaleStyle({ colors: [] })).toEqual({})
+  })
+
+  it('getScaleStyle supports scale key as fallback to colors', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps(), global: { stubs } })
+    const style = wrapper.vm.getScaleStyle({ scale: ['#fee', '#f00'] })
+    expect(style.background).toMatch(/linear-gradient/)
+  })
+
+  it('fill sets model and clear resets it to null', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps({ field: { options: colorScaleOptions } }), global: { stubs } })
+    wrapper.vm.fill(colorScaleOptions[0].value)
+    expect(wrapper.vm.value()).toEqual(colorScaleOptions[0].value)
+    wrapper.vm.clear()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('apply writes model to a target object', () => {
+    const wrapper = mount(KColorScaleField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill(colorScaleOptions[0].value)
+    const obj = {}
+    wrapper.vm.apply(obj, 'test')
+    expect(obj.test).toEqual(colorScaleOptions[0].value)
+  })
 })

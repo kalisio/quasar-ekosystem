@@ -52,17 +52,39 @@ describe('KOptionsField', () => {
     expect(wrapper.vm.value()).toBe('a')
   })
 
-  /* it('fill sets the model value', () => { ... }) */
-  /* it('clear resets model to null', () => { ... }) */
-  /* it('onChanged emits field-changed', () => { ... }) */
-  /* it('options returns empty array when no options defined', () => { ... }) */
-  /* it('options labels are translated via i18n', () => { ... }) */
-  /* it('selectedClass is text-weight-regular by default (DOM check)', () => { ... }) */
-  /* it('values prop initializes the model', () => { ... }) */
-  /* it('invalidate sets hasError to true', () => { ... }) */
-  /* it('validate clears the error', () => { ... }) */
-  /* it('selectedClass() returns text-weight-regular by default', () => { ... }) */
-  /* it('selectedClass() returns custom class when set in properties', () => { ... }) */
-  /* it('apply writes the model value to a target object', () => { ... }) */
-  /* it('readOnly shows an empty chip (KDK behavior — no label displayed)', () => { ... }) */
+  it('options returns empty array when no options defined', () => {
+    const wrapper = mount(KOptionsField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.options()).toEqual([])
+  })
+
+  it('selectedClass returns text-weight-regular by default', () => {
+    const wrapper = mount(KOptionsField, { props: makeProps({ field: { options } }), global: { stubs } })
+    expect(wrapper.vm.selectedClass()).toBe('text-weight-regular')
+  })
+
+  it('selectedClass returns custom class when set in properties', () => {
+    const wrapper = mount(KOptionsField, { props: makeProps({ field: { options, selectedClass: 'text-bold' } }), global: { stubs } })
+    expect(wrapper.vm.selectedClass()).toBe('text-bold')
+  })
+
+  it('fill sets the model value', () => {
+    const wrapper = mount(KOptionsField, { props: makeProps({ field: { options } }), global: { stubs } })
+    wrapper.vm.fill('b')
+    expect(wrapper.vm.value()).toBe('b')
+  })
+
+  it('clear resets model to null', () => {
+    const wrapper = mount(KOptionsField, { props: makeProps({ field: { options } }), global: { stubs } })
+    wrapper.vm.fill('a')
+    wrapper.vm.clear()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('apply writes model value to a target object', () => {
+    const wrapper = mount(KOptionsField, { props: makeProps({ field: { options } }), global: { stubs } })
+    wrapper.vm.fill('a')
+    const obj = {}
+    wrapper.vm.apply(obj, 'test')
+    expect(obj.test).toBe('a')
+  })
 })

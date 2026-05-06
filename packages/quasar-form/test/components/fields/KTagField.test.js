@@ -66,22 +66,66 @@ describe('KTagField', () => {
     expect(wrapper.vm.value()).toEqual(tag)
   })
 
-  /* it('emptyModel returns null for single-select', () => { ... }) */
-  /* it('emptyModel returns [] for multiselect', () => { ... }) */
-  /* it('isEmpty returns true when model is null', () => { ... }) */
-  /* it('isEmpty returns false after fill', () => { ... }) */
-  /* it('clear resets model to null (single)', () => { ... }) */
-  /* it('clear resets model to [] (multiselect)', () => { ... }) */
-  /* it('getId returns kebab-cased tag name', () => { ... }) */
-  /* it('isClearable defaults to true', () => { ... }) */
-  /* it('isClearable respects field.clearable', () => { ... }) */
-  /* it('onSearch aborts when pattern is too short', () => { ... }) */
-  /* it('onSearch calls search inject', () => { ... }) */
-  /* it('onSelected updates model and emits field-changed', () => { ... }) */
-  /* it('onSelected with null resets model', () => { ... }) */
-  /* it('values prop initializes model', () => { ... }) */
-  /* it('invalidate sets hasError', () => { ... }) */
-  /* it('validate clears error', () => { ... }) */
-  /* it('apply writes model to object', () => { ... }) */
-  /* it('field.disabled disables the field', () => { ... }) */
+  it('isEmpty returns true when model is null', () => {
+    const wrapper = mount(KTagField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('isEmpty returns false after fill', () => {
+    const wrapper = mount(KTagField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill({ name: 'vue', color: 'green' })
+    expect(wrapper.vm.isEmpty()).toBe(false)
+  })
+
+  it('clear resets single model to null', () => {
+    const wrapper = mount(KTagField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill({ name: 'vue', color: 'green' })
+    wrapper.vm.clear()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('clear resets multiselect model to []', () => {
+    const wrapper = mount(KTagField, { props: makeProps({ multiselect: true }), global: { stubs } })
+    wrapper.vm.fill([{ name: 'vue' }])
+    wrapper.vm.clear()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('getId returns kebab-cased tag name', () => {
+    const wrapper = mount(KTagField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.getId({ name: 'My Tag' })).toBe('my-tag')
+  })
+
+  it('isClearable defaults to true', () => {
+    const wrapper = mount(KTagField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.isClearable).toBe(true)
+  })
+
+  it('isClearable respects field.clearable', () => {
+    const wrapper = mount(KTagField, { props: makeProps({ field: { clearable: false } }), global: { stubs } })
+    expect(wrapper.vm.isClearable).toBe(false)
+  })
+
+  it('onSearch aborts when pattern is shorter than minCharsToSearch', async () => {
+    const abort = vi.fn()
+    const wrapper = mount(KTagField, { props: makeProps({ minCharsToSearch: 3 }), global: { stubs } })
+    await wrapper.vm.onSearch('ab', vi.fn(), abort)
+    expect(abort).toHaveBeenCalled()
+  })
+
+  it('onSelected with null resets model to emptyModel', async () => {
+    const wrapper = mount(KTagField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill({ name: 'vue' })
+    await wrapper.vm.onSelected(null)
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('apply writes model value to a target object', () => {
+    const wrapper = mount(KTagField, { props: makeProps(), global: { stubs } })
+    const tag = { name: 'typescript', color: 'blue' }
+    wrapper.vm.fill(tag)
+    const obj = {}
+    wrapper.vm.apply(obj, 'test')
+    expect(obj.test).toEqual(tag)
+  })
 })

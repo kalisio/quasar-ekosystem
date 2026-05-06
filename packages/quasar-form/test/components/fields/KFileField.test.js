@@ -82,27 +82,74 @@ describe('KFileField', () => {
     expect(wrapper.vm.filterSelectedFiles(files)).toEqual([{ name: 'data.csv' }])
   })
 
-  /* it('renders a chip per file in readOnly mode with multiple=true', () => { ... }) */
-  /* it('emptyModel returns null for single-file mode', () => { ... }) */
-  /* it('emptyModel returns [] for multiple-file mode', () => { ... }) */
-  /* it('isEmpty returns true when no file is set', () => { ... }) */
-  /* it('isEmpty returns false after fill', () => { ... }) */
-  /* it('clear resets model to [] (multiple)', () => { ... }) */
-  /* it('onFilesChanged with no files resets model', () => { ... }) */
-  /* it('onFilesChanged emits field-changed', () => { ... }) */
-  /* it('displayName joins names for multiple files', () => { ... }) */
-  /* it('maxFiles defaults to 1 for single-file mode', () => { ... }) */
-  /* it('maxFiles defaults to 9 for multiple-file mode', () => { ... }) */
-  /* it('maxFileSize defaults to 1 MB', () => { ... }) */
-  /* it('isClearable defaults to true', () => { ... }) */
-  /* it('isClearable respects field.clearable', () => { ... }) */
-  /* it('filterSelectedFiles returns all files when no filter is set', () => { ... }) */
-  /* it('filterSelectedFiles returns empty array when no files match', () => { ... }) */
-  /* it('fill sets the model', () => { ... }) */
-  /* it('clear resets model to null (single)', () => { ... }) */
-  /* it('values prop initializes model', () => { ... }) */
-  /* it('invalidate sets hasError', () => { ... }) */
-  /* it('validate clears error', () => { ... }) */
-  /* it('apply writes model to object', () => { ... }) */
-  /* it('field.disabled disables the field', () => { ... }) */
+  it('emptyModel returns null for single-file mode', () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.emptyModel()).toBeNull()
+  })
+
+  it('emptyModel returns [] for multiple-file mode', () => {
+    const wrapper = mount(KFileField, { props: makeProps({ field: { multiple: true } }), global: { stubs } })
+    expect(wrapper.vm.emptyModel()).toEqual([])
+  })
+
+  it('clear resets single model to null', () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill(makeFile())
+    wrapper.vm.clear()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('onFilesChanged with empty files resets model to emptyModel', async () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill(makeFile())
+    wrapper.vm.files = null
+    await wrapper.vm.onFilesChanged()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('onFilesChanged with readContent=false skips reading and stores File ref', async () => {
+    const wrapper = mount(KFileField, { props: makeProps({ field: { readContent: false } }), global: { stubs } })
+    wrapper.vm.files = { name: 'data.csv', type: 'text/csv' }
+    await wrapper.vm.onFilesChanged()
+    expect(wrapper.vm.value()).toMatchObject({ name: 'data.csv', type: 'text/csv' })
+    expect(wrapper.vm.value().File).toBeTruthy()
+  })
+
+  it('displayName joins names for multiple files', () => {
+    const wrapper = mount(KFileField, {
+      props: { ...makeProps({ field: { multiple: true } }), values: { test: [makeFile('a.txt'), makeFile('b.txt')] } },
+      global: { stubs }
+    })
+    expect(wrapper.vm.displayName).toBe('a.txt, b.txt')
+  })
+
+  it('maxFiles defaults to 1 for single-file mode', () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.maxFiles).toBe(1)
+  })
+
+  it('maxFiles defaults to 9 for multiple-file mode', () => {
+    const wrapper = mount(KFileField, { props: makeProps({ field: { multiple: true } }), global: { stubs } })
+    expect(wrapper.vm.maxFiles).toBe(9)
+  })
+
+  it('isClearable defaults to true', () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.isClearable).toBe(true)
+  })
+
+  it('filterSelectedFiles returns all files when no filter is set', () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    const files = [{ name: 'a.csv' }, { name: 'b.png' }]
+    expect(wrapper.vm.filterSelectedFiles(files)).toEqual(files)
+  })
+
+  it('apply writes model value to a target object', () => {
+    const wrapper = mount(KFileField, { props: makeProps(), global: { stubs } })
+    const f = makeFile('doc.pdf')
+    wrapper.vm.fill(f)
+    const obj = {}
+    wrapper.vm.apply(obj, 'test')
+    expect(obj.test).toEqual(f)
+  })
 })

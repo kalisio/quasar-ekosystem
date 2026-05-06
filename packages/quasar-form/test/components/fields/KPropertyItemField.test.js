@@ -85,12 +85,52 @@ describe('KPropertyItemField', () => {
     expect(wrapper.vm.options[0].description).toBe('Some note')
   })
 
-  /* it('emptyModel returns null for single', () => { ... }) */
-  /* it('emptyModel returns [] for multiple', () => { ... }) */
-  /* it('onSearch aborts when pattern is too short', () => { ... }) */
-  /* it('invalidate sets hasError to true', () => { ... }) */
-  /* it('field.disabled disables the field', () => { ... }) */
-  /* it('onSelected with null clears the model', () => { ... }) */
-  /* it('clear resets model to emptyModel', () => { ... }) */
-  /* it('apply writes the model value to a target object', () => { ... }) */
+  it('emptyModel returns null for single mode', () => {
+    const wrapper = mount(KPropertyItemField, { props: makeProps(serviceProps), global: { stubs } })
+    expect(wrapper.vm.emptyModel()).toBeNull()
+  })
+
+  it('emptyModel returns [] for multiple mode', () => {
+    const wrapper = mount(KPropertyItemField, { props: makeProps({ field: { ...serviceProps.field, multiple: true } }), global: { stubs } })
+    expect(wrapper.vm.emptyModel()).toEqual([])
+  })
+
+  it('isEmpty returns true when model is null', () => {
+    const wrapper = mount(KPropertyItemField, { props: makeProps(serviceProps), global: { stubs } })
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('isEmpty returns true for multiple when model is empty array', () => {
+    const wrapper = mount(KPropertyItemField, { props: makeProps({ field: { ...serviceProps.field, multiple: true } }), global: { stubs } })
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('clear resets model to emptyModel', () => {
+    const wrapper = mount(KPropertyItemField, { props: makeProps(serviceProps), global: { stubs } })
+    wrapper.vm.fill('CODE1')
+    wrapper.vm.clear()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('onSearch aborts when pattern is shorter than 2 chars', async () => {
+    const abort = vi.fn()
+    const wrapper = mount(KPropertyItemField, { props: makeProps(serviceProps), global: { stubs } })
+    await wrapper.vm.onSearch('X', vi.fn(), abort)
+    expect(abort).toHaveBeenCalled()
+  })
+
+  it('onSelected with null resets model to emptyModel', async () => {
+    const wrapper = mount(KPropertyItemField, { props: makeProps(serviceProps), global: { stubs } })
+    wrapper.vm.fill('CODE1')
+    await wrapper.vm.onSelected(null)
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('apply writes model value to a target object', () => {
+    const wrapper = mount(KPropertyItemField, { props: makeProps(serviceProps), global: { stubs } })
+    wrapper.vm.fill('CODE42')
+    const obj = {}
+    wrapper.vm.apply(obj, 'test')
+    expect(obj.test).toBe('CODE42')
+  })
 })

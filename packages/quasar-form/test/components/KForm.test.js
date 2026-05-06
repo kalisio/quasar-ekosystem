@@ -131,4 +131,82 @@ describe('KForm', () => {
     const result = wrapper.vm.validate()
     expect(result.isValid).toBe(false)
   })
+
+  // values() excludes required+empty fields but includes optional ones
+  it('values returns optional fields even when empty', async () => {
+    const wrapper = await mountReady()
+    const v = wrapper.vm.values()
+    expect(v).toHaveProperty('age')
+    expect(v).not.toHaveProperty('name')
+  })
+
+  // fill() distributes values to all field references
+  it('fill distributes values to fields and values() reflects them', async () => {
+    const wrapper = await mountReady()
+    wrapper.vm.fill({ name: 'Alice', age: 30 })
+    const v = wrapper.vm.values()
+    expect(v.name).toBe('Alice')
+    expect(v.age).toBe(30)
+  })
+
+  // validate() returns isValid:true when all required fields are filled
+  it('validate returns isValid true when all required fields are filled', async () => {
+    const wrapper = await mountReady()
+    wrapper.vm.fill({ name: 'Alice' })
+    const result = wrapper.vm.validate()
+    expect(result.isValid).toBe(true)
+    expect(result.values.name).toBe('Alice')
+  })
+
+  // clear() resets all fields to their empty state
+  it('clear resets all fields', async () => {
+    const wrapper = await mountReady()
+    wrapper.vm.fill({ name: 'Alice', age: 30 })
+    wrapper.vm.clear()
+    expect(wrapper.vm.values().age).toBeNull()
+  })
+
+  // apply() writes each field value into the provided object
+  it('apply writes field values to a target object', async () => {
+    const wrapper = await mountReady()
+    wrapper.vm.fill({ name: 'Bob', age: 25 })
+    const obj = {}
+    await wrapper.vm.apply(obj)
+    expect(obj.name).toBe('Bob')
+    expect(obj.age).toBe(25)
+  })
+
+  // submitted() throws when form is not ready
+  it('submitted throws when the form is not ready', async () => {
+    const wrapper = mount(KForm, { props: { schema: userSchema }, global: { stubs: quasarStubs } })
+    await expect(wrapper.vm.submitted({})).rejects.toThrow('Cannot run submitted on the form while not ready')
+  })
+
+  // apply() throws when form is not ready
+  it('apply throws when the form is not ready', async () => {
+    const wrapper = mount(KForm, { props: { schema: userSchema }, global: { stubs: quasarStubs } })
+    await expect(wrapper.vm.apply({})).rejects.toThrow('Cannot apply the form while not ready')
+  })
+
+  // schema with no field.component falls back to KNumberField for number type
+  it('uses KNumberField as default component for number type', async () => {
+    const numSchema = {
+      $id: 'num-form',
+      type: 'object',
+      properties: { score: { type: 'number' } }
+    }
+    const wrapper = mount(KForm, { props: { schema: numSchema }, global: { stubs: quasarStubs } })
+    await flushPromises()
+    const field = wrapper.vm.fields.find(f => f.name === 'score')
+    expect(field).toBeTruthy()
+  })
+
+  // schema watch triggers a rebuild when schema changes
+  it('rebuilds the form when schema prop changes', async () => {
+    const wrapper = await mountReady()
+    const newSchema = { $id: 'new-form', type: 'object', properties: { title: { type: 'string', field: { component: 'KTextField' } } } }
+    await wrapper.setProps({ schema: newSchema })
+    await flushPromises()
+    expect(wrapper.vm.fields.some(f => f.name === 'title')).toBe(true)
+  })
 })

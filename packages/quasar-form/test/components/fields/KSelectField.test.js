@@ -103,4 +103,48 @@ describe('KSelectField', () => {
     const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
     expect(wrapper.vm.isEmpty()).toBe(true)
   })
+
+  it('isEmpty returns true for multiselect when model is empty array', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ multiselect: true, field: { options } }), global: { stubs } })
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('clear resets multiselect model to []', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ multiselect: true, field: { options } }), global: { stubs } })
+    wrapper.vm.fill(['a', 'b'])
+    wrapper.vm.clear()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('hasChips returns false by default', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
+    expect(wrapper.vm.hasChips()).toBe(false)
+  })
+
+  it('hasChips returns true when field.chips is set', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options, chips: true } }), global: { stubs } })
+    expect(wrapper.vm.hasChips()).toBe(true)
+  })
+
+  it('getId falls back to option.label when value is a complex object', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
+    const id = wrapper.vm.getId({ value: { nested: true }, label: 'My Complex Option' })
+    expect(id).toBe('my-complex-option')
+  })
+
+  it('getId uses field.valueField to extract id from complex object', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options, valueField: 'code' } }), global: { stubs } })
+    const id = wrapper.vm.getId({ value: { code: 'opt-1', label: 'Option 1' }, label: 'Option 1' })
+    expect(id).toBe('opt-1')
+  })
+
+  it('selectedClass returns default text-weight-regular', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
+    expect(wrapper.vm.selectedClass()).toBe('text-weight-regular')
+  })
+
+  it('selectedClass returns field.selectedClass when set', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options, selectedClass: 'text-bold' } }), global: { stubs } })
+    expect(wrapper.vm.selectedClass()).toBe('text-bold')
+  })
 })

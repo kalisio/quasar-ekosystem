@@ -79,20 +79,86 @@ describe('KItemField', () => {
     expect(wrapper.vm.options[0].name).toBe('Bob')
   })
 
-  /* it('emptyModel returns null for single-select', () => { ... }) */
-  /* it('emptyModel returns [] for multiselect', () => { ... }) */
-  /* it('fill sets the model value', () => { ... }) */
-  /* it('clear resets model to null', () => { ... }) */
-  /* it('onSearch aborts when pattern is too short', () => { ... }) */
-  /* it('invalidate sets hasError to true', () => { ... }) */
-  /* it('apply writes the model value to a target object', () => { ... }) */
-  /* it('getLabel falls back to name when no service field defined', () => { ... }) */
-  /* it('getIcon extracts icon.name from item', () => { ... }) */
-  /* it('getIcon falls back to flat icon string', () => { ... }) */
-  /* it('getIcon returns empty string when no icon', () => { ... }) */
-  /* it('onSelected with null value clears the model', () => { ... }) */
-  /* it('onSelected with a value syncs model from items', () => { ... }) */
-  /* it('getDescription uses the service description property', () => { ... }) */
-  /* it('getDescription falls back to description field when not configured', () => { ... }) */
-  /* it('getId returns kebab-case from the label', () => { ... }) */
+  it('emptyModel returns null for single-select', () => {
+    const wrapper = mount(KItemField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.emptyModel()).toBeNull()
+  })
+
+  it('emptyModel returns [] for multiselect', () => {
+    const wrapper = mount(KItemField, { props: makeProps({ multiselect: true }), global: { stubs } })
+    expect(wrapper.vm.emptyModel()).toEqual([])
+  })
+
+  it('isEmpty returns true when model is null', () => {
+    const wrapper = mount(KItemField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('fill sets the model value', () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [{ service: 'users', field: 'name' }] }), global: { stubs } })
+    wrapper.vm.fill({ name: 'Alice', service: 'users' })
+    expect(wrapper.vm.value()).toEqual({ name: 'Alice', service: 'users' })
+  })
+
+  it('clear resets model to null', () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [{ service: 'users', field: 'name' }] }), global: { stubs } })
+    wrapper.vm.fill({ name: 'Alice', service: 'users' })
+    wrapper.vm.clear()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('getId returns kebab-case from the item label', () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [{ service: 'users', field: 'name' }] }), global: { stubs } })
+    const id = wrapper.vm.getId({ name: 'Alice Smith', service: 'users' })
+    expect(id).toBe('alice-smith')
+  })
+
+  it('getDescription uses the service description field', () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [{ service: 'users', field: 'name', description: 'bio' }] }), global: { stubs } })
+    expect(wrapper.vm.getDescription({ bio: 'Developer', service: 'users' })).toBe('Developer')
+  })
+
+  it('getDescription falls back to description property when not configured', () => {
+    const wrapper = mount(KItemField, { props: makeProps({ services: [{ service: 'users', field: 'name' }] }), global: { stubs } })
+    expect(wrapper.vm.getDescription({ description: 'Fallback', service: 'users' })).toBe('Fallback')
+  })
+
+  it('getIcon extracts icon.name from item', () => {
+    const wrapper = mount(KItemField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.getIcon({ icon: { name: 'las la-user' } })).toBe('las la-user')
+  })
+
+  it('getIcon falls back to flat icon string', () => {
+    const wrapper = mount(KItemField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.getIcon({ icon: 'las la-star' })).toBe('las la-star')
+  })
+
+  it('getIcon returns empty string when no icon', () => {
+    const wrapper = mount(KItemField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.getIcon({})).toBe('')
+  })
+
+  it('onSearch aborts when pattern is less than 2 characters', async () => {
+    const mockSearch = vi.fn()
+    const wrapper = mount(KItemField, { props: makeProps(), global: { stubs, provide: { search: mockSearch } } })
+    const abort = vi.fn()
+    await wrapper.vm.onSearch('a', vi.fn(), abort)
+    expect(abort).toHaveBeenCalled()
+    expect(mockSearch).not.toHaveBeenCalled()
+  })
+
+  it('onSelected with null value clears the model', async () => {
+    const wrapper = mount(KItemField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.items = { name: 'Alice' }
+    await wrapper.vm.onSelected(null)
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('apply writes model value to a target object', () => {
+    const wrapper = mount(KItemField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill({ name: 'Alice' })
+    const obj = {}
+    wrapper.vm.apply(obj, 'test')
+    expect(obj.test).toEqual({ name: 'Alice' })
+  })
 })

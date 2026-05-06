@@ -52,30 +52,58 @@ describe('KColorField', () => {
     expect(wrapper.vm.picker).toBe(true)
   })
 
-  /*
-  // readOnly also shows the swatch (same div, no picker).
-  it('renders a colored div in readOnly mode', () => {
-    const wrapper = mount(KColorField, { props: { ...makeProps(), readOnly: true, values: { test: '#ff0000' } }, global: { stubs } })
-    expect(wrapper.find('.k-color-field').exists()).toBe(true)
-  }) */
+  it('isEmpty returns true when model is empty', () => {
+    const wrapper = mount(KColorField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
 
-  /* it('initializes model to empty string when no default', () => { ... }) */
-  /* it('initializes model to properties.default when defined', () => { ... }) */
-  /* it('fill sets the model to a hex color', () => { ... }) */
-  /* it('clear resets model to empty string', () => { ... }) */
-  /* it('clear resets model to properties.default when defined', () => { ... }) */
-  /* it('picker state starts as false', () => { ... }) */
-  /* it('isClearable defaults to true', () => { ... }) */
-  /* it('isClearable can be disabled via properties.field.clearable', () => { ... }) */
-  /* it('invalidate sets hasError to true', () => { ... }) */
-  /* it('validate clears the error', () => { ... }) */
-  /* it('onChanged emits field-changed', () => { ... }) */
-  /* it('values prop initializes the model', () => { ... }) */
-  /* it('values prop change updates the model reactively', () => { ... }) */
-  /* it('field.disabled disables the field', () => { ... }) */
-  /* it('apply writes the model value to a target object', () => { ... }) */
-  /* it('onReferenceCreated with null ref does nothing (no throw)', () => { ... }) */
-  /* it('isEmpty returns true when model is empty string', () => { ... }) */
-  /* it('isEmpty returns false when model has a color', () => { ... }) */
-  /* it('emptyModel returns empty string', () => { ... }) */
+  it('isEmpty returns false after fill', () => {
+    const wrapper = mount(KColorField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill('#abc123')
+    expect(wrapper.vm.isEmpty()).toBe(false)
+  })
+
+  it('clear resets model to empty string', () => {
+    const wrapper = mount(KColorField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill('#ff0000')
+    wrapper.vm.clear()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('clear resets to properties.default when set', () => {
+    const wrapper = mount(KColorField, { props: makeProps({ default: '#000000' }), global: { stubs } })
+    wrapper.vm.fill('#ff0000')
+    wrapper.vm.clear()
+    expect(wrapper.vm.value()).toBe('#000000')
+  })
+
+  it('isClearable defaults to true', () => {
+    const wrapper = mount(KColorField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.isClearable()).toBe(true)
+  })
+
+  it('isClearable respects field.clearable', () => {
+    const wrapper = mount(KColorField, { props: makeProps({ field: { clearable: false } }), global: { stubs } })
+    expect(wrapper.vm.isClearable()).toBe(false)
+  })
+
+  it('onReferenceCreated with null ref does not throw', () => {
+    const wrapper = mount(KColorField, { props: makeProps(), global: { stubs } })
+    expect(() => wrapper.vm.onReferenceCreated(null)).not.toThrow()
+  })
+
+  it('values prop change updates model reactively', async () => {
+    const wrapper = mount(KColorField, { props: makeProps(), global: { stubs } })
+    await wrapper.setProps({ values: { test: '#336699' } })
+    await nextTick()
+    expect(wrapper.vm.value()).toBe('#336699')
+  })
+
+  it('apply writes model value to a target object', () => {
+    const wrapper = mount(KColorField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill('#00ff00')
+    const obj = {}
+    wrapper.vm.apply(obj, 'test')
+    expect(obj.test).toBe('#00ff00')
+  })
 })
