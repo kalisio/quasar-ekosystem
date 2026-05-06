@@ -14,9 +14,20 @@ const externalsPlugin = {
   resolveId (id) {
     if (id === 'loglevel' || id === 'config' || id === 'vue-router' || id === 'quasar') return PREFIX + id
     if (id.endsWith('KIcon.vue')) return PREFIX + 'KIcon'
+    if (id.includes('moment-timezone')) return PREFIX + 'moment-timezone'
   },
   load (id) {
     if (id === PREFIX + 'KIcon') return 'import { h } from "vue"; export default { render: () => h("span") }'
+    if (id === PREFIX + 'moment-timezone') {
+      return `
+      import moment from 'moment'
+      const tz = function (datetime) { return moment(datetime) }
+      tz.guess = () => 'UTC'
+      tz.zone = () => null
+      moment.tz = tz
+      export default moment
+    `
+    }
     if (id === PREFIX + 'loglevel') return 'export default { debug: () => {}, info: () => {}, warn: () => {}, error: () => {} }'
     if (id === PREFIX + 'config') return 'export default { publisherContact: "test@example.com", appName: "TestApp", appSlug: "test-app", domain: "localhost", flavor: "test" }'
     if (id === PREFIX + 'vue-router') return 'export const useRoute = () => ({ params: {}, query: {}, name: null }); export const useRouter = () => ({ push: () => {}, replace: () => {} })'
