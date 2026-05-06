@@ -70,19 +70,71 @@ describe('KDateTimeRangeField', () => {
     expect(wrapper.vm.value()).toEqual(range)
   })
 
-  /* it('renders formatted text in readOnly mode', () => { ... }) */
-  /* it('emptyModel returns object with start and end keys', () => { ... }) */
-  /* it('isEmpty returns true when both start and end are empty', () => { ... }) */
-  /* it('isEmpty returns false when start is set', () => { ... }) */
-  /* it('endValue reads the end field from model', () => { ... }) */
-  /* it('startValue reads custom field name from field.start', () => { ... }) */
-  /* it('formattedDateTimeRange returns empty string when model is null', () => { ... }) */
-  /* it('onEndChanged updates end in model and emits field-changed', () => { ... }) */
-  /* it('fill sets model', () => { ... }) */
-  /* it('clear resets model to emptyModel', () => { ... }) */
-  /* it('values prop initializes model', () => { ... }) */
-  /* it('invalidate sets hasError', () => { ... }) */
-  /* it('validate clears error', () => { ... }) */
-  /* it('apply writes model to object', () => { ... }) */
-  /* it('field.disabled disables the field', () => { ... }) */
+  it('isEmpty returns true when both start and end are empty', () => {
+    const wrapper = mount(KDateTimeRangeField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('isEmpty returns false when start is set', () => {
+    const wrapper = mount(KDateTimeRangeField, {
+      props: { ...makeProps(), values: { test: { start: '2024-01-01T00:00', end: '' } } },
+      global: { stubs }
+    })
+    expect(wrapper.vm.isEmpty()).toBe(false)
+  })
+
+  it('endValue reads the end field from model', () => {
+    const wrapper = mount(KDateTimeRangeField, {
+      props: { ...makeProps(), values: { test: { start: '', end: '2024-12-31T00:00' } } },
+      global: { stubs }
+    })
+    expect(wrapper.vm.endValue).toBe('2024-12-31T00:00')
+  })
+
+  it('formattedDateTimeRange returns empty string when both values are absent', () => {
+    const wrapper = mount(KDateTimeRangeField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.formattedDateTimeRange).toBe('')
+  })
+
+  it('onEndChanged updates end in model and emits field-changed', async () => {
+    const wrapper = mount(KDateTimeRangeField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill({ start: '2024-01-01T00:00', end: '' })
+    await wrapper.vm.onEndChanged({ target: { value: '2024-12-31T23:59' } })
+    expect(wrapper.vm.endValue).toBe('2024-12-31T23:59')
+    expect(wrapper.emitted('field-changed')).toBeTruthy()
+  })
+
+  it('maxStart is constrained by endValue when end is set', () => {
+    const wrapper = mount(KDateTimeRangeField, {
+      props: { ...makeProps(), values: { test: { start: '', end: '2024-06-30T00:00' } } },
+      global: { stubs }
+    })
+    expect(wrapper.vm.maxStart).toBe('2024-06-30T00:00')
+  })
+
+  it('minEnd is constrained by startValue when start is set', () => {
+    const wrapper = mount(KDateTimeRangeField, {
+      props: { ...makeProps(), values: { test: { start: '2024-01-15T00:00', end: '' } } },
+      global: { stubs }
+    })
+    expect(wrapper.vm.minEnd).toBe('2024-01-15T00:00')
+  })
+
+  it('apply writes model to a target object', () => {
+    const range = { start: '2024-01-01T00:00', end: '2024-01-31T00:00' }
+    const wrapper = mount(KDateTimeRangeField, {
+      props: { ...makeProps(), values: { test: range } },
+      global: { stubs }
+    })
+    const obj = {}
+    wrapper.vm.apply(obj, 'test')
+    expect(obj.test).toEqual(range)
+  })
+
+  it('clear resets model to empty start/end', () => {
+    const wrapper = mount(KDateTimeRangeField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill({ start: '2024-01-01T00:00', end: '2024-01-31T00:00' })
+    wrapper.vm.clear()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
 })

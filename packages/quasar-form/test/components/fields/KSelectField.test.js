@@ -147,4 +147,29 @@ describe('KSelectField', () => {
     const wrapper = mount(KSelectField, { props: makeProps({ field: { options, selectedClass: 'text-bold' } }), global: { stubs } })
     expect(wrapper.vm.selectedClass()).toBe('text-bold')
   })
+
+  it('chips computed delegates to hasChips()', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
+    expect(wrapper.vm.chips).toBe(false)
+  })
+
+  it('hasNoOption returns false when field.noOption is not set', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
+    expect(wrapper.vm.hasNoOption).toBe(false)
+  })
+
+  it('hasNoOption returns true when field.noOption is set', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options, noOption: 'No results' } }), global: { stubs } })
+    expect(wrapper.vm.hasNoOption).toBe(true)
+  })
+
+  it('noOption returns null when field.noOption is not set', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options } }), global: { stubs } })
+    expect(wrapper.vm.noOption).toBeNull()
+  })
+
+  it('noOption returns configured value', () => {
+    const wrapper = mount(KSelectField, { props: makeProps({ field: { options, noOption: 'No matches' } }), global: { stubs } })
+    expect(wrapper.vm.noOption).toBe('No matches')
+  })
 })

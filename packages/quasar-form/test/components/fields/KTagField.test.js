@@ -128,4 +128,18 @@ describe('KTagField', () => {
     wrapper.vm.apply(obj, 'test')
     expect(obj.test).toEqual(tag)
   })
+
+  it('onSearch in multiselect mode excludes already-selected tags', async () => {
+    const mockSearch = vi.fn().mockResolvedValue([
+      { name: 'vue', color: 'green' },
+      { name: 'react', color: 'blue' }
+    ])
+    const wrapper = mount(KTagField, {
+      props: makeProps({ multiselect: true, services: [{ service: 'tags' }] }),
+      global: { stubs, provide: { search: mockSearch } }
+    })
+    wrapper.vm.items = [{ name: 'vue', color: 'green' }]
+    await wrapper.vm.onSearch('react', vi.fn(fn => fn()), vi.fn())
+    expect(wrapper.vm.options.every(o => o.name !== 'vue')).toBe(true)
+  })
 })

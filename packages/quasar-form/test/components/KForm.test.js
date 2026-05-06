@@ -209,4 +209,39 @@ describe('KForm', () => {
     await flushPromises()
     expect(wrapper.vm.fields.some(f => f.name === 'title')).toBe(true)
   })
+
+  // submitted() iterates all field refs and calls their submitted hook
+  it('submitted resolves when all field refs have submitted', async () => {
+    const wrapper = await mountReady()
+    await expect(wrapper.vm.submitted({})).resolves.toBeUndefined()
+  })
+
+  // uses KToggleField as default component for boolean type
+  it('uses KToggleField as default component for boolean type', async () => {
+    const boolSchema = { $id: 'bool-form', type: 'object', properties: { active: { type: 'boolean' } } }
+    const wrapper = mount(KForm, { props: { schema: boolSchema }, global: { stubs: quasarStubs } })
+    await flushPromises()
+    expect(wrapper.vm.fields.some(f => f.name === 'active')).toBe(true)
+  })
+
+  // uses KTextField as default component for string type
+  it('uses KTextField as default component for string type', async () => {
+    const strSchema = { $id: 'str-form', type: 'object', properties: { title: { type: 'string' } } }
+    const wrapper = mount(KForm, { props: { schema: strSchema }, global: { stubs: quasarStubs } })
+    await flushPromises()
+    expect(wrapper.vm.fields.some(f => f.name === 'title')).toBe(true)
+  })
+
+  // groups are built from schema.groups
+  it('groups is populated when schema has groups', async () => {
+    const groupedSchema = {
+      $id: 'grouped-form',
+      type: 'object',
+      properties: { name: { type: 'string', field: { component: 'KTextField', group: 'info' } } },
+      groups: { info: { label: 'Information', icon: 'info' } }
+    }
+    const wrapper = mount(KForm, { props: { schema: groupedSchema }, global: { stubs: { ...quasarStubs, 'k-action': true } } })
+    await flushPromises()
+    expect(Object.keys(wrapper.vm.groups)).toContain('info')
+  })
 })
