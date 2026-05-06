@@ -59,12 +59,24 @@ describe('KUnitField', () => {
     expect(wrapper.vm.options[0].value).toBe('meter')
   })
 
-  /* it('onChanged emits field-changed', () => { ... }) */
-  /* it('fill sets the model value', () => { ... }) */
-  /* it('invalidate sets hasError to true', () => { ... }) */
-  /* it('field.disabled disables the field', () => { ... }) */
-  /* it('clear resets model to null', () => { ... }) */
-  /* it('values prop initializes the model', () => { ... }) */
-  /* it('values prop change updates the model reactively', () => { ... }) */
-  /* it('apply writes the model value to a target object', () => { ... }) */
+  it('fill sets and value() reads the model', () => {
+    const wrapper = mount(KUnitField, { props: makeProps({ field: { options: unitOptions } }), global: { stubs } })
+    wrapper.vm.fill('km')
+    expect(wrapper.vm.value()).toBe('km')
+  })
+
+  it('clear resets model to null', () => {
+    const wrapper = mount(KUnitField, { props: makeProps({ field: { options: unitOptions } }), global: { stubs } })
+    wrapper.vm.fill('m')
+    wrapper.vm.clear()
+    expect(wrapper.vm.isEmpty()).toBe(true)
+  })
+
+  it('apply writes the model value to a target object', () => {
+    const wrapper = mount(KUnitField, { props: makeProps({ field: { options: unitOptions } }), global: { stubs } })
+    wrapper.vm.fill('km')
+    const obj = {}
+    wrapper.vm.apply(obj, 'test')
+    expect(obj.test).toBe('km')
+  })
 })

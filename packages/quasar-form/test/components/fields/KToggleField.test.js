@@ -54,19 +54,21 @@ describe('KToggleField', () => {
     expect(wrapper.vm.value()).toBe(true)
   })
 
-  /*
-  // Clear should reset to false, not null.
   it('clear resets model to false', () => {
     const wrapper = mount(KToggleField, { props: makeProps(), global: { stubs } })
     wrapper.vm.fill(true)
     wrapper.vm.clear()
     expect(wrapper.vm.value()).toBe(false)
-  }) */
+  })
 
-  /* it('renders a q-chip in readOnly mode', () => { ... }) */
-  /* it('onChanged emits field-changed', () => { ... }) */
-  /* it('clear uses default value from properties', () => { ... }) */
-  /* it('invalidate sets hasError to true', () => { ... }) */
-  /* it('validate clears the error', () => { ... }) */
-  /* it('apply writes the model value to a target object', () => { ... }) */
+  it('clear uses properties.default when defined', () => {
+    const wrapper = mount(KToggleField, { props: makeProps({ default: true }), global: { stubs } })
+    wrapper.vm.clear()
+    expect(wrapper.vm.value()).toBe(true)
+  })
+
+  it('emptyModel method returns false', () => {
+    const wrapper = mount(KToggleField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.emptyModel()).toBe(false)
+  })
 })

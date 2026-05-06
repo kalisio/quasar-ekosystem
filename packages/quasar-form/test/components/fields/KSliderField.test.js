@@ -56,18 +56,35 @@ describe('KSliderField', () => {
     expect(wrapper.emitted('field-changed').at(-1)).toEqual(['test', 50])
   })
 
-  /* it('initializes model to custom min when defined', () => { ... }) */
-  /* it('fill sets the model value', () => { ... }) */
-  /* it('clear resets model to min', () => { ... }) */
-  /* it('clear resets model to properties.default when defined', () => { ... }) */
-  /* it('invalidate sets hasError to true', () => { ... }) */
-  /* it('validate clears the error', () => { ... }) */
-  /* it('onChanged emits field-changed', () => { ... }) */
-  /* it('values prop initializes the model', () => { ... }) */
-  /* it('values prop change updates the model reactively', () => { ... }) */
-  /* it('field.disabled disables the field', () => { ... }) */
-  /* it('apply writes the model value to a target object', () => { ... }) */
-  /* it('isEmpty returns false (slider always has a value)', () => { ... }) */
-  /* it('markers defaults to false', () => { ... }) */
-  /* it('markers is read from properties.field.markers', () => { ... }) */
+  it('isEmpty returns true only when model is null', () => {
+    const wrapper = mount(KSliderField, { props: makeProps(), global: { stubs } })
+    wrapper.vm.fill(null)
+    expect(wrapper.vm.isEmpty()).toBe(true)
+    wrapper.vm.fill(0)
+    expect(wrapper.vm.isEmpty()).toBe(false)
+  })
+
+  it('clear resets model to field.min when no default', () => {
+    const wrapper = mount(KSliderField, { props: makeProps({ field: { min: 10 } }), global: { stubs } })
+    wrapper.vm.fill(80)
+    wrapper.vm.clear()
+    expect(wrapper.vm.value()).toBe(10)
+  })
+
+  it('clear resets model to properties.default when defined', () => {
+    const wrapper = mount(KSliderField, { props: makeProps({ default: 42, field: { min: 0 } }), global: { stubs } })
+    wrapper.vm.fill(99)
+    wrapper.vm.clear()
+    expect(wrapper.vm.value()).toBe(42)
+  })
+
+  it('markers defaults to false', () => {
+    const wrapper = mount(KSliderField, { props: makeProps(), global: { stubs } })
+    expect(wrapper.vm.markers).toBe(false)
+  })
+
+  it('markers is read from properties.field.markers', () => {
+    const wrapper = mount(KSliderField, { props: makeProps({ field: { markers: true } }), global: { stubs } })
+    expect(wrapper.vm.markers).toBe(true)
+  })
 })
