@@ -27,7 +27,9 @@
 import _ from 'lodash'
 import { computed } from 'vue'
 import { uid } from 'quasar'
-import { filterContent, getBoundValue, loadComponent } from '../utils/index.js'
+import { content } from '../utilities/content.js'
+const { filter, resolve } = content
+import { load } from '../utils/index.js'
 
 // Props
 const props = defineProps({
@@ -66,14 +68,14 @@ const filteredComponents = computed(() => {
   let components = props.content
   if (!Array.isArray(components)) components = _.get(components, props.mode, [])
   // Filter the components
-  if (!_.isEmpty(props.filter)) components = filterContent(components, props.filter)
+  if (!_.isEmpty(props.filter)) components = filter(components, props.filter)
   // Configure the components
   for (const component of components) {
     component.name = _.get(component, 'component', 'action/KAction')
     component.uid = uid()
     component.isHidden = getVisibility(component, 'hidden', false)
     component.isVisible = getVisibility(component, 'visible', true)
-    if (!_.startsWith(component.name, 'Q')) component.instance = loadComponent(component.name)
+    if (!_.startsWith(component.name, 'Q') && !_.startsWith(component.name, 'q-')) component.instance = load(component.name)
     else component.instance = component.name
   }
   return components
@@ -86,7 +88,7 @@ function getVisibility (component, property, defaultValue) {
   if (typeof isVisible === 'function') {
     isVisible = isVisible(props.context)
   } else {
-    isVisible = getBoundValue(isVisible, props.context)
+    isVisible = resolve(isVisible, props.context)
   }
   return isVisible
 }

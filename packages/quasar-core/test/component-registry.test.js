@@ -3,7 +3,7 @@ import { ComponentRegistry } from '../src/index.js'
 
 describe('registry', () => {
   it('loads a core component', () => {
-    expect(ComponentRegistry.load('KAvatar')).toBeDefined()
+    expect(ComponentRegistry.load('KContent')).toBeDefined()
   })
 
   it('throws for an unknown component', () => {
@@ -16,7 +16,7 @@ describe('registry', () => {
   })
 
   it('load accepts a path-style name and extracts the component name', () => {
-    expect(ComponentRegistry.load('../components/KAvatar.vue')).toBeDefined()
+    expect(ComponentRegistry.load('../components/KContent.vue')).toBeDefined()
   })
 
   it('load returns the same reference for a non-lazy component', () => {

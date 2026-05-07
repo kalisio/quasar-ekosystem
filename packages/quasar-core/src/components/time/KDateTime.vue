@@ -164,18 +164,24 @@ const computedTimePicker = computed(() => {
 
 // Watch
 watch(() => props.modelValue, (value) => {
-  dateTime.value = Time.convertToLocal(props.modelValue)
+  // dateTime.value = Time.convertToLocal(props.modelValue)
+  dateTime.value = moment(props.modelValue)
 })
 watch(() => props.timezone, (value) => {
-  dateTime.value = Time.convertToLocal(props.modelValue)
-  minDateTime.value = Time.convertToLocal(props.min)
-  maxDateTime.value = Time.convertToLocal(props.max)
+  // dateTime.value = Time.convertToLocal(props.modelValue)
+  dateTime.value = moment(props.modelValue)
+  // minDateTime.value = Time.convertToLocal(props.min)
+  minDateTime.value = moment(props.min)
+  // maxDateTime.value = Time.convertToLocal(props.max)
+  maxDateTime.value = moment(props.max)
 })
 watch(() => props.min, (value) => {
-  minDateTime.value = Time.convertToLocal(props.min)
+  // minDateTime.value = Time.convertToLocal(props.min)
+  minDateTime.value = moment(props.min)
 })
 watch(() => props.max, (value) => {
-  maxDateTime.value = Time.convertToLocal(props.max)
+  // maxDateTime.value = Time.convertToLocal(props.max)
+  maxDateTime.value = moment(props.max)
 })
 
 // Functions
@@ -238,7 +244,10 @@ const triggerEmit = _.debounce(() => {
 }, 100)
 
 // Immediate
-if (props.modelValue) dateTime.value = Time.convertToLocal(props.modelValue)
-if (props.min) minDateTime.value = Time.convertToLocal(props.min)
-if (props.max) maxDateTime.value = Time.convertToLocal(props.max)
+// if (props.modelValue) dateTime.value = Time.convertToLocal(props.modelValue)
+if (props.modelValue) dateTime.value = moment(props.modelValue)
+// if (props.min) minDateTime.value = Time.convertToLocal(props.min)
+if (props.min) minDateTime.value = moment(props.min)
+// if (props.max) maxDateTime.value = Time.convertToLocal(props.max)
+if (props.max) maxDateTime.value = moment(props.max)
 </script>

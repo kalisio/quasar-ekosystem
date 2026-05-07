@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeAll } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import KTime from '../../../src/components/time/KTime.vue'
-import { Time } from '../../../src/time.js'
+// import { Time } from '../../../src/time.js'
 
-beforeAll(() => { Time.initialize() })
+// beforeAll(() => { Time.initialize() })
 
 describe('KTime', () => {
   it('mounts without errors', () => {

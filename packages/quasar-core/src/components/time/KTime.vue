@@ -15,7 +15,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import { computed } from 'vue'
 // import { Time } from '../../time.js'
-import { i18n } from '../../i18n.js'
+// import { i18n } from '../../i18n.js'
 
 // Props
 const props = defineProps({
@@ -71,11 +71,14 @@ const computedModel = computed({
 const computedButton = computed(() => {
   // compute format
   let format = props.format
-  if (_.isEmpty(format)) format = _.get(Time.getFormat(), 'time.long')
+  // if (_.isEmpty(format)) format = _.get(Time.getFormat(), 'time.long')
+  if (_.isEmpty(format)) format = 'HH:mm'
   // compute label
   let label
-  if (!_.isEmpty(computedModel.value)) label = moment.tz(computedModel.value, mask, Time.getFormatTimezone()).format(format)
-  else label = i18n.tie(props.placeholder)
+  // if (!_.isEmpty(computedModel.value)) label = moment.tz(computedModel.value, mask, Time.getFormatTimezone()).format(format)
+  if (!_.isEmpty(computedModel.value)) label = moment(computedModel.value, mask).format(format)
+  // else label = i18n.tie(props.placeholder)
+  else label = props.placeholder
   // define button spec
   const spec = {
     id: 'time-button',

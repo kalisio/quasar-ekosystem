@@ -22,6 +22,7 @@ vi.mock('quasar', () => {
     uid: () => 'test-uid',
     openURL: vi.fn(),
     getCssVar: vi.fn(() => '#1976D2'),
+    colors: { getBrand: vi.fn(() => null), setBrand: vi.fn(), getPaletteColor: vi.fn(() => null) },
     useDialogPluginComponent,
     Notify: { create: vi.fn() },
     EventBus

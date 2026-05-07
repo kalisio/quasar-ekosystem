@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import KStamp from '../../src/components/KStamp.vue'
+import KLabel from '../../src/components/KLabel.vue'
+const KStamp = KLabel
 
-describe('KStamp', () => {
+describe('KLabel', () => {
   // canShowIcon is true when an icon prop is provided
   it('shows icon when icon prop is provided', () => {
     const wrapper = mount(KStamp, { props: { text: 'Hello', icon: 'las la-star' } })

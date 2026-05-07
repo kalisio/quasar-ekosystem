@@ -2,7 +2,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest'
 import { nextTick } from 'vue'
 import { mount } from '@vue/test-utils'
 import { openURL } from 'quasar'
-import KAction from '../../../src/components/action/KAction.vue'
+import KAction from '../../src/components/KAction.vue'
 
 afterEach(() => vi.restoreAllMocks())
 

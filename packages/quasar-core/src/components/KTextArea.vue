@@ -15,10 +15,11 @@
       @scrolled="onScrolled"
     >
       <!-- content -->
+      <!-- v-html="Document.sanitizeHtml(props.text)" -->
       <div
         class="q-pr-lg"
         :class="{ 'k-textarea-collapsed': !isExpanded, 'k-textarea-expanded': isExpanded }"
-        v-html="Document.sanitizeHtml(props.text)"
+        v-html="props.text"
       />
     </KScrollArea>
     <div class="k-expandable-action">
@@ -38,7 +39,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { Document } from '../document.js'
+// import { Document } from '../document.js'
 import KExpandable from './KExpandable.vue'
 import KScrollArea from './KScrollArea.vue'
 

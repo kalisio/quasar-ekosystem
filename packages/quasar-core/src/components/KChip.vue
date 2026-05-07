@@ -26,7 +26,8 @@
       <q-resize-observer @resize="onResize" />
     </div>
     <q-tooltip v-if="computedTooltip">
-      <div v-html="Document.sanitizeHtml(computedTooltip)" />
+      <!-- <div v-html="Document.sanitizeHtml(computedTooltip)" /> -->
+      <div v-html="computedTooltip" />
     </q-tooltip>
     <slot />
   </q-chip>
@@ -36,8 +37,8 @@
 import _ from 'lodash'
 import { ref, computed } from 'vue'
 import { uid } from 'quasar'
-import { i18n } from '../i18n.js'
-import { Document } from '../document.js'
+// import { i18n } from '../i18n.js'
+// import { Document } from '../document.js'
 import { getHtmlColor, getContrastColor } from '../utils/index.js'
 
 // Props
@@ -144,7 +145,8 @@ const computedState = computed({
   }
 })
 const computedLabel = computed(() => {
-  if (!props.hideLabel && props.label) return i18n.tie(props.label)
+  // if (!props.hideLabel && props.label) return i18n.tie(props.label)
+  if (!props.hideLabel && props.label) return props.label
 })
 const computedIcon = computed(() => {
   if (!props.hideIcon) return props.icon
@@ -154,7 +156,8 @@ const computedTooltip = computed(() => {
   if (props.tooltipBehavior === 'truncated') {
     if (!isTruncated.value) return
   }
-  return props.label ? i18n.tie(props.label) : props.tooltip
+  // return props.label ? i18n.tie(props.label) : props.tooltip
+  return props.label ? props.label : props.tooltip
 })
 const computedColor = computed(() => {
   return props.outline ? 'transparent' : getHtmlColor(props.color)

@@ -1,6 +1,8 @@
 import { ref } from 'vue'
+import { ComponentRegistry } from '../component-registry.js'
 export * from './utils.actions.js'
-export { load, register } from '../component-registry.js'
+export const load = (name) => ComponentRegistry.load(name)
+export const register = (components) => ComponentRegistry.register(components)
 
 export function getHtmlColor (color) { return color }
 export function getContrastColor () { return 'white' }
