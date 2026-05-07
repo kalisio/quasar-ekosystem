@@ -43,9 +43,14 @@
   "homepage": "https://github.com/kalisio/quasar-ekosystem/tree/main/packages/quasar-core",
   "dependencies": {
     "@kalisio/common-core": "catalog:",
+    "@kalisio/common-graphics": "catalog:",
     "@logtape/logtape": "catalog:",
+    "chroma-js": "catalog:",
     "lodash": "catalog:",
-    "moment": "catalog:"
+    "moment": "catalog:",
+    "quasar": "catalog:",
+    "sift": "catalog:",
+    "vue": "catalog:"
   },
   "devDependencies": {
     "@vue/test-utils": "catalog:",

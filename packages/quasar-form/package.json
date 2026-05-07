@@ -43,17 +43,16 @@
   "homepage": "https://github.com/kalisio/quasar-ekosystem/tree/main/packages/check#readme",
   "dependencies": {
     "@kalisio/quasar-core": "workspace:*",
+    "@logtape/logtape": "catalog:",
     "ajv": "catalog:",
     "ajv-formats": "catalog:",
     "ajv-keywords": "catalog:",
     "lodash": "catalog:",
-    "@logtape/logtape": "catalog:"
-  },
-  "devDependencies": {
-    "@kalisio/quasar-moment": "workspace:*",
-    "@vue/test-utils": "catalog:",
-    "happy-dom": "catalog:",
     "vue": "catalog:",
     "vue-i18n": "catalog:"
+  },
+  "devDependencies": {
+    "@vue/test-utils": "catalog:",
+    "happy-dom": "catalog:"
   }
 }

@@ -12,6 +12,9 @@ catalogs:
     '@kalisio/common-core':
       specifier: ~0.3.0
       version: 0.3.0
+    '@kalisio/common-graphics':
+      specifier: ~0.3.0
+      version: 0.3.0
     '@logtape/logtape':
       specifier: ~0.7.0
       version: 0.7.2
@@ -33,6 +36,9 @@ catalogs:
     ajv-keywords:
       specifier: ~5.1.0
       version: 5.1.0
+    chroma-js:
+      specifier: ~3.2.0
+      version: 3.2.0
     cross-env:
       specifier: ~10.1.0
       version: 10.1.0
@@ -69,6 +75,9 @@ catalogs:
     rimraf:
       specifier: ~6.1.3
       version: 6.1.3
+    sift:
+      specifier: ~17.1.3
+      version: 17.1.3
     standard:
       specifier: ~17.1.2
       version: 17.1.2
@@ -190,16 +199,31 @@ importers:
     dependencies:
       '@kalisio/common-core':
         specifier: 'catalog:'
-        version: 0.3.0(moment@2.30.1)
+        version: 0.3.0(moment@2.30.1)(sift@17.1.3)
+      '@kalisio/common-graphics':
+        specifier: 'catalog:'
+        version: 0.3.0(moment@2.30.1)(sift@17.1.3)
       '@logtape/logtape':
         specifier: 'catalog:'
         version: 0.7.2
+      chroma-js:
+        specifier: 'catalog:'
+        version: 3.2.0
       lodash:
         specifier: 'catalog:'
         version: 4.18.1
       moment:
         specifier: 'catalog:'
         version: 2.30.1
+      quasar:
+        specifier: 'catalog:'
+        version: 2.18.7
+      sift:
+        specifier: 'catalog:'
+        version: 17.1.3
+      vue:
+        specifier: 'catalog:'
+        version: 3.5.31
     devDependencies:
       '@vue/test-utils':
         specifier: 'catalog:'
@@ -231,34 +255,12 @@ importers:
       lodash:
         specifier: 'catalog:'
         version: 4.18.1
-    devDependencies:
-      '@kalisio/quasar-moment':
-        specifier: workspace:*
-        version: link:../quasar-moment
-      '@vue/test-utils':
-        specifier: 'catalog:'
-        version: 2.4.6
-      happy-dom:
-        specifier: 'catalog:'
-        version: 20.9.0
       vue:
         specifier: 'catalog:'
         version: 3.5.31
       vue-i18n:
         specifier: 'catalog:'
         version: 11.3.0(vue@3.5.31)
-
-  packages/quasar-moment:
-    dependencies:
-      '@kalisio/quasar-core':
-        specifier: workspace:*
-        version: link:../quasar-core
-      lodash:
-        specifier: 'catalog:'
-        version: 4.18.1
-      moment:
-        specifier: 'catalog:'
-        version: 2.30.1
     devDependencies:
       '@vue/test-utils':
         specifier: 'catalog:'
@@ -266,9 +268,6 @@ importers:
       happy-dom:
         specifier: 'catalog:'
         version: 20.9.0
-      vue:
-        specifier: 'catalog:'
-        version: 3.5.31
 
 packages:
 
@@ -852,6 +851,9 @@ packages:
         optional: true
       sift:
         optional: true
+
+  '@kalisio/common-graphics@0.3.0':
+    resolution: {integrity: sha512-Rcw7DO2+LxSnbhOavy8WsQ6/oJ9k6xuWWw/J22aj596P9/NfkbQ2cE4PhL+06DYc5KE2tdTrjIUQv81Ahs5OMg==}
 
   '@logtape/logtape@0.7.2':
     resolution: {integrity: sha512-3iL71YEiJ8GM6HzeW4eCG2pS8/F9EX6tYfVVCp/oWhzYjQ5FY/QMesSPMtAYdAGG4Evac23ugOSXZJp592zg0A==}
@@ -1774,6 +1776,9 @@ packages:
   chokidar@4.0.3:
     resolution: {integrity: sha512-Qgzu8kfBvo+cA4962jnP1KkS6Dop5NS6g7R5LFYJr4b8Ub94PPQXUksCw9PvXoeXPRRddRNC5C1JQUR2SMGtnA==}
     engines: {node: '>= 14.16.0'}
+
+  chroma-js@3.2.0:
+    resolution: {integrity: sha512-os/OippSlX1RlWWr+QDPcGUZs0uoqr32urfxESG9U93lhUfbnlyckte84Q8P1UQY/qth983AS1JONKmLS4T0nw==}
 
   cli-cursor@5.0.0:
     resolution: {integrity: sha512-aCj4O5wKyszjMmDT4tZj93kxyydN/K5zPWSCe6/0AV/AA1pqe5ZBIw0a2ZfPQV7lL5/yb5HsUreJ6UFAF1tEQw==}
@@ -3492,6 +3497,9 @@ packages:
     resolution: {integrity: sha512-ZX99e6tRweoUXqR+VBrslhda51Nh5MTQwou5tnUDgbtyM0dBgmhEDtWGP/xbKn6hqfPRHujUNwz5fy/wbbhnpw==}
     engines: {node: '>= 0.4'}
 
+  sift@17.1.3:
+    resolution: {integrity: sha512-Rtlj66/b0ICeFzYTuNvX/EF1igRbbnGSvEyT79McoZa/DeGhMyC5pWKOEsZKnpkqtSeovd5FL/bjHWC3CIIvCQ==}
+
   siginfo@2.0.0:
     resolution: {integrity: sha512-ybx0WO1/8bSBLEWXZvEd7gMW3Sn3JFlW3TvX1nREbDLRNQNaeNN8WK0meBwPdAaOI7TtRRRJn/Es1zhrrCHu7g==}
 
@@ -4584,9 +4592,20 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@kalisio/common-core@0.3.0(moment@2.30.1)':
+  '@kalisio/common-core@0.3.0(moment@2.30.1)(sift@17.1.3)':
     optionalDependencies:
       moment: 2.30.1
+      sift: 17.1.3
+
+  '@kalisio/common-graphics@0.3.0(moment@2.30.1)(sift@17.1.3)':
+    dependencies:
+      '@kalisio/common-core': 0.3.0(moment@2.30.1)(sift@17.1.3)
+      '@logtape/logtape': 0.7.2
+    transitivePeerDependencies:
+      - lodash-es
+      - mathjs
+      - moment
+      - sift
 
   '@logtape/logtape@0.7.2': {}
 
@@ -5432,6 +5451,8 @@ snapshots:
   chokidar@4.0.3:
     dependencies:
       readdirp: 4.1.2
+
+  chroma-js@3.2.0: {}
 
   cli-cursor@5.0.0:
     dependencies:
@@ -7573,6 +7594,8 @@ snapshots:
       side-channel-list: 1.0.0
       side-channel-map: 1.0.1
       side-channel-weakmap: 1.0.2
+
+  sift@17.1.3: {}
 
   siginfo@2.0.0: {}
 
