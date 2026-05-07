@@ -56,5 +56,12 @@ export default mergeConfig(baseConfig, defineConfig({
     name: 'quasar-core',
     environment: 'happy-dom',
     setupFiles: ['./test/setup.js']
+  },
+  resolve: {
+    alias: {
+      '@kalisio/common-core/predicates': path.resolve(__dirname, 'node_modules/@kalisio/common-core/src/predicates'),
+      '@kalisio/common-core': path.resolve(__dirname, 'node_modules/@kalisio/common-core/src'),
+      '@kalisio/common-graphics': path.resolve(__dirname, 'node_modules/@kalisio/common-graphics/src')
+    }
   }
 }))

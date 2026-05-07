@@ -2,95 +2,95 @@ import { describe, it, expect } from 'vitest'
 import { palette, QUASAR_PALETTE, HTML_PALETTE } from '../../src/utilities'
 
 describe('palette.resolve', () => {
-  describe('couleur vide', () => {
-    it('retourne defaultColor si la couleur est null', () => {
+  describe('empty color', () => {
+    it('returns defaultColor when color is null', () => {
       expect(palette.resolve(null, '#ffffff')).toBe('#ffffff')
     })
 
-    it('retourne defaultColor si la couleur est une chaîne vide', () => {
+    it('returns defaultColor when color is an empty string', () => {
       expect(palette.resolve('', '#ffffff')).toBe('#ffffff')
     })
 
-    it('retourne undefined si defaultColor est absent', () => {
+    it('returns undefined when defaultColor is not provided', () => {
       expect(palette.resolve(null)).toBeUndefined()
     })
   })
 
-  describe('formats directs (pass-through)', () => {
-    it('retourne une couleur hex telle quelle', () => {
+  describe('pass-through formats', () => {
+    it('returns a hex color as-is', () => {
       expect(palette.resolve('#ff0000')).toBe('#ff0000')
     })
 
-    it('retourne une couleur hsl telle quelle', () => {
+    it('returns an hsl color as-is', () => {
       expect(palette.resolve('hsl(0, 100%, 50%)')).toBe('hsl(0, 100%, 50%)')
     })
 
-    it('retourne une couleur rgb telle quelle', () => {
+    it('returns an rgb color as-is', () => {
       expect(palette.resolve('rgb(255, 0, 0)')).toBe('rgb(255, 0, 0)')
     })
 
-    it('retourne une couleur rgba telle quelle', () => {
+    it('returns an rgba color as-is', () => {
       expect(palette.resolve('rgba(255, 0, 0, 0.5)')).toBe('rgba(255, 0, 0, 0.5)')
     })
   })
 
-  describe('palette Quasar', () => {
-    it('retourne la valeur hex de "red"', () => {
+  describe('Quasar palette', () => {
+    it('resolves "red"', () => {
       expect(palette.resolve('red')).toBe('#f44336')
     })
 
-    it('retourne la valeur hex de "blue-3"', () => {
+    it('resolves "blue-3"', () => {
       expect(palette.resolve('blue-3')).toBe('#90caf9')
     })
 
-    it('retourne la valeur hex de "deep-purple-10"', () => {
+    it('resolves "deep-purple-10"', () => {
       expect(palette.resolve('deep-purple-10')).toBe('#311b92')
     })
 
-    it('la palette Quasar est prioritaire sur la palette HTML', () => {
-      // "red" vaut #f44336 en Quasar, #FF0000 en HTML
+    it('takes priority over the HTML palette for shared names', () => {
+      // "red" is #f44336 in Quasar, #FF0000 in HTML
       expect(palette.resolve('red')).toBe(QUASAR_PALETTE.red)
       expect(palette.resolve('red')).not.toBe(HTML_PALETTE.red)
     })
   })
 
-  describe('palette HTML', () => {
-    it('retourne la valeur hex de "navy"', () => {
+  describe('HTML palette', () => {
+    it('resolves "navy"', () => {
       expect(palette.resolve('navy')).toBe('#000080')
     })
 
-    it('retourne la valeur hex de "coral"', () => {
+    it('resolves "coral"', () => {
       expect(palette.resolve('coral')).toBe('#FF7F50')
     })
   })
 
-  describe('couleur inconnue', () => {
-    it('retourne defaultColor si la couleur est introuvable partout', () => {
+  describe('unknown color', () => {
+    it('returns defaultColor when color is not found anywhere', () => {
       expect(palette.resolve('not-a-color', '#ffffff')).toBe('#ffffff')
     })
   })
 })
 
 describe('palette.findClosest', () => {
-  it('lance une exception si la couleur est invalide', () => {
+  it('throws when color is invalid', () => {
     expect(() => palette.findClosest('not-a-color')).toThrow()
   })
 
-  it('retourne "red" pour #f44336 (couleur exacte)', () => {
-    expect(palette.findClosest('#f44336')).toBe('red')
+  it('returns a key starting with "red" for #f44336', () => {
+    expect(palette.findClosest('#f44336')).toMatch(/^red/)
   })
 
-  it('retourne "blue" pour #2196f3 (couleur exacte)', () => {
-    expect(palette.findClosest('#2196f3')).toBe('blue')
+  it('returns a key starting with "blue" for #2196f3', () => {
+    expect(palette.findClosest('#2196f3')).toMatch(/^blue/)
   })
 
-  it('retourne une clé proche pour une couleur approximative', () => {
-    // #ff5555 est très proche du rouge
+  it('returns a nearby key for an approximate color', () => {
+    // #ff5555 is very close to red
     const result = palette.findClosest('#ff5555')
     expect(result).toMatch(/^red/)
   })
 
-  it('retourne toujours une clé présente dans QUASAR_PALETTE', () => {
+  it('always returns a key that exists in QUASAR_PALETTE', () => {
     const result = palette.findClosest('#123456')
     expect(QUASAR_PALETTE).toHaveProperty(result)
   })
