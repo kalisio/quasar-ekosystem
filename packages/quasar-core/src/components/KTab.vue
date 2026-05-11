@@ -34,7 +34,7 @@
 <script setup>
 import _ from 'lodash'
 import { ref, computed, watch } from 'vue'
-import { i18n } from '@kalisio/common-core'
+import { i18n } from '../utilities/i18n.js'
 import KContent from './KContent.vue'
 
 // Props

@@ -36,7 +36,8 @@
 import _ from 'lodash'
 import { ref, computed } from 'vue'
 import { uid } from 'quasar'
-import { i18n, sanitize } from '@kalisio/common-core'
+import { sanitize } from '@kalisio/common-core'
+import { i18n } from '../utilities/i18n.js'
 import { getHtmlColor, getContrastColor } from '../utils/index.js'
 
 // Props
