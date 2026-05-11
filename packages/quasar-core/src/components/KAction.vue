@@ -181,7 +181,7 @@ import _ from 'lodash'
 import { ref, toRef, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, openURL } from 'quasar'
-// import { i18n } from '../../i18n.js'
+import { i18n } from '@kalisio/common-core'
 import { actionProps } from '../utils/utils.actions.js'
 import { bindParams, bindProperties } from '../utilities/content.js'
 import KIcon from '../../graphics/KIcon.vue'
@@ -201,10 +201,8 @@ const emit = defineEmits(['triggered', 'toggled', 'dialog-confirmed', 'dialog-ca
 // Computed
 const computedLabel = computed(() => {
   // Check also for translation key or already translated message
-  // if (isToggled.value && _.has(props.toggle, 'label')) return i18n.tie(props.toggle.label)
-  if (isToggled.value && _.has(props.toggle, 'label')) return props.toggle.label
-  // return i18n.tie(props.label)
-  return props.label
+  if (isToggled.value && _.has(props.toggle, 'label')) return i18n.tie(props.toggle.label)
+  return i18n.tie(props.label)
 })
 const computedIcon = computed(() => {
   if (isToggled.value && _.has(props.toggle, 'icon')) return props.toggle.icon
@@ -217,15 +215,12 @@ const computedColor = computed(() => {
 const computedTooltip = computed(() => {
   if (computedDisabled.value) return
   // Check also for translation key or already translated message
-  // if (isToggled.value && _.has(props.toggle, 'tooltip')) return i18n.tie(props.toggle.tooltip)
-  if (isToggled.value && _.has(props.toggle, 'tooltip')) return props.toggle.tooltip
-  // return i18n.tie(props.tooltip)
-  return props.tooltip
+  if (isToggled.value && _.has(props.toggle, 'tooltip')) return i18n.tie(props.toggle.tooltip)
+  return i18n.tie(props.tooltip)
 })
 const computedBadgeLabel = computed(() => {
   // Check also for translation key or already translated message
-  // if (props.badge && _.has(props.badge, 'label')) return i18n.tie(props.badge.label)
-  if (props.badge && _.has(props.badge, 'label')) return props.badge.label
+  if (props.badge && _.has(props.badge, 'label')) return i18n.tie(props.badge.label)
   // Take care that changing this to null or '' breaks the display in Quasar
   return undefined
 })

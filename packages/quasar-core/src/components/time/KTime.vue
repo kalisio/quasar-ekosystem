@@ -15,7 +15,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import { computed } from 'vue'
 // import { Time } from '../../time.js'
-// import { i18n } from '../../i18n.js'
+import { i18n } from '@kalisio/common-core'
 
 // Props
 const props = defineProps({
@@ -77,8 +77,7 @@ const computedButton = computed(() => {
   let label
   // if (!_.isEmpty(computedModel.value)) label = moment.tz(computedModel.value, mask, Time.getFormatTimezone()).format(format)
   if (!_.isEmpty(computedModel.value)) label = moment(computedModel.value, mask).format(format)
-  // else label = i18n.tie(props.placeholder)
-  else label = props.placeholder
+  else label = i18n.tie(props.placeholder)
   // define button spec
   const spec = {
     id: 'time-button',

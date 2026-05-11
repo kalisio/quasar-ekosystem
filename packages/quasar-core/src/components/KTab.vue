@@ -34,7 +34,7 @@
 <script setup>
 import _ from 'lodash'
 import { ref, computed, watch } from 'vue'
-// import { i18n } from '../i18n.js'
+import { i18n } from '@kalisio/common-core'
 import KContent from './KContent.vue'
 
 // Props
@@ -97,8 +97,7 @@ function getModes () {
 }
 function getLabel (index) {
   const label = _.nth(props.labels, index)
-  // if (label) return i18n.tie(label)
-  if (label) return label
+  if (label) return i18n.tie(label)
 }
 function onTabChanged (params) {
   emit('tab-changed', params)
