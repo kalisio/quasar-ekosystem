@@ -40,7 +40,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/kalisio/quasar-ekosystem.git"
+    "url": "git+https://github.com/kalisio/quasar-ekosystem.git"
   },
   "bugs": {
     "url": "https://github.com/kalisio/quasar-ekosystem/issues"
