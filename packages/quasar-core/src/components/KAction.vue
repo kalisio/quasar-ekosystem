@@ -183,8 +183,9 @@ import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, openURL } from 'quasar'
 import { i18n } from '../utilities/i18n.js'
 import { actionProps } from '../utils/utils.actions.js'
-import { bindParams, bindProperties } from '../utilities/content.js'
-import KIcon from '../../graphics/KIcon.vue'
+import { content } from '../utilities/content.js'
+const { bindParams, bindProperties } = content
+import KIcon from './KIcon.vue'
 
 // Props
 const props = defineProps(actionProps)

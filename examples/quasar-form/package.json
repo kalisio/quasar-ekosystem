@@ -20,10 +20,12 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@kalisio/quasar-core": "workspace:*",
     "@kalisio/quasar-form": "workspace:*",
     "@vitejs/plugin-vue": "catalog:",
     "quasar": "catalog:",
     "vue": "catalog:",
-    "vue-i18n": "catalog:"
+    "vue-i18n": "catalog:",
+    "vue-router": "catalog:"
   }
 }

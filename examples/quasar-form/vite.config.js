@@ -11,6 +11,7 @@ export default defineConfig({
     conditions: ['development', 'import', 'browser', 'module', 'default'],
     alias: {
       vue: 'vue/dist/vue.esm-bundler.js',
+      'vue-router': resolve(__dirname, 'node_modules/vue-router'),
       '@schemas': resolve(__dirname, 'schemas')
     }
   },

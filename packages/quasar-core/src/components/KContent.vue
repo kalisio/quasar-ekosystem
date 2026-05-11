@@ -29,7 +29,6 @@ import { computed } from 'vue'
 import { uid } from 'quasar'
 import { content } from '../utilities/content.js'
 const { filter, resolve } = content
-import { load } from '../utils/index.js'
 
 // Props
 const props = defineProps({
@@ -75,8 +74,7 @@ const filteredComponents = computed(() => {
     component.uid = uid()
     component.isHidden = getVisibility(component, 'hidden', false)
     component.isVisible = getVisibility(component, 'visible', true)
-    if (!_.startsWith(component.name, 'Q') && !_.startsWith(component.name, 'q-')) component.instance = load(component.name)
-    else component.instance = component.name
+    component.instance = component.name
   }
   return components
 })
