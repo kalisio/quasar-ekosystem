@@ -48,7 +48,7 @@
     <!-- SCRIPTS -->
     <script type="module">
       import { createApp, ref } from 'vue'
-      import QuasarCore from '@kalisio/quasar-core'
+      import QuasarForm from '@kalisio/quasar-form'
       import {
         Quasar, Notify,
         QLayout, QHeader, QBanner, QIcon, QBtn, QBtnToggle, QPageContainer, QPage,
@@ -79,7 +79,7 @@
           return { page }
         }
       })
-      app.use(QuasarCore, { i18n })
+      app.use(QuasarForm, { i18n })
       app.use(Quasar, {
         plugins: { Notify },
         components: {

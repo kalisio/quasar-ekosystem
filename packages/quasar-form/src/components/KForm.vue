@@ -213,7 +213,7 @@ async function build () {
         else if (field.type === 'boolean') component = 'KToggleField'
         else if (field.type === 'string') component = 'KTextField'
       }
-      cloneField.component = component
+      cloneField.component = component.split('/').pop()
       cloneField.reference = null // will be set once te field is rendered
       cloneField.required = _.includes(schema.value.required, property) // add extra required info
       // add the field to the list of fields to be rendered

@@ -1,13 +1,11 @@
 import { ref } from 'vue'
 import { useQuasar, exportFile } from 'quasar'
-import { KForm, schemaRegistry } from '@kalisio/quasar-form'
+import { schemaRegistry } from '@kalisio/quasar-form'
 import designSchema from '@schemas/design.json'
 
 const EXAMPLE = JSON.stringify(designSchema, null, 2)
 
 export default {
-  components: { KForm },
-
   template: `
     <div class="row q-gutter-lg justify-center">
       <div class="column q-gutter-sm" style="width: 440px">

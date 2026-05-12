@@ -1,5 +1,4 @@
 import { ref, reactive, computed, watch } from 'vue'
-import { KForm } from '@kalisio/quasar-form'
 import userSchema from '@schemas/user.create.json'
 import eventSchema from '@schemas/event.create.json'
 
@@ -11,8 +10,6 @@ const currentValues = reactive({
 })
 
 export default {
-  components: { KForm },
-
   props: {
     readOnly: { type: Boolean, default: false }
   },

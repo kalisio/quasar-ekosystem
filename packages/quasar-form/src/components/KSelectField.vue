@@ -120,9 +120,6 @@ export default {
     }
   },
   computed: {
-    dense () {
-      return this.$props.dense
-    },
     multiple () {
       return this.isMultiselect()
     },
