@@ -11,13 +11,12 @@ function stub (name) {
 }
 
 // Aliases work for exact package names. For file-path patterns (relative imports
-// like ./KIcon.vue or moment-timezone/data/...) we need resolveId instead.
+// like ./KIcon.vue) we need resolveId instead.
 const fileStubsPlugin = {
   name: 'quasar-core-file-stubs',
   enforce: 'pre',
   resolveId (id) {
     if (id.endsWith('KIcon.vue')) return stub('KIcon')
-    if (id.includes('moment-timezone')) return stub('moment-timezone')
   },
   transform (code, id) {
     if (id.endsWith('.scss') || id.endsWith('.sass')) return { code: '', map: null }
@@ -36,10 +35,9 @@ export default mergeConfig(baseConfig, defineConfig({
     conditions: ['import', 'browser', 'module', 'default'],
     alias: [
       { find: /^vue-router$/, replacement: stub('vue-router') },
-      { find: /^quasar$/, replacement: stub('quasar') },
-      { find: /^sanitize-html$/, replacement: stub('sanitize-html') },
       { find: /^@kalisio\/common-core$/, replacement: stub('common-core') },
-      { find: /^@kalisio\/common-graphics$/, replacement: stub('common-graphics') }
+      { find: /^@kalisio\/common-graphics$/, replacement: stub('common-graphics') },
+      { find: /^quasar$/, replacement: stub('quasar') }
     ]
   }
 }))
