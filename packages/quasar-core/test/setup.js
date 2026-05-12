@@ -1,10 +1,6 @@
 import { vi } from 'vitest'
 import { config } from '@vue/test-utils'
 
-vi.mock('@logtape/logtape', () => ({
-  getLogger: () => ({ debug: vi.fn(), error: vi.fn(), warn: vi.fn(), info: vi.fn() })
-}))
-
 vi.mock('quasar', () => {
   const EventBus = class { on () {}; off () {}; emit () {} }
   const useDialogPluginComponent = () => ({

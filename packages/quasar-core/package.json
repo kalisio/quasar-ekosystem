@@ -13,14 +13,6 @@
   "files": [
     "dist"
   ],
-  "publishConfig": {
-    "exports": {
-      ".": {
-        "import": "./dist/index.mjs",
-        "require": "./dist/index.cjs"
-      }
-    }
-  },
   "standard": {
     "ignore": [
       "dist/**"
@@ -42,31 +34,42 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/kalisio/quasar-ekosystem.git",
+    "url": "git+https://github.com/kalisio/quasar-ekosystem.git",
     "directory": "packages/quasar-core"
   },
   "bugs": {
     "url": "https://github.com/kalisio/quasar-ekosystem/issues"
   },
   "homepage": "https://github.com/kalisio/quasar-ekosystem/tree/main/packages/quasar-core",
-  "dependencies": {
+  "peerDependencies": {
     "@kalisio/common-core": "catalog:",
     "@kalisio/common-graphics": "catalog:",
     "@logtape/logtape": "catalog:",
     "chroma-js": "catalog:",
     "lodash-es": "catalog:",
+    "mathjs": "catalog:",
     "moment": "catalog:",
     "quasar": "catalog:",
+    "sanitize-html": "catalog:",
     "sift": "catalog:",
-    "vue": "catalog:"
-  },
-  "peerDependencies": {
-    "mathjs": "catalog:",
-    "sanitize-html": "catalog:"
+    "vue": "catalog:",
+    "vue-router": "catalog:"
   },
   "devDependencies": {
+    "@quasar/quasar-app-extension-testing-unit-vitest": "catalog:",
     "@vue/test-utils": "catalog:",
     "happy-dom": "catalog:",
     "sass": "^1.99.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      }
+    }
   }
 }

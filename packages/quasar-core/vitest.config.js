@@ -1,12 +1,12 @@
 import { fileURLToPath } from 'node:url'
-import path from 'node:path'
+import { dirname } from 'node:path'
 import { defineConfig, mergeConfig } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
 import { baseConfig } from '../../vitest.base-config'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
-function stub (name) {
+/* function stub (name) {
   return path.resolve(__dirname, `test/stubs/${name}.js`)
 }
 
@@ -22,20 +22,23 @@ const fileStubsPlugin = {
     if (id.endsWith('.scss') || id.endsWith('.sass')) return { code: '', map: null }
   }
 }
+*/
 
 export default mergeConfig(baseConfig, defineConfig({
-  plugins: [vue(), fileStubsPlugin],
+  // plugins: [vue()], //, fileStubsPlugin],
+  plugins: [
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => tag.startsWith('q-')
+        }
+      }
+    })
+  ],
   root: __dirname,
   test: {
     name: 'quasar-core',
     environment: 'happy-dom',
     setupFiles: ['./test/setup.js']
-  },
-  resolve: {
-    conditions: ['import', 'browser', 'module', 'default'],
-    alias: [
-      { find: /^vue-router$/, replacement: stub('vue-router') },
-      { find: /^quasar$/, replacement: stub('quasar') }
-    ]
   }
 }))
