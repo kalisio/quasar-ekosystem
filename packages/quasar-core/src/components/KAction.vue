@@ -177,7 +177,7 @@ export default {
 </script>
 
 <script setup>
-import _ from 'lodash'
+import _ from 'lodash-es'
 import { ref, toRef, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, openURL } from 'quasar'

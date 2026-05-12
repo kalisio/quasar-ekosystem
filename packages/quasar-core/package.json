@@ -54,11 +54,14 @@
     "@kalisio/common-graphics": "catalog:",
     "@logtape/logtape": "catalog:",
     "chroma-js": "catalog:",
-    "lodash": "catalog:",
+    "lodash-es": "catalog:",
     "moment": "catalog:",
     "quasar": "catalog:",
     "sift": "catalog:",
     "vue": "catalog:"
+  },
+  "peerDependencies": {
+    "sanitize-html": "*"
   },
   "devDependencies": {
     "@vue/test-utils": "catalog:",

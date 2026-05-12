@@ -1,5 +1,5 @@
 import { has, is } from '@kalisio/common-core/predicates'
-import _ from 'lodash'
+import _ from 'lodash-es'
 import sift from 'sift'
 
 const RESOLVERS = []

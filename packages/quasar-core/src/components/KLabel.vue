@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash'
+import _ from 'lodash-es'
 import { computed } from 'vue'
 import { useQuasar } from 'quasar'
 

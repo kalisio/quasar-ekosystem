@@ -33,13 +33,12 @@
 </template>
 
 <script setup>
-import _ from 'lodash'
+import _ from 'lodash-es'
 import { ref, computed } from 'vue'
 import { uid } from 'quasar'
 import { sanitize } from '@kalisio/common-core'
 import { color } from '@kalisio/common-graphics'
-import { i18n } from '../utilities/i18n.js'
-import { palette } from '../utilities/palette.js'
+import { i18n, palette } from '../utilities'
 
 // Props
 const props = defineProps({

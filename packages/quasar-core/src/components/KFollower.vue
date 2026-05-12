@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash'
+import _ from 'lodash-es'
 import { ref, computed, onMounted } from 'vue'
 
 // Props

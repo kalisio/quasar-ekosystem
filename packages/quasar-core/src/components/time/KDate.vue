@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash'
+import _ from 'lodash-es'
 import moment from 'moment'
 import { computed } from 'vue'
 // import { Time } from '../../time.js'

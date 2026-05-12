@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash'
+import _ from 'lodash-es'
 import { computed } from 'vue'
 import { uid } from 'quasar'
 import { content } from '../utilities/content.js'

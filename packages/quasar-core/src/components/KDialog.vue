@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash'
+import _ from 'lodash-es'
 import { getLogger } from '@logtape/logtape'
 const logger = getLogger(['quasar-core', 'KDialog'])
 import { ref, computed, useAttrs } from 'vue'

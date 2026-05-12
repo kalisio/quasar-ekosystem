@@ -32,7 +32,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash'
+import _ from 'lodash-es'
 import { ref, computed, watch } from 'vue'
 import { i18n } from '../utilities/i18n.js'
 import KContent from './KContent.vue'
