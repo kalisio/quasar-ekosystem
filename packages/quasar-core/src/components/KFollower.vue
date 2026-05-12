@@ -2,7 +2,7 @@
   <Teleport v-if="targetElement" :to="'#' + targetId">
     <div :style="computedStyle">
       <component
-        :is="loadComponent(follower.component)"
+        :is="follower.component"
         v-bind="computedProps"
       />
     </div>
@@ -12,7 +12,6 @@
 <script setup>
 import _ from 'lodash'
 import { ref, computed, onMounted } from 'vue'
-import { loadComponent } from '../utils'
 
 // Props
 const props = defineProps({

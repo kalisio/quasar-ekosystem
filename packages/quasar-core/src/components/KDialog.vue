@@ -34,7 +34,6 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import { ref, computed, useAttrs } from 'vue'
 import { useDialogPluginComponent } from 'quasar'
-import { loadComponent } from '../utils'
 import KModal from './KModal.vue'
 
 // Props
@@ -142,7 +141,7 @@ const computedButtons = computed(() => {
   return buttons
 })
 const computedComponent = computed(() => {
-  return loadComponent(props.component)
+  return props.component
 })
 const computedHandlers = computed(() => {
   if (_.isEmpty(props.handlers)) return {}

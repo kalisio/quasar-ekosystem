@@ -38,7 +38,7 @@ import { ref, computed } from 'vue'
 import { uid } from 'quasar'
 import { sanitize } from '@kalisio/common-core'
 import { i18n } from '../utilities/i18n.js'
-import { getHtmlColor, getContrastColor } from '../utils/index.js'
+import { getHtmlColor, getContrastColor } from '../utilities/index.js'
 
 // Props
 const props = defineProps({
