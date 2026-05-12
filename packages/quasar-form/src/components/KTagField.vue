@@ -45,12 +45,10 @@
 <script>
 import _ from 'lodash'
 import { inject } from 'vue'
-import { load } from '@kalisio/quasar-core'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
 export default {
-  components: { KChip: load('KChip') },
   // Missing Mixin: baseField
   // mixins: [baseField],
   props: fieldProps,

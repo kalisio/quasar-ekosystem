@@ -1,11 +1,6 @@
-import { describe, it, expect, afterEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { createApp } from 'vue'
-import QuasarCore, { load, register } from '@kalisio/quasar-core'
-
-afterEach(() => {
-  // le plugin stocke l'instance i18n dans un singleton — on repart propre entre chaque test
-  QuasarCore.install(createApp({}))
-})
+import QuasarCore from '@kalisio/quasar-core'
 
 describe('QuasarCore plugin (vu depuis quasar-form)', () => {
   it('est un plugin Vue valide', () => {
@@ -21,20 +16,15 @@ describe('QuasarCore plugin (vu depuis quasar-form)', () => {
     }
   })
 
-  it('expose load et register comme exports nommés', () => {
-    expect(typeof load).toBe('function')
-    expect(typeof register).toBe('function')
+  it('expose $tie comme propriété globale', () => {
+    const app = createApp({})
+    app.use(QuasarCore)
+    expect(typeof app.config.globalProperties.$tie).toBe('function')
   })
 
-  it('register enregistre les composants de quasar-form dans le ComponentRegistry', () => {
-    const modules = import.meta.glob('../src/components/**/*.vue')
-    expect(() => register(modules)).not.toThrow()
-  })
-
-  it('load retrouve un composant enregistré par register', () => {
-    const modules = import.meta.glob('../src/components/**/*.vue')
-    register(modules)
-    const loader = load('KForm')
-    expect(loader).toBeDefined()
+  it('$tie retourne la clé si aucune traduction', () => {
+    const app = createApp({})
+    app.use(QuasarCore)
+    expect(app.config.globalProperties.$tie('my.key')).toBe('my.key')
   })
 })

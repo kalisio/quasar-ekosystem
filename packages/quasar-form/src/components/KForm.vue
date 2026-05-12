@@ -77,7 +77,6 @@ import { getLogger } from '@logtape/logtape'
 
 const logger = getLogger(['quasar-form', 'KForm'])
 import { ref, watch, computed, onMounted } from 'vue'
-import { load } from '@kalisio/quasar-core'
 import { useSchema } from '../composables/index.js'
 
 // Props
@@ -214,7 +213,7 @@ async function build () {
         else if (field.type === 'boolean') component = 'KToggleField'
         else if (field.type === 'string') component = 'KTextField'
       }
-      cloneField.component = load(component)
+      cloneField.component = component
       cloneField.reference = null // will be set once te field is rendered
       cloneField.required = _.includes(schema.value.required, property) // add extra required info
       // add the field to the list of fields to be rendered
