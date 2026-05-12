@@ -35,8 +35,6 @@ export default mergeConfig(baseConfig, defineConfig({
   resolve: {
     conditions: ['import', 'browser', 'module', 'default'],
     alias: [
-      { find: /^loglevel$/, replacement: stub('loglevel') },
-      { find: /^config$/, replacement: stub('config') },
       { find: /^vue-router$/, replacement: stub('vue-router') },
       { find: /^quasar$/, replacement: stub('quasar') },
       { find: /^sanitize-html$/, replacement: stub('sanitize-html') },

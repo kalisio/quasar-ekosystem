@@ -70,7 +70,8 @@
 
 <script setup>
 import _ from 'lodash'
-import logger from 'loglevel'
+import { getLogger } from '@logtape/logtape'
+const logger = getLogger(['quasar-core', 'KDateTimeRange'])
 import moment from 'moment'
 import { ref, computed, watch, onMounted } from 'vue'
 import KDateTime from './KDateTime.vue'

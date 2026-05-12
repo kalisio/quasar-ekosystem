@@ -31,7 +31,8 @@
 
 <script setup>
 import _ from 'lodash'
-import logger from 'loglevel'
+import { getLogger } from '@logtape/logtape'
+const logger = getLogger(['quasar-core', 'KDialog'])
 import { ref, computed, useAttrs } from 'vue'
 import { useDialogPluginComponent } from 'quasar'
 import KModal from './KModal.vue'
