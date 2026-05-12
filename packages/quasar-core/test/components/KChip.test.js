@@ -65,7 +65,7 @@ describe('KChip', () => {
   // outline=true sets the border to the chip color
   it('computedBorderColor uses chip color when outline is true', () => {
     const wrapper = mount(KChip, { props: { outline: true, color: 'grey-7' } })
-    expect(wrapper.vm.computedBorderColor).toBe('grey-7')
+    expect(wrapper.vm.computedBorderColor).toBe('#757575')
   })
 
   // outline=false hides the border by making it transparent
@@ -77,6 +77,6 @@ describe('KChip', () => {
   // an explicit textColor prop bypasses contrast calculation
   it('computedTextColor uses explicit textColor when provided', () => {
     const wrapper = mount(KChip, { props: { textColor: 'red' } })
-    expect(wrapper.vm.computedTextColor).toBe('red')
+    expect(wrapper.vm.computedTextColor).toBe('#f44336')
   })
 })

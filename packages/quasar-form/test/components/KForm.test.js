@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 
-import '../../src/index.js'
+import { plugin as QuasarForm } from '../../src/plugin.js'
 import KForm from '../../src/components/KForm.vue'
 import { schemaRegistry } from '../../src/utils/index.js'
 
@@ -31,7 +31,7 @@ const userSchema = {
 }
 
 async function mountReady (extraProps = {}) {
-  const wrapper = mount(KForm, { props: { schema: userSchema, ...extraProps }, global: { stubs: quasarStubs } })
+  const wrapper = mount(KForm, { props: { schema: userSchema, ...extraProps }, global: { plugins: [QuasarForm], stubs: quasarStubs } })
   await flushPromises()
   return wrapper
 }
@@ -68,25 +68,25 @@ describe('KForm', () => {
 
   // Without a schema prop, the q-form element is not rendered at all
   it('renders nothing when no schema is provided', () => {
-    const wrapper = mount(KForm, { props: {}, global: { stubs: quasarStubs } })
+    const wrapper = mount(KForm, { props: {}, global: { plugins: [QuasarForm], stubs: quasarStubs } })
     expect(wrapper.find('form').exists()).toBe(false)
   })
 
   // fill() throws immediately when called before the build completes
   it('fill throws when the form is not ready', () => {
-    const wrapper = mount(KForm, { props: { schema: userSchema }, global: { stubs: quasarStubs } })
+    const wrapper = mount(KForm, { props: { schema: userSchema }, global: { plugins: [QuasarForm], stubs: quasarStubs } })
     expect(() => wrapper.vm.fill({})).toThrow('Cannot fill the form while not ready')
   })
 
   // clear() throws immediately when called before the build completes
   it('clear throws when the form is not ready', () => {
-    const wrapper = mount(KForm, { props: { schema: userSchema }, global: { stubs: quasarStubs } })
+    const wrapper = mount(KForm, { props: { schema: userSchema }, global: { plugins: [QuasarForm], stubs: quasarStubs } })
     expect(() => wrapper.vm.clear()).toThrow('Cannot clear the form while not ready')
   })
 
   // validate() throws immediately when called before the build completes
   it('validate throws when the form is not ready', () => {
-    const wrapper = mount(KForm, { props: { schema: userSchema }, global: { stubs: quasarStubs } })
+    const wrapper = mount(KForm, { props: { schema: userSchema }, global: { plugins: [QuasarForm], stubs: quasarStubs } })
     expect(() => wrapper.vm.validate()).toThrow('Cannot validate the form while not ready')
   })
 
@@ -178,13 +178,13 @@ describe('KForm', () => {
 
   // submitted() throws when form is not ready
   it('submitted throws when the form is not ready', async () => {
-    const wrapper = mount(KForm, { props: { schema: userSchema }, global: { stubs: quasarStubs } })
+    const wrapper = mount(KForm, { props: { schema: userSchema }, global: { plugins: [QuasarForm], stubs: quasarStubs } })
     await expect(wrapper.vm.submitted({})).rejects.toThrow('Cannot run submitted on the form while not ready')
   })
 
   // apply() throws when form is not ready
   it('apply throws when the form is not ready', async () => {
-    const wrapper = mount(KForm, { props: { schema: userSchema }, global: { stubs: quasarStubs } })
+    const wrapper = mount(KForm, { props: { schema: userSchema }, global: { plugins: [QuasarForm], stubs: quasarStubs } })
     await expect(wrapper.vm.apply({})).rejects.toThrow('Cannot apply the form while not ready')
   })
 
@@ -195,7 +195,7 @@ describe('KForm', () => {
       type: 'object',
       properties: { score: { type: 'number' } }
     }
-    const wrapper = mount(KForm, { props: { schema: numSchema }, global: { stubs: quasarStubs } })
+    const wrapper = mount(KForm, { props: { schema: numSchema }, global: { plugins: [QuasarForm], stubs: quasarStubs } })
     await flushPromises()
     const field = wrapper.vm.fields.find(f => f.name === 'score')
     expect(field).toBeTruthy()
@@ -219,7 +219,7 @@ describe('KForm', () => {
   // uses KToggleField as default component for boolean type
   it('uses KToggleField as default component for boolean type', async () => {
     const boolSchema = { $id: 'bool-form', type: 'object', properties: { active: { type: 'boolean' } } }
-    const wrapper = mount(KForm, { props: { schema: boolSchema }, global: { stubs: quasarStubs } })
+    const wrapper = mount(KForm, { props: { schema: boolSchema }, global: { plugins: [QuasarForm], stubs: quasarStubs } })
     await flushPromises()
     expect(wrapper.vm.fields.some(f => f.name === 'active')).toBe(true)
   })
@@ -227,7 +227,7 @@ describe('KForm', () => {
   // uses KTextField as default component for string type
   it('uses KTextField as default component for string type', async () => {
     const strSchema = { $id: 'str-form', type: 'object', properties: { title: { type: 'string' } } }
-    const wrapper = mount(KForm, { props: { schema: strSchema }, global: { stubs: quasarStubs } })
+    const wrapper = mount(KForm, { props: { schema: strSchema }, global: { plugins: [QuasarForm], stubs: quasarStubs } })
     await flushPromises()
     expect(wrapper.vm.fields.some(f => f.name === 'title')).toBe(true)
   })
@@ -240,7 +240,7 @@ describe('KForm', () => {
       properties: { name: { type: 'string', field: { component: 'KTextField', group: 'info' } } },
       groups: { info: { label: 'Information', icon: 'info' } }
     }
-    const wrapper = mount(KForm, { props: { schema: groupedSchema }, global: { stubs: { ...quasarStubs, 'k-action': true } } })
+    const wrapper = mount(KForm, { props: { schema: groupedSchema }, global: { plugins: [QuasarForm], stubs: quasarStubs } })
     await flushPromises()
     expect(Object.keys(wrapper.vm.groups)).toContain('info')
   })

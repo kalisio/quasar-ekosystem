@@ -10,6 +10,7 @@ import { useI18n } from 'vue-i18n'
 // instead of null, even when called from within the composable.
 export function useField (props, emit, opts = {}) {
   const _emptyModel = opts.emptyModel ?? (() => null)
+  const { t } = useI18n()
 
   // State
   const model = ref(_emptyModel())
@@ -18,7 +19,7 @@ export function useField (props, emit, opts = {}) {
   // Computed
   const label = computed(() => {
     const description = _.get(props.properties, 'description', '')
-    return useI18n().t(_.get(props.properties.field, 'label', description))
+    return t(_.get(props.properties.field, 'label', description))
   })
   const hasHelper = computed(() => !_.isEmpty(_.get(props.properties.field, 'helper', {})))
   const helperLabel = computed(() => _.get(props.properties.field?.helper, 'label', null))
@@ -32,7 +33,7 @@ export function useField (props, emit, opts = {}) {
   const errorLabel = computed(() => {
     let err = _.get(props.properties.field, 'errorLabel', '')
     if (!err) err = error.value
-    return useI18n().t(err)
+    return t(err)
   })
   const disabled = computed(() => _.get(props.properties.field, 'disabled', false))
 

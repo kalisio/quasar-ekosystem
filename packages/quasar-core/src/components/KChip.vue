@@ -37,8 +37,9 @@ import _ from 'lodash'
 import { ref, computed } from 'vue'
 import { uid } from 'quasar'
 import { sanitize } from '@kalisio/common-core'
+import { color } from '@kalisio/common-graphics'
 import { i18n } from '../utilities/i18n.js'
-import { getHtmlColor, getContrastColor } from '../utilities/index.js'
+import { palette } from '../utilities/palette.js'
 
 // Props
 const props = defineProps({
@@ -157,17 +158,18 @@ const computedTooltip = computed(() => {
   return props.label ? i18n.tie(props.label) : props.tooltip
 })
 const computedColor = computed(() => {
-  return props.outline ? 'transparent' : getHtmlColor(props.color)
+  return props.outline ? 'transparent' : palette.resolve(props.color, props.color)
 })
 const computedTextColor = computed(() => {
   if (_.isEmpty(props.textColor)) {
     if (props.outline) return computedBorderColor.value
-    return getContrastColor(props.color)
+    const resolved = palette.resolve(props.color, '#757575')
+    return color.is(resolved) ? color.contrast(resolved) : 'white'
   }
-  return getHtmlColor(props.textColor)
+  return palette.resolve(props.textColor, props.textColor)
 })
 const computedBorderColor = computed(() => {
-  return props.outline ? getHtmlColor(props.color) : 'transparent'
+  return props.outline ? palette.resolve(props.color, props.color) : 'transparent'
 })
 
 // Function
