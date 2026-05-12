@@ -35,8 +35,6 @@ export default mergeConfig(baseConfig, defineConfig({
     conditions: ['import', 'browser', 'module', 'default'],
     alias: [
       { find: /^vue-router$/, replacement: stub('vue-router') },
-      { find: /^@kalisio\/common-core$/, replacement: stub('common-core') },
-      { find: /^@kalisio\/common-graphics$/, replacement: stub('common-graphics') },
       { find: /^quasar$/, replacement: stub('quasar') }
     ]
   }

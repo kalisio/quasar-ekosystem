@@ -61,7 +61,8 @@
     "vue": "catalog:"
   },
   "peerDependencies": {
-    "sanitize-html": "*"
+    "mathjs": "catalog:",
+    "sanitize-html": "catalog:"
   },
   "devDependencies": {
     "@vue/test-utils": "catalog:",
