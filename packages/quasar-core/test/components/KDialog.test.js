@@ -22,7 +22,6 @@ describe('KDialog', () => {
     expect(okButton.label).toBe('Submit')
   })
 
-  // Reactive tests
   // Setting cancelAction after mount adds the cancel button dynamically
   it('adds cancel button when cancelAction changes', async () => {
     const wrapper = mount(KDialog)

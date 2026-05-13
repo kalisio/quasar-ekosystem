@@ -21,7 +21,6 @@ describe('KTree', () => {
     expect(wrapper.vm.nodeKey).toBe('id')
   })
 
-  // Reactive tests
   // Replacing the nodes array with a longer one updates the tree data
   it('updates nodes when prop changes', async () => {
     const wrapper = mount(KTree, { props: { nodes: [] } })

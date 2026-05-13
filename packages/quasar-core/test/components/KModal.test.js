@@ -68,7 +68,6 @@ describe('KModal', () => {
     div2.remove()
   })
 
-  // Reactive tests
   // Changing backgroundColor updates the bg-* class in computedClass
   it('updates computedClass when backgroundColor changes', async () => {
     const wrapper = mount(KModal, { props: { backgroundColor: 'white' } })

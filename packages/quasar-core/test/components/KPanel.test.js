@@ -21,7 +21,6 @@ describe('KPanel', () => {
     expect(wrapper.vm.direction).toBe('horizontal')
   })
 
-  // Reactive tests
   // Providing content after mount switches hasContent from false to true
   it('updates hasContent when content changes', async () => {
     const wrapper = mount(KPanel, { props: { content: [] } })

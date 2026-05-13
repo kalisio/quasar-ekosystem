@@ -34,7 +34,6 @@ describe('KScrollArea', () => {
     expect(wrapper.find('.inner').text()).toBe('Hello')
   })
 
-  // Reactive tests
   // Enabling dense after mount narrows the thumb from 8px to 4px
   it('updates thumb width when dense prop changes', async () => {
     const wrapper = mount(KScrollArea, { props: { maxHeight: 300, dense: false } })

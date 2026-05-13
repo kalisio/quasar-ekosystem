@@ -15,7 +15,6 @@ describe('KExpandable', () => {
     expect(wrapper.classes()).toContain('k-expandable-expanded')
   })
 
-  // Reactive tests
   // Toggling isExpanded swaps the collapsed class for the expanded class
   it('switches class when isExpanded changes', async () => {
     const wrapper = mount(KExpandable, { props: { isExpanded: false, minHeight: 50, maxHeight: 300 } })

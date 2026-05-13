@@ -42,13 +42,11 @@ describe('KForm', () => {
     schemaRegistry.initialize()
   })
 
-  // Le formulaire est rendu depuis un schéma JSON.
   it('renders the form from a schema', async () => {
     const wrapper = await mountReady()
     expect(wrapper.find('form').exists()).toBe(true)
   })
 
-  // fill() distribue les valeurs, values() les retourne, validate() les vérifie.
   it.skip('fill / values / validate work together', async () => {
     const wrapper = await mountReady()
     expect(wrapper.vm.validate().isValid).toBe(false)
@@ -57,7 +55,6 @@ describe('KForm', () => {
     expect(wrapper.vm.validate().isValid).toBe(true)
   })
 
-  // apply() écrit chaque valeur dans un objet cible.
   it.skip('apply writes values to a target object', async () => {
     const wrapper = await mountReady()
     wrapper.vm.fill({ name: 'Bob', age: 25 })

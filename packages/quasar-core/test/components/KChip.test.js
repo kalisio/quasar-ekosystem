@@ -27,7 +27,6 @@ describe('KChip', () => {
     expect(wrapper.vm.computedIcon).toBeUndefined()
   })
 
-  // Reactive tests
   // Updating the label prop recalculates computedLabel immediately
   it('updates label when prop changes', async () => {
     const wrapper = mount(KChip, { props: { label: 'Hello' } })

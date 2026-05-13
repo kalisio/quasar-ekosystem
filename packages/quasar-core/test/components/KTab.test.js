@@ -23,7 +23,6 @@ describe('KTab', () => {
     expect(wrapper.vm.panel).toEqual(content.info)
   })
 
-  // Reactive tests
   // Replacing content with more keys updates the tabs array accordingly
   it('updates tabs when content changes', async () => {
     const wrapper = mount(KTab, { props: { content: { info: [] }, mode: 'info' } })

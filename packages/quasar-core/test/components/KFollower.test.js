@@ -42,7 +42,6 @@ describe('KFollower', () => {
     expect(wrapper.vm.computedProps.label).toBe('test')
   })
 
-  // Reactive tests
   // Switching anchor from top-right to bottom-left updates the style object
   it('updates style when anchor prop changes', async () => {
     const wrapper = mount(KFollower, { props: { follower, targetId: 'target', anchor: 'top-right' } })

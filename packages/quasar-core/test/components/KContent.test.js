@@ -22,7 +22,6 @@ describe('KContent', () => {
     expect(wrapper.vm.filteredComponents).toHaveLength(1)
   })
 
-  // Reactive tests
   // Replacing the content prop with a longer array updates filteredComponents
   it('updates filteredComponents when content changes', async () => {
     const wrapper = mount(KContent, { props: { content: [] } })

@@ -16,23 +16,23 @@ describe('QuasarCore plugin', () => {
       'KModal', 'KPanel', 'KTab', 'KTextArea'
     ]
     for (const name of expected) {
-      expect(app.component(name), `${name} doit être enregistré`).toBeDefined()
+      expect(app.component(name), `${name} should be registered`).toBeDefined()
     }
   })
 
-  it('expose $tie comme propriété globale', () => {
+  it('exposes $tie as a global property', () => {
     const app = createApp({})
     app.use(plugin)
     expect(typeof app.config.globalProperties.$tie).toBe('function')
   })
 
-  it('$tie retourne la clé si aucune traduction', () => {
+  it('$tie returns the key when no translation is found', () => {
     const app = createApp({})
     app.use(plugin)
     expect(app.config.globalProperties.$tie('my.key')).toBe('my.key')
   })
 
-  it('$tie utilise l\'instance i18n passée en option', () => {
+  it('$tie uses the i18n instance passed as an option', () => {
     const mockI18n = {
       te: (key) => key === 'known.key',
       t: (key) => `[${key}]`

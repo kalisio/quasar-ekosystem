@@ -36,7 +36,6 @@ describe('KLabel', () => {
     expect(wrapper.find('.column').exists()).toBe(false)
   })
 
-  // Reactive tests
   // Adding an icon prop after mount sets canShowIcon to true
   it('shows icon when icon prop is added', async () => {
     const wrapper = mount(KStamp, { props: { text: 'Hello' } })
