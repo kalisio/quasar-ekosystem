@@ -12,7 +12,7 @@
 const props = defineProps({
   nodes: {
     type: Array,
-    default: []
+    default: () => []
   },
   labelKey: {
     type: String,
@@ -24,7 +24,7 @@ const props = defineProps({
   },
   onLazyLoad: {
     type: Function,
-    default: 'onLazyLoad'
+    default: null
   }
 })
 

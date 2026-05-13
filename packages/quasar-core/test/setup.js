@@ -1,38 +1,28 @@
-import { vi } from 'vitest'
 import { config } from '@vue/test-utils'
+import { createRouter, createMemoryHistory } from 'vue-router'
+import { Dialog } from 'quasar'
+import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-vitest'
 
-vi.mock('quasar', () => {
-  const EventBus = class { on () {}; off () {}; emit () {} }
-  const useDialogPluginComponent = () => ({
-    dialogRef: { value: { show: vi.fn(), hide: vi.fn() } },
-    onDialogOK: vi.fn(),
-    onDialogCancel: vi.fn()
-  })
-  useDialogPluginComponent.emits = ['ok', 'hide', 'update:modelValue']
-  return {
-    useQuasar: () => ({
-      screen: { lt: { sm: false, md: false, lg: false, xl: false }, gt: { xs: true, sm: true }, height: 800 },
-      dialog: vi.fn(() => ({ onOk: (cb) => { cb(); return { onCancel: vi.fn() } }, onCancel: vi.fn() })),
-      notify: vi.fn()
-    }),
-    uid: () => 'test-uid',
-    openURL: vi.fn(),
-    getCssVar: vi.fn(() => '#1976D2'),
-    colors: { getBrand: vi.fn(() => null), setBrand: vi.fn(), getPaletteColor: vi.fn(() => null) },
-    useDialogPluginComponent,
-    Notify: { create: vi.fn() },
-    EventBus
-  }
+// Install a router
+const router = createRouter({
+  history: createMemoryHistory(),
+  routes: [{ path: '/', component: { template: '<div />' } }]
 })
+config.global.plugins = [router]
+
+// Install Quasar
+installQuasarPlugin({ plugins: { Dialog } })
+
+// Install the components
+const componentFiles = import.meta.glob('../src/components/**/*.vue', { eager: true })
+const components = {}
+for (const path in componentFiles) {
+  const name = path.split('/').pop().replace('.vue', '')
+  components[name] = componentFiles[path].default
+}
+config.global.components = components
 
 config.global.mocks = {
   $t: (key) => key,
-  $tie: (key) => key,
-  $q: {
-    screen: { lt: { sm: false, md: false, lg: false, xl: false }, gt: { xs: true, sm: true }, height: 800 }
-  }
-}
-
-config.global.directives = {
-  'close-popup': () => {}
+  $tie: (key) => key
 }

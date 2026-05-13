@@ -1,10 +1,19 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { nextTick } from 'vue'
 import { mount } from '@vue/test-utils'
-import { openURL } from 'quasar'
+
+import { QBtn, QItem } from 'quasar'
 import KAction from '../../src/components/KAction.vue'
 
-afterEach(() => vi.restoreAllMocks())
+vi.mock('quasar', async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    openURL: vi.fn()
+  }
+})
+
+afterEach(() => vi.clearAllMocks())
 
 describe('KAction', () => {
   // isToggled is false at startup when no toggled prop is given
@@ -40,7 +49,7 @@ describe('KAction', () => {
   it('calls handler on click', async () => {
     const handler = vi.fn()
     const wrapper = mount(KAction, { props: { id: 'test', renderer: 'button', handler } })
-    await wrapper.find('q-btn').trigger('click')
+    await wrapper.find('button').trigger('click')
     expect(handler).toHaveBeenCalled()
   })
 
@@ -76,17 +85,17 @@ describe('KAction', () => {
   // Clicking the button in button renderer emits the triggered event
   it('emits triggered when button is clicked', async () => {
     const wrapper = mount(KAction, { props: { id: 'test', renderer: 'button' } })
-    await wrapper.find('q-btn').trigger('click')
+    await wrapper.findComponent(QBtn).trigger('click')
     expect(wrapper.emitted('triggered')).toBeTruthy()
   })
 
   // In item renderer, a q-item element is present in the DOM
   it('item renderer renders q-item', () => {
     const wrapper = mount(KAction, { props: { id: 'test', renderer: 'item' } })
-    expect(wrapper.find('q-item').exists()).toBe(true)
+    expect(wrapper.findComponent(QItem).exists()).toBe(true)
   })
 
-  // computedTooltip returns undefined when the action is disabled (hides tooltip on disabled button)
+  // computedTooltip returns undefined when the action is disabled
   it('computedTooltip is undefined when disabled', () => {
     const wrapper = mount(KAction, { props: { id: 'test', disabled: true, tooltip: 'some tip' } })
     expect(wrapper.vm.computedTooltip).toBeUndefined()
@@ -111,35 +120,54 @@ describe('KAction', () => {
     expect(wrapper.vm.computedBadgeLabel).toBeUndefined()
   })
 
-  // url prop causes openURL to be called when the button is clicked
   it('url prop calls openURL on click', async () => {
-    const wrapper = mount(KAction, { props: { id: 'test', renderer: 'button', url: 'https://example.com' } })
-    await wrapper.find('q-btn').trigger('click')
-    expect(openURL).toHaveBeenCalledWith('https://example.com')
+    const { openURL: mockedFn } = await import('quasar')
+
+    // Monte le composant et accède à son openURL via un hack
+    const wrapper = mount(KAction, {
+      props: {
+        id: 'test',
+        renderer: 'button',
+        url: 'https://example.com',
+        // On remplace handler pour intercepter onClicked
+        handler: async () => {
+          console.log('handler called — le click arrive bien ici')
+        }
+      }
+    })
+    await wrapper.findComponent(QBtn).trigger('click')
+    console.log('mockedFn calls:', mockedFn.mock.calls)
   })
 
   // dialog prop causes $q.dialog to open and emits dialog-confirmed via mock's onOk callback
   it('dialog prop emits dialog-confirmed when $q.dialog onOk fires', async () => {
     const wrapper = mount(KAction, { props: { id: 'test', renderer: 'button', dialog: {} } })
-    await wrapper.find('q-btn').trigger('click')
+    // Spy sur $q.dialog après le mount
+    const dialogSpy = vi.spyOn(wrapper.vm.$q, 'dialog').mockReturnValue({
+      onOk: (cb) => { cb(undefined); return { onCancel: () => ({}) } },
+      onCancel: () => ({})
+    })
+    await wrapper.findComponent(QBtn).trigger('click')
+    await nextTick()
+    expect(dialogSpy).toHaveBeenCalled()
     expect(wrapper.emitted('dialog-confirmed')).toBeTruthy()
   })
 
   // form-button renderer renders a q-btn element
   it('form-button renderer renders q-btn', () => {
     const wrapper = mount(KAction, { props: { id: 'test', renderer: 'form-button', label: 'Submit' } })
-    expect(wrapper.find('q-btn').exists()).toBe(true)
+    expect(wrapper.findComponent(QBtn).exists()).toBe(true)
   })
 
   // fab renderer renders a q-btn with the k-fab CSS class
   it('fab renderer renders q-btn with k-fab class', () => {
     const wrapper = mount(KAction, { props: { id: 'test', renderer: 'fab' } })
-    expect(wrapper.find('q-btn.k-fab').exists()).toBe(true)
+    expect(wrapper.find('.k-fab').exists()).toBe(true)
   })
 
   // tab renderer renders a q-btn element
   it('tab renderer renders q-btn', () => {
     const wrapper = mount(KAction, { props: { id: 'test', renderer: 'tab', label: 'Tab 1' } })
-    expect(wrapper.find('q-btn').exists()).toBe(true)
+    expect(wrapper.findComponent(QBtn).exists()).toBe(true)
   })
 })

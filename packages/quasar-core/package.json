@@ -57,6 +57,7 @@
   },
   "devDependencies": {
     "@quasar/quasar-app-extension-testing-unit-vitest": "catalog:",
+    "@quasar/vite-plugin": "catalog:",
     "@vue/test-utils": "catalog:",
     "happy-dom": "catalog:",
     "sass": "^1.99.0"

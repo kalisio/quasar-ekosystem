@@ -1,12 +1,24 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import KModal from '../../src/components/KModal.vue'
+import { nextTick } from 'vue'
 
 describe('KModal', () => {
   // The title text is rendered inside the header element
-  it('renders title text in the header', () => {
-    const wrapper = mount(KModal, { props: { title: 'My Modal' } })
-    expect(wrapper.find('.text-h6').text()).toBe('My Modal')
+  it('renders title text in the header', async () => {
+    const div = document.createElement('div')
+    document.body.appendChild(div)
+    const wrapper = mount(KModal, {
+      props: { title: 'My Modal', modelValue: false }, // ← false au départ
+      attachTo: div
+    })
+    wrapper.vm.show()
+    await nextTick()
+    await nextTick() // twice to let teleport resolution
+    const header = document.body.querySelector('.text-h6')
+    expect(header?.textContent?.trim()).toBe('My Modal')
+    wrapper.unmount()
+    div.remove()
   })
 
   // computedClass builds a Quasar CSS class string from backgroundColor and textColor props

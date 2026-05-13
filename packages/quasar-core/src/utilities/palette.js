@@ -1,7 +1,7 @@
 import { assert, is, has } from '@kalisio/common-core/predicates'
 import { color as commonColor } from '@kalisio/common-graphics'
 import chroma from 'chroma-js'
-import { colors } from 'quasar'
+import { getCssVar } from 'quasar'
 
 export const QUASAR_PALETTE = {
   red: '#f44336',
@@ -451,7 +451,7 @@ export const palette = {
     if (color.startsWith('rgb')) return color
     if (has.key(QUASAR_PALETTE, color)) return QUASAR_PALETTE[color]
     if (has.key(HTML_PALETTE, color)) return HTML_PALETTE[color]
-    return colors.getPaletteColor(color) ?? defaultColor // theme color, e.g. primary, secondary...
+    return getCssVar(color) ?? defaultColor // theme color, e.g. primary, secondary...
   },
 
   findClosest (color) {
