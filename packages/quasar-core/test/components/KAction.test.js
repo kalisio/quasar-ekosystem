@@ -16,7 +16,6 @@ vi.mock('quasar', async (importOriginal) => {
 afterEach(() => vi.clearAllMocks())
 
 describe('KAction', () => {
-  // isToggled is false at startup when no toggled prop is given
   it('isToggled starts as false', () => {
     const wrapper = mount(KAction, { props: { id: 'test' } })
     expect(wrapper.vm.isToggled).toBe(false)
@@ -120,29 +119,19 @@ describe('KAction', () => {
     expect(wrapper.vm.computedBadgeLabel).toBeUndefined()
   })
 
-  it('url prop calls openURL on click', async () => {
-    const { openURL: mockedFn } = await import('quasar')
-
-    // Monte le composant et accède à son openURL via un hack
+  it('url prop opens the URL on click', async () => {
+    const windowOpen = vi.spyOn(window, 'open').mockImplementation(() => null)
     const wrapper = mount(KAction, {
-      props: {
-        id: 'test',
-        renderer: 'button',
-        url: 'https://example.com',
-        // On remplace handler pour intercepter onClicked
-        handler: async () => {
-          console.log('handler called — le click arrive bien ici')
-        }
-      }
+      props: { id: 'test', renderer: 'button', url: 'https://example.com' }
     })
     await wrapper.findComponent(QBtn).trigger('click')
-    console.log('mockedFn calls:', mockedFn.mock.calls)
+    expect(windowOpen).toHaveBeenCalledWith('https://example.com', '_blank', 'noopener')
+    windowOpen.mockRestore()
   })
 
   // dialog prop causes $q.dialog to open and emits dialog-confirmed via mock's onOk callback
   it('dialog prop emits dialog-confirmed when $q.dialog onOk fires', async () => {
     const wrapper = mount(KAction, { props: { id: 'test', renderer: 'button', dialog: {} } })
-    // Spy sur $q.dialog après le mount
     const dialogSpy = vi.spyOn(wrapper.vm.$q, 'dialog').mockReturnValue({
       onOk: (cb) => { cb(undefined); return { onCancel: () => ({}) } },
       onCancel: () => ({})

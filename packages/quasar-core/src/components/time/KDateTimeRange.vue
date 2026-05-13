@@ -212,8 +212,8 @@ watch(() => [props.min, props.max], () => {
   const max = moment(props.max)
   const duration = moment.duration(max.diff(min)).asMilliseconds()
   if (duration === 0) {
-    startTimeModel.value = min
-    endTimeModel.value = max
+    startTimeModel.value = props.min
+    endTimeModel.value = props.max
     rangeModel.value.min = 0
     rangeModel.value.max = 100
   } else {
