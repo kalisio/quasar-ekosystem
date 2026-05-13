@@ -50,6 +50,7 @@
   },
   "homepage": "https://github.com/kalisio/quasar-ekosystem/tree/main/packages/check#readme",
   "peerDependencies": {
+    "@kalisio/common-core": "catalog:",
     "@kalisio/quasar-core": "workspace:*",
     "@logtape/logtape": "catalog:",
     "ajv": "catalog:",

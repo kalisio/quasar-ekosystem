@@ -264,6 +264,9 @@ importers:
 
   packages/quasar-form:
     dependencies:
+      '@kalisio/common-core':
+        specifier: 'catalog:'
+        version: 0.4.1(lodash-es@4.18.1)(mathjs@15.1.1)(moment@2.30.1)(sanitize-html@2.17.3)(sift@17.1.3)
       '@kalisio/quasar-core':
         specifier: workspace:*
         version: link:../quasar-core

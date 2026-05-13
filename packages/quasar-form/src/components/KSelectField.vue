@@ -88,7 +88,7 @@
 import _ from 'lodash-es'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
-import { makeDiacriticPattern } from '../utils/diacritics.js'
+import { string } from '@kalisio/common-core'
 
 export default {
   // Missing Mixin: baseField
@@ -133,7 +133,7 @@ export default {
       })
       if (this.filter) {
         opts = _.filter(opts, option => {
-          const regExp = new RegExp(makeDiacriticPattern(this.filter))
+          const regExp = new RegExp(string.makeDiacriticPattern(this.filter))
           return regExp.test(option.label.toLowerCase())
         })
       }
