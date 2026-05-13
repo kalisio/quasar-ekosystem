@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _ from 'lodash-es'
 import { ref, computed, watch, getCurrentInstance } from 'vue'
 import { openURL } from 'quasar'
 import { useI18n } from 'vue-i18n'

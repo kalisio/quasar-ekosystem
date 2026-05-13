@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _ from 'lodash-es'
 
 // Extract icon name from a given icon property on a given target object
 export function getIconName (object, path = 'icon.name') {

@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import _ from 'lodash'
+import _ from 'lodash-es'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 

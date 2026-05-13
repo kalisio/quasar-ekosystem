@@ -49,18 +49,22 @@
     "url": "https://github.com/kalisio/quasar-ekosystem/issues"
   },
   "homepage": "https://github.com/kalisio/quasar-ekosystem/tree/main/packages/check#readme",
-  "dependencies": {
+  "peerDependencies": {
     "@kalisio/quasar-core": "workspace:*",
     "@logtape/logtape": "catalog:",
     "ajv": "catalog:",
     "ajv-formats": "catalog:",
     "ajv-keywords": "catalog:",
-    "lodash": "catalog:",
+    "lodash-es": "catalog:",
+    "quasar": "catalog:",
     "vue": "catalog:",
     "vue-i18n": "catalog:"
   },
   "devDependencies": {
+    "@quasar/quasar-app-extension-testing-unit-vitest": "catalog:",
+    "@quasar/vite-plugin": "catalog:",
     "@vue/test-utils": "catalog:",
-    "happy-dom": "catalog:"
+    "happy-dom": "catalog:",
+    "quasar": "catalog:"
   }
 }

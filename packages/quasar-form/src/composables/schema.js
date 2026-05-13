@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _ from 'lodash-es'
 import { ref, readonly } from 'vue'
 import { schemaRegistry as registry } from '../utils/index.js'
 
