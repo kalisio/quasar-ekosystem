@@ -4,6 +4,7 @@ import { mount } from '@vue/test-utils'
 
 import { QBtn, QItem } from 'quasar'
 import KAction from '../../src/components/KAction.vue'
+import { router } from '../setup.js'
 
 vi.mock('quasar', async (importOriginal) => {
   const actual = await importOriginal()
@@ -158,5 +159,64 @@ describe('KAction', () => {
   it('tab renderer renders q-btn', () => {
     const wrapper = mount(KAction, { props: { id: 'test', renderer: 'tab', label: 'Tab 1' } })
     expect(wrapper.findComponent(QBtn).exists()).toBe(true)
+  })
+})
+
+describe('KAction — route prop', () => {
+  it('calls router.push with route name on click', async () => {
+    const wrapper = mount(KAction, {
+      props: { id: 'test', renderer: 'button', route: { name: 'dashboard' } }
+    })
+    await wrapper.findComponent(QBtn).trigger('click')
+    expect(router.push).toHaveBeenCalledWith({ name: 'dashboard', query: {}, params: {} })
+  })
+
+  it('passes static query params to router.push', async () => {
+    const wrapper = mount(KAction, {
+      props: { id: 'test', renderer: 'button', route: { name: 'search', query: { q: 'hello' } } }
+    })
+    await wrapper.findComponent(QBtn).trigger('click')
+    expect(router.push).toHaveBeenCalledWith({ name: 'search', query: { q: 'hello' }, params: {} })
+  })
+
+  it('resolves dynamic param from context', async () => {
+    const wrapper = mount(KAction, {
+      props: {
+        id: 'test',
+        renderer: 'button',
+        route: { name: 'user', params: { id: ':userId' } },
+        context: { userId: '42' }
+      }
+    })
+    await wrapper.findComponent(QBtn).trigger('click')
+    expect(router.push).toHaveBeenCalledWith(
+      expect.objectContaining({ params: expect.objectContaining({ id: '42' }) })
+    )
+  })
+
+  it('resolves dynamic param from current route params', async () => {
+    router.setParams({ projectId: 'abc' })
+    const wrapper = mount(KAction, {
+      props: {
+        id: 'test',
+        renderer: 'button',
+        route: { name: 'project-detail', params: { id: ':projectId' } },
+        context: {}
+      }
+    })
+    await wrapper.findComponent(QBtn).trigger('click')
+    expect(router.push).toHaveBeenCalledWith(
+      expect.objectContaining({ params: expect.objectContaining({ id: 'abc' }) })
+    )
+  })
+
+  it('sets location.href when route.url is provided', async () => {
+    const mockLocation = { href: '' }
+    Object.defineProperty(window, 'location', { value: mockLocation, configurable: true, writable: true })
+    const wrapper = mount(KAction, {
+      props: { id: 'test', renderer: 'button', route: { url: 'https://example.com/oauth' } }
+    })
+    await wrapper.findComponent(QBtn).trigger('click')
+    expect(window.location.href).toBe('https://example.com/oauth')
   })
 })

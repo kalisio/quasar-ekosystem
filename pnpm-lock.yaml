@@ -117,6 +117,9 @@ catalogs:
     vue-router:
       specifier: ~5.0.3
       version: 5.0.6
+    vue-router-mock:
+      specifier: ~2.0.2
+      version: 2.0.2
 
 importers:
 
@@ -261,6 +264,9 @@ importers:
       sass:
         specifier: ^1.99.0
         version: 1.99.0
+      vue-router-mock:
+        specifier: 'catalog:'
+        version: 2.0.2(vue-router@5.0.6(@vue/compiler-sfc@3.5.31)(vue@3.5.31))(vue@3.5.31)
 
   packages/quasar-form:
     dependencies:
@@ -4115,6 +4121,12 @@ packages:
     engines: {node: '>= 16'}
     peerDependencies:
       vue: ^3.0.0
+
+  vue-router-mock@2.0.2:
+    resolution: {integrity: sha512-QI6gHBDofiLGI/7f5WhhuB7TbJIUED80MhYuhGORCxEnHPCE6xWXBCancSroiX1sguKjHZZRviUE4ptO3B0U/A==}
+    peerDependencies:
+      vue: ^3.2.23
+      vue-router: ^4.0.12 || ^5.0.0
 
   vue-router@5.0.6:
     resolution: {integrity: sha512-9+kmUTGbKMyW9Asoy98IXXYIzrTMT7JDAdpDDeEkorHvybpUvBI2wsrSM5jFOXrFydpzRFJ9vAh+80DN2PGu9w==}
@@ -8419,6 +8431,11 @@ snapshots:
       '@intlify/shared': 11.3.0
       '@vue/devtools-api': 6.6.4
       vue: 3.5.31
+
+  vue-router-mock@2.0.2(vue-router@5.0.6(@vue/compiler-sfc@3.5.31)(vue@3.5.31))(vue@3.5.31):
+    dependencies:
+      vue: 3.5.31
+      vue-router: 5.0.6(@vue/compiler-sfc@3.5.31)(vue@3.5.31)
 
   vue-router@5.0.6(@vue/compiler-sfc@3.5.31)(vue@3.5.31):
     dependencies:

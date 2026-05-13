@@ -60,7 +60,8 @@
     "@quasar/vite-plugin": "catalog:",
     "@vue/test-utils": "catalog:",
     "happy-dom": "catalog:",
-    "sass": "^1.99.0"
+    "sass": "^1.99.0",
+    "vue-router-mock": "catalog:"
   },
   "engines": {
     "node": ">=20"
