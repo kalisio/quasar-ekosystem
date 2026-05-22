@@ -2,16 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { vHover } from '../../src/directives/v-hover.js'
 import { Platform } from '../../src/utilities/platform.js'
 
-vi.mock('../../src/utilities/platform.js', () => ({
-  Platform: { touch: false }
-}))
-
-vi.mock('@logtape/logtape', () => ({ getLogger: () => ({ debug: vi.fn() }) }))
-vi.mock('@thumbmarkjs/thumbmarkjs', () => ({
-  getFingerprint: vi.fn(),
-  getFingerprintData: vi.fn()
-}))
-
 beforeEach(() => {
   Platform.touch = false
 })
