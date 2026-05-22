@@ -32,6 +32,18 @@ describe('QuasarCore plugin', () => {
     expect(app.config.globalProperties.$tie('my.key')).toBe('my.key')
   })
 
+  it('registers hover directive', () => {
+    const app = createApp({})
+    app.use(plugin)
+    expect(app.directive('hover')).toBeDefined()
+  })
+
+  it('registers safe-html directive', () => {
+    const app = createApp({})
+    app.use(plugin)
+    expect(app.directive('safe-html')).toBeDefined()
+  })
+
   it('$tie uses the i18n instance passed as an option', () => {
     const mockI18n = {
       te: (key) => key === 'known.key',
