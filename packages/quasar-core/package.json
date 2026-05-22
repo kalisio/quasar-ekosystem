@@ -46,6 +46,7 @@
     "@kalisio/common-core": "catalog:",
     "@kalisio/common-graphics": "catalog:",
     "@logtape/logtape": "catalog:",
+    "@thumbmarkjs/thumbmarkjs": "catalog:",
     "chroma-js": "catalog:",
     "lodash-es": "catalog:",
     "mathjs": "catalog:",

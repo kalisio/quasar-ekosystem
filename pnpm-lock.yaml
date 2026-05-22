@@ -24,6 +24,9 @@ catalogs:
     '@quasar/vite-plugin':
       specifier: ~1.11.0
       version: 1.11.0
+    '@thumbmarkjs/thumbmarkjs':
+      specifier: ~1.7.5
+      version: 1.7.7
     '@vitejs/plugin-vue':
       specifier: ~6.0.4
       version: 6.0.4
@@ -221,6 +224,9 @@ importers:
       '@logtape/logtape':
         specifier: 'catalog:'
         version: 0.7.2
+      '@thumbmarkjs/thumbmarkjs':
+        specifier: 'catalog:'
+        version: 1.7.7
       chroma-js:
         specifier: 'catalog:'
         version: 3.2.0
@@ -1430,6 +1436,9 @@ packages:
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
+
+  '@thumbmarkjs/thumbmarkjs@1.7.7':
+    resolution: {integrity: sha512-1gFlBz0wb/DRhuobudmvbVHY+I0drXZw8CwBZCZG5PQfGmmc+gl9SW3lqWVYRWltsWQaQWNWHBB/sXw9MZQiyw==}
 
   '@tybys/wasm-util@0.10.1':
     resolution: {integrity: sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg==}
@@ -5228,6 +5237,8 @@ snapshots:
   '@shikijs/vscode-textmate@10.0.2': {}
 
   '@standard-schema/spec@1.1.0': {}
+
+  '@thumbmarkjs/thumbmarkjs@1.7.7': {}
 
   '@tybys/wasm-util@0.10.1':
     dependencies:
