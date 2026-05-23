@@ -15,6 +15,7 @@ It is organized around 2 modules:
 
 - [components](#components) — generic UI building blocks (avatar, chip, modal, tabs, tree…)
 - [directives](#directives) — reusable Vue directives (`v-hover`, `v-safe-html`)
+- [Plarform](#platform) - a unique object that provides platform, browser, and fingerprint data
 
 ### Components
 
@@ -41,42 +42,6 @@ It is organized around 2 modules:
 | `KTree` | Hierarchical tree with lazy node loading |
 
 All components are automatically registered globally when the plugin is installed.
-
-### Directives
-
-**quasar-core** ships the following Vue directives, all automatically registered by the plugin:
-
-| Directive | Description |
-|---|---|
-| `v-hover` | Attaches `mouseenter`, `mouseover` and `mouseleave` listeners. No-op on touch devices (`Platform.touch`). Accepts `{ enter, over, leave }` handlers. |
-| `v-safe-html` | Injects sanitized HTML into an element's `innerHTML`. Uses `sanitize` from `@kalisio/common-core` to strip dangerous tags before rendering. Prefer this over `v-html`. |
-
-```vue
-<!-- v-hover -->
-<div v-hover="{ enter: onEnter, leave: onLeave }">Hover me</div>
-
-<!-- v-safe-html -->
-<div v-safe-html="htmlContent" />
-```
-
-> [!TIP]
-> `v-safe-html` is the safe replacement for `v-html`. It sanitizes content using the `basicFormatting` profile from `@kalisio/common-core` before injecting it into the DOM.
-
-### Platform
-
-The `Platform` utility extends Quasar's built-in platform detection with fingerprinting and build mode information.
-
-```js
-import { Platform } from '@kalisio/quasar-core'
-
-await Platform.initialize('spa') // or 'pwa'
-
-Platform.getData()                    // full data object
-Platform.getData('application.mode') // 'spa' | 'pwa'
-Platform.getData('system.desktop')   // true | false
-```
-
-`initialize(buildMode)` must be called once at application startup. It merges Quasar's platform data, collects browser fingerprint data, and stores the build mode.
 
 ## Installation
 
