@@ -1,57 +1,102 @@
-import { describe, it, expect } from 'vitest'
-import { createApp } from 'vue'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { plugin } from '../src/plugin.js'
 
-describe('QuasarCore plugin', () => {
-  it('installs without error', () => {
-    const app = createApp({})
-    expect(() => app.use(plugin)).not.toThrow()
-  })
+import { I18n } from '../src/i18n.js'
+import { Platform } from '../src/platform.js'
 
-  it('registers all components globally', () => {
-    const app = createApp({})
-    app.use(plugin)
-    const expected = [
-      'KAction', 'KChip', 'KContent', 'KDialog',
-      'KModal', 'KPanel', 'KTab', 'KTextArea'
-    ]
-    for (const name of expected) {
-      expect(app.component(name), `${name} should be registered`).toBeDefined()
+// --- mocks ---
+
+vi.mock('vue', () => ({
+  defineAsyncComponent: vi.fn((loader) => loader)
+}))
+
+vi.mock('../src/i18n.js', () => ({
+  I18n: {
+    setInstance: vi.fn()
+  }
+}))
+
+vi.mock('../src/platform.js', () => ({
+  Platform: {
+    initialize: vi.fn().mockResolvedValue(undefined),
+    getData: vi.fn()
+  }
+}))
+
+// --- helpers ---
+
+function makeApp () {
+  return {
+    component: vi.fn(),
+    directive: vi.fn(),
+    provide: vi.fn(),
+    config: {
+      globalProperties: {}
     }
+  }
+}
+
+// --- tests ---
+
+describe('plugin', () => {
+  let app
+
+  beforeEach(() => {
+    app = makeApp()
+    vi.clearAllMocks()
   })
 
-  it('exposes $tie as a global property', () => {
-    const app = createApp({})
-    app.use(plugin)
-    expect(typeof app.config.globalProperties.$tie).toBe('function')
+  it('should register components', async () => {
+    await plugin.install(app, { buildMode: 'SPA' })
+    expect(app.component).toHaveBeenCalled()
   })
 
-  it('$tie returns the key when no translation is found', () => {
-    const app = createApp({})
-    app.use(plugin)
-    expect(app.config.globalProperties.$tie('my.key')).toBe('my.key')
+  it('should register directives', async () => {
+    await plugin.install(app, { buildMode: 'SPA' })
+    expect(app.directive).toHaveBeenCalled()
   })
 
-  it('registers hover directive', () => {
-    const app = createApp({})
-    app.use(plugin)
-    expect(app.directive('hover')).toBeDefined()
+  it('should initialize Platform with the provided build mode', async () => {
+    await plugin.install(app, { buildMode: 'PWA' })
+    expect(Platform.initialize).toHaveBeenCalledWith('PWA')
   })
 
-  it('registers safe-html directive', () => {
-    const app = createApp({})
-    app.use(plugin)
-    expect(app.directive('safe-html')).toBeDefined()
+  it('should provide platform', async () => {
+    await plugin.install(app, { buildMode: 'SPA' })
+    expect(app.provide).toHaveBeenCalledWith('platform', Platform)
   })
 
-  it('$tie uses the i18n instance passed as an option', () => {
-    const mockI18n = {
-      te: (key) => key === 'known.key',
-      t: (key) => `[${key}]`
-    }
-    const app = createApp({})
-    app.use(plugin, { i18n: mockI18n })
-    expect(app.config.globalProperties.$tie('known.key')).toBe('[known.key]')
-    expect(app.config.globalProperties.$tie('unknown.key')).toBe('unknown.key')
+  it('should expose $platform as a global property', async () => {
+    await plugin.install(app, { buildMode: 'SPA' })
+    expect(app.config.globalProperties.$platform).toBe(Platform)
+  })
+
+  it('should set the i18n instance when provided', async () => {
+    const i18nInstance = { global: {} }
+    await plugin.install(app, { buildMode: 'SPA', i18n: i18nInstance })
+    expect(I18n.setInstance).toHaveBeenCalledWith(i18nInstance)
+  })
+
+  it('should not set the i18n instance when not provided', async () => {
+    await plugin.install(app, { buildMode: 'SPA' })
+    expect(I18n.setInstance).not.toHaveBeenCalled()
+  })
+
+  it('should provide i18n', async () => {
+    await plugin.install(app, { buildMode: 'SPA' })
+    expect(app.provide).toHaveBeenCalledWith('i18n', I18n)
+  })
+
+  it('should expose $tie as a global property', async () => {
+    await plugin.install(app, { buildMode: 'SPA' })
+    expect(app.config.globalProperties.$tie).toBeTypeOf('function')
+  })
+
+  it('should call I18n.tie when $tie is invoked', async () => {
+    I18n.tie = vi.fn().mockReturnValue('hello')
+    await plugin.install(app, { buildMode: 'SPA' })
+    const result = app.config.globalProperties.$tie('app.welcome', { name: 'Alice' })
+    expect(I18n.tie).toHaveBeenCalledWith('app.welcome', { name: 'Alice' })
+    expect(result).toBe('hello')
   })
 })

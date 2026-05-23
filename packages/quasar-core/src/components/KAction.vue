@@ -19,7 +19,7 @@
     v-close-popup="closePopup"
     @click="onClicked"
     :class="{ 'k-action-toggled': isToggled }"
-  > 
+  >
     <!-- icon -->
     <KIcon v-if="!iconRight && computedIcon" :icon="computedIcon" />
     <!-- label -->
@@ -181,7 +181,7 @@ import _ from 'lodash-es'
 import { ref, toRef, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, openURL } from 'quasar'
-import { i18n } from '../utilities/i18n.js'
+import { useI18n } from '../composables'
 import { actionProps } from '../utilities/actions.js'
 import { content } from '../utilities/content.js'
 const { bindParams, bindProperties } = content
@@ -194,6 +194,7 @@ const props = defineProps(actionProps)
 const route = useRoute()
 const router = useRouter()
 const $q = useQuasar()
+const { tie } = useI18n()
 const isToggled = _.has(props, 'toggle.value') ? toRef(props.toggle, 'value') : ref(props.toggled)
 
 // Emit
@@ -202,8 +203,8 @@ const emit = defineEmits(['triggered', 'toggled', 'dialog-confirmed', 'dialog-ca
 // Computed
 const computedLabel = computed(() => {
   // Check also for translation key or already translated message
-  if (isToggled.value && _.has(props.toggle, 'label')) return i18n.tie(props.toggle.label)
-  return i18n.tie(props.label)
+  if (isToggled.value && _.has(props.toggle, 'label')) return tie(props.toggle.label)
+  return tie(props.label)
 })
 const computedIcon = computed(() => {
   if (isToggled.value && _.has(props.toggle, 'icon')) return props.toggle.icon
@@ -216,12 +217,12 @@ const computedColor = computed(() => {
 const computedTooltip = computed(() => {
   if (computedDisabled.value) return
   // Check also for translation key or already translated message
-  if (isToggled.value && _.has(props.toggle, 'tooltip')) return i18n.tie(props.toggle.tooltip)
-  return i18n.tie(props.tooltip)
+  if (isToggled.value && _.has(props.toggle, 'tooltip')) return tie(props.toggle.tooltip)
+  return tie(props.tooltip)
 })
 const computedBadgeLabel = computed(() => {
   // Check also for translation key or already translated message
-  if (props.badge && _.has(props.badge, 'label')) return i18n.tie(props.badge.label)
+  if (props.badge && _.has(props.badge, 'label')) return tie(props.badge.label)
   // Take care that changing this to null or '' breaks the display in Quasar
   return undefined
 })
@@ -317,7 +318,7 @@ defineExpose({
 <style lang="scss" scoped>
 .k-fab, .k-fab-action {
   border: 2px solid;
-  border-color: v-bind(computedColor) - 75%; 
+  border-color: v-bind(computedColor) - 75%;
 }
 .k-tab-action-active {
   border-bottom: solid 2px;

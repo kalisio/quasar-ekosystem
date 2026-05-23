@@ -7,11 +7,12 @@ import { Platform as QPlatform } from 'quasar'
 const logger = getLogger(['quasar-core', 'platform'])
 
 const BUILD_MODES = ['PWA', 'SPA']
+let _buildMode = null
 
 export const Platform = {
   async initialize (buildMode) {
     assert.that(buildMode, (v) => is.oneOf(v, BUILD_MODES), `buildMode must be one of: ${BUILD_MODES.join(', ')}`)
-    this.buildMode = buildMode
+    _buildMode = buildMode
     // use Quasar platform data
     merge(this, omit(QPlatform, ['install', '__installed']))
     // use fingerprint data
@@ -22,10 +23,11 @@ export const Platform = {
     logger.debug('[quasar-core] Platform initialized with:', this)
   },
   getData (scope) {
+    assert.that(_buildMode, is.defined, 'Platform must be initialized before calling getData')
     const data = {
       userAgent: this.userAgent,
       application: {
-        mode: this.buildMode,
+        mode: _buildMode,
         iframe: this.within.iframe,
         permissions: this.fingerprintData?.permissions
       },

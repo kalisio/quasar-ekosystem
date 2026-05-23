@@ -108,7 +108,7 @@ describe('KAction', () => {
     expect(wrapper.vm.computedTooltip).toBe('Toggled tip')
   })
 
-  // computedBadgeLabel reads badge.label through i18n.tie
+  // computedBadgeLabel reads badge.label through I18n.tie
   it('computedBadgeLabel returns badge label when set', () => {
     const wrapper = mount(KAction, { props: { id: 'test', badge: { label: 'new' } } })
     expect(wrapper.vm.computedBadgeLabel).toBe('new')

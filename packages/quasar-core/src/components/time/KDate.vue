@@ -14,8 +14,7 @@
 import _ from 'lodash-es'
 import moment from 'moment'
 import { computed } from 'vue'
-// import { Time } from '../../time.js'
-import { i18n } from '../../utilities/i18n.js'
+import { useI18n } from '../../composables'
 
 // Props
 const props = defineProps({
@@ -53,6 +52,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 // Data
+const { tie } = useI18n()
 const mask = 'YYYY-MM-DD'
 
 // Computed
@@ -70,7 +70,7 @@ const computedButton = computed(() => {
   // if (_.isEmpty(format)) format = _.get(Time.getFormat(), 'date.short')
   if (_.isEmpty(format)) format = 'iso'
   // compute label
-  // const label = _.isEmpty(computedModel.value) ? i18n.tie(props.placeholder) : moment.tz(computedModel.value, mask, Time.getFormatTimezone()).format(format)
+  // const label = _.isEmpty(computedModel.value) ? tie(props.placeholder) : moment.tz(computedModel.value, mask, Time.getFormatTimezone()).format(format)
   // define button spec
   const spec = {
     id: 'date-button',

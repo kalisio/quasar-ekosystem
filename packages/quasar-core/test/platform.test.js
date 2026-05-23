@@ -34,15 +34,19 @@ vi.mock('quasar', () => ({
 
 describe('Platform', () => {
   describe('initialize', () => {
+    it('should throw if getData is called before initialization', () => {
+      expect(() => Platform.getData()).toThrow('Platform must be initialized before calling getData')
+    })
+
     it('should initialize in SPA build mode', async () => {
       await Platform.initialize('SPA')
-      expect(Platform.buildMode).toBe('SPA')
+      expect(Platform.getData('application.mode')).toBe('SPA')
       expect(Platform.is.pwa).toBe(false)
     })
 
     it('should initialize in PWA build mode', async () => {
       await Platform.initialize('PWA')
-      expect(Platform.buildMode).toBe('PWA')
+      expect(Platform.getData('application.mode')).toBe('PWA')
       expect(Platform.is.pwa).toBe(true)
     })
 

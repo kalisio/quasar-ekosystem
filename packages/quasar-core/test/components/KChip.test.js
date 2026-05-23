@@ -3,7 +3,7 @@ import { mount } from '@vue/test-utils'
 import KChip from '../../src/components/KChip.vue'
 
 describe('KChip', () => {
-  // The label prop is passed through i18n.tie and returned as-is in tests
+  // The label prop is passed through I18n.tie and returned as-is in tests
   it('computes label from prop', () => {
     const wrapper = mount(KChip, { props: { label: 'Hello' } })
     expect(wrapper.vm.computedLabel).toBe('Hello')

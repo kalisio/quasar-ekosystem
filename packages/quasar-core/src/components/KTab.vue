@@ -34,7 +34,7 @@
 <script setup>
 import _ from 'lodash-es'
 import { ref, computed, watch } from 'vue'
-import { i18n } from '../utilities/i18n.js'
+import { useI18n } from '../composables'
 import KContent from './KContent.vue'
 
 // Props
@@ -73,6 +73,7 @@ const props = defineProps({
 const emit = defineEmits(['tab-changed', 'triggered'])
 
 // Data
+const { tie } = useI18n()
 const current = ref(null)
 
 // Computed
@@ -97,7 +98,7 @@ function getModes () {
 }
 function getLabel (index) {
   const label = _.nth(props.labels, index)
-  if (label) return i18n.tie(label)
+  if (label) return tie(label)
 }
 function onTabChanged (params) {
   emit('tab-changed', params)

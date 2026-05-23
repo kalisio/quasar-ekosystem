@@ -19,7 +19,13 @@ beforeEach(() => {
   injectRouterMock(router)
 })
 
-// Install the components
+// Provide singletons for composables usage
+config.global.provide = {
+  i18n: { tie: (key) => key },
+  platform: { getData: vi.fn(), is: { desktop: true, mobile: false, touch: false, pwa: false } }
+}
+
+// Declare components
 const componentFiles = import.meta.glob('../src/components/**/*.vue', { eager: true })
 const components = {}
 for (const path in componentFiles) {
@@ -28,6 +34,7 @@ for (const path in componentFiles) {
 }
 config.global.components = components
 
+// Mock i18n functions
 config.global.mocks = {
   $t: (key) => key,
   $tie: (key) => key

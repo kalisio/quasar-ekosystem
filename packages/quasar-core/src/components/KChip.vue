@@ -38,7 +38,8 @@ import { ref, computed } from 'vue'
 import { uid } from 'quasar'
 import { sanitize } from '@kalisio/common-core'
 import { color } from '@kalisio/common-graphics'
-import { i18n, palette } from '../utilities'
+import { palette } from '../utilities'
+import { useI18n } from '../composables'
 
 // Props
 const props = defineProps({
@@ -131,6 +132,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'update:selected', 'remove', 'click'])
 
 // Data
+const { tie } = useI18n()
 const isTruncated = ref(false)
 const id = uid()
 
@@ -144,7 +146,7 @@ const computedState = computed({
   }
 })
 const computedLabel = computed(() => {
-  if (!props.hideLabel && props.label) return i18n.tie(props.label)
+  if (!props.hideLabel && props.label) return tie(props.label)
 })
 const computedIcon = computed(() => {
   if (!props.hideIcon) return props.icon
@@ -154,7 +156,7 @@ const computedTooltip = computed(() => {
   if (props.tooltipBehavior === 'truncated') {
     if (!isTruncated.value) return
   }
-  return props.label ? i18n.tie(props.label) : props.tooltip
+  return props.label ? tie(props.label) : props.tooltip
 })
 const computedColor = computed(() => {
   return props.outline ? 'transparent' : palette.resolve(props.color, props.color)
