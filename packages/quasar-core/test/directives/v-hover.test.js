@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { vHover } from '../../src/directives/v-hover.js'
-import { Platform } from '../../src/utilities/platform.js'
+import { Platform } from '../../src/platform.js'
 
 beforeEach(() => {
   Platform.touch = false
