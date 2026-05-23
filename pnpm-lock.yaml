@@ -10,11 +10,11 @@ catalogs:
       specifier: ~2.30.0
       version: 2.30.0
     '@kalisio/common-core':
-      specifier: ~0.4.1
-      version: 0.4.1
+      specifier: ~0.5.0
+      version: 0.5.0
     '@kalisio/common-graphics':
-      specifier: ~0.4.1
-      version: 0.4.1
+      specifier: ~0.5.0
+      version: 0.5.0
     '@logtape/logtape':
       specifier: ~0.7.0
       version: 0.7.2
@@ -217,10 +217,10 @@ importers:
     dependencies:
       '@kalisio/common-core':
         specifier: 'catalog:'
-        version: 0.4.1(lodash-es@4.18.1)(mathjs@15.1.1)(moment@2.30.1)(sanitize-html@2.17.3)(sift@17.1.3)
+        version: 0.5.0(lodash-es@4.18.1)(mathjs@15.1.1)(moment@2.30.1)(sanitize-html@2.17.3)(sift@17.1.3)
       '@kalisio/common-graphics':
         specifier: 'catalog:'
-        version: 0.4.1(lodash-es@4.18.1)(mathjs@15.1.1)(moment@2.30.1)(sanitize-html@2.17.3)(sift@17.1.3)
+        version: 0.5.0(@kalisio/common-core@0.5.0(lodash-es@4.18.1)(mathjs@15.1.1)(moment@2.30.1)(sanitize-html@2.17.3)(sift@17.1.3))(@logtape/logtape@0.7.2)(chroma-js@3.2.0)(lru-cache@11.3.5)
       '@logtape/logtape':
         specifier: 'catalog:'
         version: 0.7.2
@@ -278,7 +278,7 @@ importers:
     dependencies:
       '@kalisio/common-core':
         specifier: 'catalog:'
-        version: 0.4.1(lodash-es@4.18.1)(mathjs@15.1.1)(moment@2.30.1)(sanitize-html@2.17.3)(sift@17.1.3)
+        version: 0.5.0(lodash-es@4.18.1)(mathjs@15.1.1)(moment@2.30.1)(sanitize-html@2.17.3)(sift@17.1.3)
       '@kalisio/quasar-core':
         specifier: workspace:*
         version: link:../quasar-core
@@ -893,8 +893,9 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@kalisio/common-core@0.4.1':
-    resolution: {integrity: sha512-EEgx3sZNIxpruUbQi3dQlSBGv2krKGwVgZX2Bzfqj3ho4WEQvVEgRMTGWcjAHqfCjA5eg30g76VcS5qKwYseGQ==}
+  '@kalisio/common-core@0.5.0':
+    resolution: {integrity: sha512-xSkR8smDW3X0eFZZ1+xIhlRa3jQu0/0RI9u5CKc2hXkhmaAva8TBUa8SY0q2ZoPOK+T1rIGoSU4LLVYXynylVA==}
+    engines: {node: '>=20'}
     peerDependencies:
       lodash-es: ~4.18.1
       mathjs: ~15.1.1
@@ -913,8 +914,18 @@ packages:
       sift:
         optional: true
 
-  '@kalisio/common-graphics@0.4.1':
-    resolution: {integrity: sha512-2Tdi7zo6KeXLUCpoEGMIJ+myL5qXJUOJztfg6KPsYNt8+++TS+dETMtcIcKPpFXi2G3H9rdTMr5aEIVmuSsrsQ==}
+  '@kalisio/common-graphics@0.5.0':
+    resolution: {integrity: sha512-RPJ2mMnqlbhpSLSKuuFh6UGcnjslApNH1RtSF9VcZVXBCOkAHTbyNDBOReayvJs1/qsiXP14I0/Ztc2WNuvRuA==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      '@kalisio/common-core': 0.5.0
+      '@logtape/logtape': ~0.7.0
+      chroma-js: ~3.2.0
+      lru-cache: ~11.3.5
+      sharp: ~0.34.5
+    peerDependenciesMeta:
+      sharp:
+        optional: true
 
   '@logtape/logtape@0.7.2':
     resolution: {integrity: sha512-3iL71YEiJ8GM6HzeW4eCG2pS8/F9EX6tYfVVCp/oWhzYjQ5FY/QMesSPMtAYdAGG4Evac23ugOSXZJp592zg0A==}
@@ -4831,7 +4842,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@kalisio/common-core@0.4.1(lodash-es@4.18.1)(mathjs@15.1.1)(moment@2.30.1)(sanitize-html@2.17.3)(sift@17.1.3)':
+  '@kalisio/common-core@0.5.0(lodash-es@4.18.1)(mathjs@15.1.1)(moment@2.30.1)(sanitize-html@2.17.3)(sift@17.1.3)':
     optionalDependencies:
       lodash-es: 4.18.1
       mathjs: 15.1.1
@@ -4839,17 +4850,12 @@ snapshots:
       sanitize-html: 2.17.3
       sift: 17.1.3
 
-  '@kalisio/common-graphics@0.4.1(lodash-es@4.18.1)(mathjs@15.1.1)(moment@2.30.1)(sanitize-html@2.17.3)(sift@17.1.3)':
+  '@kalisio/common-graphics@0.5.0(@kalisio/common-core@0.5.0(lodash-es@4.18.1)(mathjs@15.1.1)(moment@2.30.1)(sanitize-html@2.17.3)(sift@17.1.3))(@logtape/logtape@0.7.2)(chroma-js@3.2.0)(lru-cache@11.3.5)':
     dependencies:
-      '@kalisio/common-core': 0.4.1(lodash-es@4.18.1)(mathjs@15.1.1)(moment@2.30.1)(sanitize-html@2.17.3)(sift@17.1.3)
+      '@kalisio/common-core': 0.5.0(lodash-es@4.18.1)(mathjs@15.1.1)(moment@2.30.1)(sanitize-html@2.17.3)(sift@17.1.3)
       '@logtape/logtape': 0.7.2
       chroma-js: 3.2.0
-    transitivePeerDependencies:
-      - lodash-es
-      - mathjs
-      - moment
-      - sanitize-html
-      - sift
+      lru-cache: 11.3.5
 
   '@logtape/logtape@0.7.2': {}
 
