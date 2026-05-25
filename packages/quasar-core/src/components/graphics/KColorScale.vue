@@ -14,6 +14,7 @@ import * as math from 'mathjs'
 import { computed, watch, onMounted } from 'vue'
 import { uid } from 'quasar'
 import { color } from '@kalisio/common-graphics'
+import { units } from '../../utilities/units.js'
 
 // props
 const props = defineProps({
@@ -80,8 +81,7 @@ const callRefresh = _.debounce(() => { refresh() }, 200)
 // Computed
 const labelText = computed(() => {
   let text = props.label
-  // if (text && props.unit) text += ` (${Units.getUnitSymbol(props.unit)})`
-  if (text && props.unit) text += (props.unit)
+  if (text && props.unit) text += ` (${units.getSymbol(props.unit)})`
   return text
 })
 const labelSize = computed(() => {

@@ -29,9 +29,14 @@ describe('KColorScale', () => {
     expect(wrapper.vm.labelText).toBe('Temperature')
   })
 
-  it('appends unit to labelText when both are set', () => {
-    const wrapper = mountScale({ label: 'Temperature', unit: '°C' })
-    expect(wrapper.vm.labelText).toBe('Temperature°C')
+  it('appends unit symbol to labelText when both are set', () => {
+    const wrapper = mountScale({ label: 'Temperature', unit: 'degC' })
+    expect(wrapper.vm.labelText).toBe('Temperature (°C)')
+  })
+
+  it('falls back to the raw unit string when unit is unknown', () => {
+    const wrapper = mountScale({ label: 'Pressure', unit: 'hPa' })
+    expect(wrapper.vm.labelText).toBe('Pressure (hPa)')
   })
 
   it('returns undefined labelText when no label', () => {
