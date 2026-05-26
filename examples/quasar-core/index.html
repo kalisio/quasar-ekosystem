@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet" type="text/css">
+    <link href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" rel="stylesheet" type="text/css">
+  </head>
+
+  <body>
+    <div id="q-app">
+      <q-layout view="lhh LpR lff">
+        <q-header class="q-pa-md">
+          <q-banner class="bg-primary text-white">
+            <span class="text-h4">quasar-core</span>
+            <template v-slot:avatar>
+              <q-icon name="widgets" color="white"></q-icon>
+            </template>
+            <template v-slot:action>
+              <q-btn color="white" label="Graphics"
+                :flat="page !== 'graphics'"
+                :outline="page === 'graphics'"
+                @click="page = 'graphics'"
+              ></q-btn>
+            </template>
+          </q-banner>
+        </q-header>
+        <q-page-container>
+          <q-page padding>
+            <graphics-page v-if="page === 'graphics'"></graphics-page>
+          </q-page>
+        </q-page-container>
+      </q-layout>
+    </div>
+
+    <script type="module">
+      import { createApp, ref } from 'vue'
+      import QuasarCore from '@kalisio/quasar-core'
+      import {
+        Quasar,
+        QLayout, QHeader, QBanner, QIcon, QBtn, QPageContainer, QPage,
+        QCard, QCardSection, QSeparator, QResizeObserver, QTooltip
+      } from 'quasar'
+      import 'quasar/dist/quasar.css'
+      import GraphicsPage from './components/graphics-page.js'
+
+      const app = createApp({
+        components: { GraphicsPage },
+        setup () {
+          const page = ref('graphics')
+          return { page }
+        }
+      })
+
+      app.use(QuasarCore, { buildMode: 'SPA' })
+      app.use(Quasar, {
+        components: {
+          QLayout, QHeader, QBanner, QIcon, QBtn, QPageContainer, QPage,
+          QCard, QCardSection, QSeparator, QResizeObserver, QTooltip
+        }
+      })
+
+      app.mount('#q-app')
+    </script>
+  </body>
+</html>

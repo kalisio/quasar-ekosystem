@@ -98,30 +98,47 @@ Renders a continuous or discrete color scale on an HTML canvas. The scale automa
 
 ### Usage
 
+**Continuous horizontal scale**
+
+![KColorScale continuous horizontal](../../kcolor-scale-continuous.png)
+
 ```html
-<!-- Continuous horizontal scale -->
 <KColorScale label="Temperature" colors="RdYlBu" :domain="[-20, 40]" />
+```
 
-<!-- Continuous vertical scale -->
-<KColorScale
-  label="Wind speed"
-  colors="Viridis"
-  :domain="[0, 30]"
-  direction="vertical"
-/>
+**Discrete horizontal scale**
 
-<!-- Discrete horizontal scale -->
+![KColorScale discrete horizontal](../../kcolor-scale-discrete.png)
+
+```html
 <KColorScale
   label="Elevation"
   colors="OrRd"
   :domain="[0, 3000]"
   :classes="[0, 500, 1000, 2000, 3000]"
 />
+```
 
-<!-- Reversed domain -->
+**Continuous vertical scale**
+
+```html
+<KColorScale
+  label="Wind speed"
+  colors="Viridis"
+  :domain="[0, 30]"
+  direction="vertical"
+/>
+```
+
+**Reversed domain**
+
+```html
 <KColorScale colors="Blues" :domain="[100, 0]" />
+```
 
-<!-- Custom tick formatting -->
+**Custom tick formatting**
+
+```html
 <KColorScale
   :domain="[0, 1]"
   :layout="{

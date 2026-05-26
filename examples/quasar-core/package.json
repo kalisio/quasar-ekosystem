@@ -1,0 +1,23 @@
+{
+  "name": "quasar-core",
+  "description": "quasar-core example",
+  "packageManager": "pnpm@10.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "lint": "standard --fix"
+  },
+  "author": {
+    "name": "KALISIO <contact@kalisio.com>",
+    "url": "https://github.com/kalisio"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "devDependencies": {
+    "@kalisio/quasar-core": "workspace:*",
+    "@vitejs/plugin-vue": "catalog:",
+    "quasar": "catalog:",
+    "vue": "catalog:",
+    "vite": "catalog:"
+  }
+}
