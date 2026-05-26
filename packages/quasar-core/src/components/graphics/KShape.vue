@@ -9,9 +9,9 @@
 
 <script setup>
 import { computed } from 'vue'
-import { Graphiks } from '@kalisio/common-graphics'
+import { ShapeFactory } from '@kalisio/common-graphics'
 
-const graphiks = new Graphiks()
+const factory = new ShapeFactory()
 
 // Props
 const props = defineProps({
@@ -27,7 +27,7 @@ const props = defineProps({
 
 // Computed
 const content = computed(() => {
-  const shape = graphiks.renderShape(props.options)
+  const shape = factory.build(props.options)
   return shape ? shape.toSVG() : undefined
 })
 </script>
