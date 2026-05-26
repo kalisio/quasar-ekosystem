@@ -9,4 +9,8 @@ config.global.mocks = {
   $t: (key) => key
 }
 
+config.global.stubs = {
+  KAction: true
+}
+
 vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (key) => key }) }))
