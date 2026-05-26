@@ -17,9 +17,6 @@
     :autofocus="hasFocus"
     bottom-slots
   >
-    <!-- Helper -->
-    <!-- Missing Component: KAction -->
-    <!--
     <template v-if="hasHelper" v-slot:append>
       <k-action
         :id="properties.name + '-helper'"
@@ -33,7 +30,6 @@
         color="primary"
       />
     </template>
-    -->
   </q-input>
 </template>
 

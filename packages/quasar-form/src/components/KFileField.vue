@@ -44,9 +44,6 @@
     @update:model-value="onFilesChanged"
     @rejected="onFileRejected"
   >
-    <!-- Helper -->
-    <!-- Missing Component: KAction -->
-    <!--
     <template v-if="hasHelper" v-slot:append>
       <KAction
         :id="properties.name + '-helper'"
@@ -60,7 +57,6 @@
         color="primary"
       />
     </template>
-    -->
   </q-file>
 </template>
 

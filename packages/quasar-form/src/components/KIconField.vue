@@ -39,9 +39,6 @@
           :name="iconName"
           :color="iconColor" />
       </template>
-      <!-- Helper -->
-      <!-- Missing Component: KAction -->
-      <!--
       <template v-if="hasHelper" v-slot:append>
         <KAction
           :id="properties.name + '-helper'"
@@ -55,7 +52,6 @@
           color="primary"
         />
       </template>
-      -->
     </q-field>
   </div>
 </template>
