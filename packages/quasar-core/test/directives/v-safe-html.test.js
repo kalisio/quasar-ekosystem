@@ -1,18 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { vSafeHtml } from '../../src/directives'
-
-import { sanitize } from '@kalisio/common-core'
-
-// --- mocks ---
-
-vi.mock('@kalisio/common-core', () => ({
-  sanitize: vi.fn((html, config) => `sanitized:${config ?? 'default'}:${html}`)
-}))
 
 // --- helpers ---
 
 function makeEl () {
-  return { innerHTML: '' }
+  return document.createElement('div')
 }
 
 function makeBinding (value) {
@@ -22,52 +14,46 @@ function makeBinding (value) {
 // --- tests ---
 
 describe('vSafeHtml', () => {
-  beforeEach(() => {
-    sanitize.mockClear()
-  })
-
   describe('mounted', () => {
-    it('should sanitize with default config when binding is a string', () => {
+    it('should set innerHTML when binding is a string', () => {
       const el = makeEl()
       vSafeHtml.mounted(el, makeBinding('<p>hello</p>'))
-      expect(sanitize).toHaveBeenCalledWith('<p>hello</p>')
+      expect(el.innerHTML).toBe('<p>hello</p>')
     })
 
-    it('should sanitize with a named profile', () => {
+    it('should set innerHTML when binding is an object with html', () => {
       const el = makeEl()
       vSafeHtml.mounted(el, makeBinding({ html: '<p>hello</p>', config: 'markdown' }))
-      expect(sanitize).toHaveBeenCalledWith('<p>hello</p>', 'markdown')
+      expect(el.innerHTML).toBe('<p>hello</p>')
     })
 
-    it('should sanitize with a custom config object', () => {
+    it('should set innerHTML with a custom config object', () => {
       const el = makeEl()
-      const config = { allowedTags: ['b', 'i'] }
-      vSafeHtml.mounted(el, makeBinding({ html: '<b>bold</b>', config }))
-      expect(sanitize).toHaveBeenCalledWith('<b>bold</b>', config)
+      vSafeHtml.mounted(el, makeBinding({ html: '<b>bold</b>', config: { allowedTags: ['b', 'i'] } }))
+      expect(el.innerHTML).toBe('<b>bold</b>')
     })
 
-    it('should set innerHTML with the sanitized result', () => {
-      sanitize.mockReturnValueOnce('<p>safe</p>')
+    it('should strip disallowed tags', () => {
       const el = makeEl()
-      vSafeHtml.mounted(el, makeBinding('<p>hello</p>'))
-      expect(el.innerHTML).toBe('<p>safe</p>')
+      vSafeHtml.mounted(el, makeBinding('<script>alert("xss")</script><p>safe</p>'))
+      expect(el.innerHTML).not.toContain('<script>')
+      expect(el.innerHTML).toContain('<p>safe</p>')
     })
   })
 
   describe('updated', () => {
-    it('should re-sanitize when the binding value changes', () => {
+    it('should update innerHTML when binding value changes', () => {
       const el = makeEl()
       vSafeHtml.mounted(el, makeBinding('<p>first</p>'))
       vSafeHtml.updated(el, makeBinding('<p>second</p>'))
-      expect(sanitize).toHaveBeenCalledTimes(2)
-      expect(sanitize).toHaveBeenLastCalledWith('<p>second</p>')
+      expect(el.innerHTML).toBe('<p>second</p>')
     })
 
-    it('should re-sanitize with updated profile', () => {
+    it('should update innerHTML with new profile', () => {
       const el = makeEl()
       vSafeHtml.mounted(el, makeBinding({ html: '<p>hello</p>', config: 'strict' }))
-      vSafeHtml.updated(el, makeBinding({ html: '<p>hello</p>', config: 'markdown' }))
-      expect(sanitize).toHaveBeenLastCalledWith('<p>hello</p>', 'markdown')
+      vSafeHtml.updated(el, makeBinding({ html: '<p>world</p>', config: 'markdown' }))
+      expect(el.innerHTML).toBe('<p>world</p>')
     })
   })
 })

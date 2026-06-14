@@ -4,9 +4,6 @@ import { file } from '@kalisio/common-core/utilities'
 import { I18n } from '../i18n.js'
 import { palette } from '../utilities'
 
-console.log('******************')
-console.log(palette.resolve('negative'))
-
 const logger = getLogger(['quasar-core', 'directives', 'v-drop-file'])
 
 export const vDropFile = {
