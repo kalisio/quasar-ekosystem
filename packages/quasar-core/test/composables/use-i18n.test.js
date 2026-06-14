@@ -1,20 +1,22 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { defineComponent } from 'vue'
 import { mount } from '@vue/test-utils'
-import { useI18n } from '../../src/composables'
+import { createI18n } from 'vue-i18n'
+import { I18n } from '../../src/i18n.js'
+import { useI18n } from '../../src/composables/use-i18n.js'
 
 // --- helpers ---
 
-function mountWithI18n (i18n) {
+function mountWithI18n (messages = {}) {
+  const i18n = createI18n({ legacy: false, locale: 'en', messages: { en: messages } })
+  I18n.setInstance(i18n)
   const TestComponent = defineComponent({
-    setup () {
-      return useI18n()
-    },
+    setup () { return useI18n() },
     template: '<div />'
   })
   return mount(TestComponent, {
     global: {
-      provide: { i18n }
+      provide: { i18n: I18n }
     }
   })
 }
@@ -23,24 +25,17 @@ function mountWithI18n (i18n) {
 
 describe('useI18n', () => {
   it('should return the translated string when the key exists', () => {
-    const i18n = { tie: vi.fn().mockReturnValue('Hello!') }
-    const wrapper = mountWithI18n(i18n)
-    const result = wrapper.vm.tie('app.hello')
-    expect(i18n.tie).toHaveBeenCalledWith('app.hello', undefined)
-    expect(result).toBe('Hello!')
+    const wrapper = mountWithI18n({ app: { hello: 'Hello!' } })
+    expect(wrapper.vm.tie('app.hello')).toBe('Hello!')
   })
 
   it('should return the key as-is when no translation is found', () => {
-    const i18n = { tie: vi.fn((key) => key) }
-    const wrapper = mountWithI18n(i18n)
-    const result = wrapper.vm.tie('app.unknown')
-    expect(result).toBe('app.unknown')
+    const wrapper = mountWithI18n()
+    expect(wrapper.vm.tie('app.unknown')).toBe('app.unknown')
   })
 
-  it('should forward params to i18n.tie', () => {
-    const i18n = { tie: vi.fn().mockReturnValue('Hello, Alice!') }
-    const wrapper = mountWithI18n(i18n)
-    wrapper.vm.tie('app.greeting', { name: 'Alice' })
-    expect(i18n.tie).toHaveBeenCalledWith('app.greeting', { name: 'Alice' })
+  it('should forward params', () => {
+    const wrapper = mountWithI18n({ app: { greeting: 'Hello, {name}!' } })
+    expect(wrapper.vm.tie('app.greeting', { name: 'Alice' })).toBe('Hello, Alice!')
   })
 })

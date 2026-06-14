@@ -1,11 +1,26 @@
 import { vi, beforeEach } from 'vitest'
 import { config } from '@vue/test-utils'
-import { Dialog } from 'quasar'
+import { createI18n } from 'vue-i18n'
+import { Dialog, Notify } from 'quasar'
 import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-vitest'
 import { createRouterMock, injectRouterMock } from 'vue-router-mock'
+import { I18n } from '../src/i18n.js'
 
 // Install Quasar
-installQuasarPlugin({ plugins: { Dialog } })
+installQuasarPlugin({ plugins: { Dialog, Notify } })
+
+// Create I18n instance
+const i18n = createI18n({
+  legacy: false,
+  locale: 'en',
+  messages: {}
+})
+I18n.setInstance(i18n)
+config.global.config = {
+  globalProperties: {
+    $tie: (key, params) => I18n.tie(key, params)
+  }
+}
 
 // Install a mock router
 export const router = createRouterMock({
@@ -33,9 +48,3 @@ for (const path in componentFiles) {
   components[name] = componentFiles[path].default
 }
 config.global.components = components
-
-// Mock i18n functions
-config.global.mocks = {
-  $t: (key) => key,
-  $tie: (key) => key
-}

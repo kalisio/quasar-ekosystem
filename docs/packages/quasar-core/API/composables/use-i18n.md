@@ -5,28 +5,26 @@ description: Composable that provides access to the I18n utility.
 
 # useI18n
 
-Composable that provides access to the `I18n` utility. Wraps `inject('i18n')` for convenient use in components.
+Composable that provides access to the `I18n` utility from within a component setup.
 
 ## Usage
 
 ### Signature
 
 ```js
-const { tie } = useI18n()
+const i18n = useI18n()
 ```
 
 ### Returns
 
-| Name | Type | Description |
-|------|------|-------------|
-| `tie` | `function` | Translates a key if it exists, otherwise returns the key as-is. See [I18n — tie](./plugin#accessing-i18n) |
+Returns the `I18n` instance. See [I18n](./i18n) for the full API.
 
 ### Examples
 
 ```js
 import { useI18n } from 'quasar-core'
 
-const { tie } = useI18n()
+const { tie, t } = useI18n()
 
 const label = computed(() => tie('app.welcome'))
 const greeting = computed(() => tie('app.greeting', { name: 'Alice' }))

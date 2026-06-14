@@ -4,7 +4,7 @@ import { toRef } from 'vue'
 import { Screen, AppFullscreen } from 'quasar'
 import { is } from '@kalisio/common-core/predicates'
 
-const logger = getLogger(['quasar-core', 'screen'])
+const logger = getLogger(['quasar-core', 'utilities', 'screen'])
 
 function resolveDimension (value, screenSize, dimensionName) {
   if (is.number(value)) {

@@ -56,6 +56,7 @@
     "sanitize-html": "catalog:",
     "sift": "catalog:",
     "vue": "catalog:",
+    "vue-i18n": "catalog:",
     "vue-router": "catalog:"
   },
   "devDependencies": {
