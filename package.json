@@ -1,15 +1,16 @@
 {
   "name": "quasar-ekosystem",
   "description": "A collection of advanced components for extending the Quasar Framework",
-  "packageManager": "pnpm@10.1.0",
+  "packageManager": "pnpm@10.34.5",
   "type": "module",
   "scripts": {
-    "build": "pnpm -r build",
+    "build": "pnpm -r --filter './packages/*' build",
     "build:quasar-core": "pnpm --filter @kalisio/quasar-core build",
     "build:quasar-form": "pnpm --filter @kalisio/quasar-form build",
+    "prebump": "changeset",
     "bump": "changeset version",
-    "change": "changeset",
     "clear": "pnpm -r exec rimraf node_modules dist coverage",
+    "docs:prepare": "pnpm --filter './examples/*' build",
     "docs:build": "pnpm --filter docs run build",
     "docs:dev": "pnpm --filter docs run dev",
     "inspect": "pnpm knip",
@@ -59,8 +60,14 @@
     "vite": "catalog:",
     "vitest": "catalog:"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "vue-demi"
+    ]
+  },
   "metaCatalog": {
     "version": "0.10.0",
-    "syncedAt": "2026-08-14T10:07:43.792Z"
+    "syncedAt": "2026-08-28T12:54:50.243Z"
   }
 }

@@ -1,7 +1,7 @@
 {
   "name": "quasar-core",
   "description": "quasar-core example",
-  "packageManager": "pnpm@10.1.0",
+  "packageManager": "pnpm@10.34.5",
   "type": "module",
   "scripts": {
     "dev": "vite",

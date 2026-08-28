@@ -2,7 +2,7 @@
   "name": "@kalisio/quasar-form",
   "description": "Automatically create validated Quasar forms from JSON Schema",
   "version": "0.0.0",
-  "packageManager": "pnpm@10.1.0",
+  "packageManager": "pnpm@10.34.5",
   "type": "module",
   "exports": {
     ".": {
