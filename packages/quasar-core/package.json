@@ -65,6 +65,7 @@
     "@vue/test-utils": "catalog:",
     "happy-dom": "catalog:",
     "sass": "^1.99.0",
+    "sharp": "catalog:",
     "vue-router-mock": "catalog:"
   },
   "engines": {
