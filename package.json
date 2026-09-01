@@ -17,7 +17,7 @@
     "lint": "pnpm -r lint",
     "lint:quasar-core": "pnpm --filter @kalisio/quasar-core lint",
     "lint:quasar-form": "pnpm --filter @kalisio/quasar-form lint",
-    "prepare": "husky",
+    "prepare": "node scripts/prepare.mjs",
     "prerelease": "pnpm build",
     "release": "changeset publish",
     "postrelease": "git push --follow-tags",
