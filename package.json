@@ -60,8 +60,8 @@
     "vite": "catalog:",
     "vitest": "catalog:"
   },
-  "metaCatalog": {
+  "metaWorkspace": {
     "version": "0.10.0",
-    "syncedAt": "2026-09-01T12:23:16.344Z"
+    "syncedAt": "2026-10-10T20:18:09.963Z"
   }
 }
