@@ -139,9 +139,7 @@ export default {
       })
     },
     onSelected (value) {
-      if (value) {
-        this.model = this.multiple ? this.items : this.items
-      } else this.model = this.emptyModel()
+      this.model = value ? this.items : this.emptyModel()
       this.options = []
       this.$refs.select?.updateInputValue?.('')
       this.onChanged()
