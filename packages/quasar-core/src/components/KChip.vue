@@ -36,7 +36,7 @@
 import _ from 'lodash-es'
 import { ref, computed } from 'vue'
 import { uid } from 'quasar'
-import { sanitize } from '@kalisio/common-core'
+import { sanitize } from '@kalisio/common-core/operators/sanitize'
 import { color } from '@kalisio/common-graphics'
 import { palette } from '../utilities'
 import { useI18n } from '../composables'

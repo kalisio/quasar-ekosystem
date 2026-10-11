@@ -38,7 +38,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { sanitize } from '@kalisio/common-core'
+import { sanitize } from '@kalisio/common-core/operators/sanitize'
 import KExpandable from './KExpandable.vue'
 import KScrollArea from './KScrollArea.vue'
 

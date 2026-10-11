@@ -84,7 +84,7 @@
 import _ from 'lodash-es'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
-import { string } from '@kalisio/common-core'
+import { string } from '@kalisio/common-core/utilities'
 
 export default {
   // Missing Mixin: baseField
