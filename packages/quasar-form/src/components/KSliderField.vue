@@ -27,43 +27,28 @@
   </q-field>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash-es'
+import { computed } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
-export default {
-  // Missing Mixin: baseField
-  // mixins: [baseField],
-  props: fieldProps,
-  emits: ['field-changed'],
-  setup (props, { emit }) {
-    function emptyModel () {
-      return _.get(props.properties, 'field.min', 0)
-    }
-    return { ...useField(props, emit, { emptyModel }), emptyModel }
-  },
-  computed: {
-    min () {
-      return _.get(this.properties, 'field.min', 0)
-    },
-    max () {
-      return _.get(this.properties, 'field.max', 100)
-    },
-    step () {
-      return _.get(this.properties, 'field.step', 1)
-    },
-    markers () {
-      return _.get(this.properties, 'field.markers', false)
-    }
-  },
-  methods: {
-    isEmpty () {
-      return this.model === null
-    },
-    clear () {
-      this.fill(_.get(this.properties, 'default', this.min))
-    }
-  }
-}
+const props = defineProps(fieldProps)
+const emit = defineEmits(['field-changed'])
+
+const min = computed(() => _.get(props.properties, 'field.min', 0))
+const max = computed(() => _.get(props.properties, 'field.max', 100))
+const step = computed(() => _.get(props.properties, 'field.step', 1))
+const markers = computed(() => _.get(props.properties, 'field.markers', false))
+
+function emptyModel() { return min.value }
+
+const {
+  model, label, hasError, errorLabel, disabled,
+  fill, clear, value, validate, invalidate, onChanged, apply, submitted
+} = useField(props, emit, { emptyModel })
+
+function isEmpty() { return model.value === null }
+
+defineExpose({ fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, onChanged, hasError, min, max, step, markers })
 </script>

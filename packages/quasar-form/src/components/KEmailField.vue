@@ -34,17 +34,19 @@
   </q-input>
 </template>
 
-<script>
+<script setup>
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
-export default {
-  // Missing Mixin: baseField
-  // mixins: [baseField],
-  props: fieldProps,
-  emits: ['field-changed'],
-  setup (props, { emit }) {
-    return useField(props, emit)
-  }
-}
+const props = defineProps(fieldProps)
+const emit = defineEmits(['field-changed'])
+
+const {
+  model, label,
+  hasHelper, helperLabel, helperIcon, helperTooltip, helperUrl, helperDialog, helperContext,
+  hasFocus, hasError, errorLabel, disabled,
+  fill, emptyModel, isEmpty, clear, value, validate, invalidate, onChanged, apply, submitted, onHelperDialogConfirmed
+} = useField(props, emit)
+
+defineExpose({ fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, onChanged, hasError })
 </script>

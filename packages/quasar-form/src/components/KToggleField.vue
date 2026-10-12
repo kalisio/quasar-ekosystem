@@ -37,33 +37,24 @@
   </q-field>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash-es'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
-export default {
-  // Missing Mixin: baseField
-  // mixins: [baseField],
-  props: fieldProps,
-  emits: ['field-changed'],
-  setup (props, { emit }) {
-    return useField(props, emit)
-  },
-  created () {
-    // Booleans are never "empty" — default is false, not null
-    if (_.isNil(this.model)) this.model = false
-  },
-  methods: {
-    emptyModel () {
-      return false
-    },
-    isEmpty () {
-      return false
-    },
-    clear () {
-      this.fill(_.get(this.properties, 'default', false))
-    }
-  }
-}
+const props = defineProps(fieldProps)
+const emit = defineEmits(['field-changed'])
+
+function emptyModel() { return false }
+
+const {
+  model, label,
+  hasHelper, helperLabel, helperIcon, helperTooltip, helperUrl, helperDialog, helperContext,
+  hasError, errorLabel, disabled,
+  fill, clear, value, validate, invalidate, onChanged, apply, submitted, onHelperDialogConfirmed
+} = useField(props, emit, { emptyModel })
+
+function isEmpty() { return false }
+
+defineExpose({ fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, onChanged, hasError })
 </script>

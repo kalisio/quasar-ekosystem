@@ -76,108 +76,107 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash-es'
+import { ref, computed, watch } from 'vue'
 import { useField } from '../composables/index.js'
-import { fieldProps } from '../utils/index.js'
-import { getIconName } from '../utils/index.js'
-// Missing Component: KIconChooser
-// import { KIconChooser } from '../input'
-// import { baseField } from '../../mixins'
+import { fieldProps, getIconName } from '../utils/index.js'
 
-export default {
-  // Missing Component: KIconChooser
-  // components: { KIconChooser },
-  // Missing Mixin: baseField
-  // mixins: [baseField],
-  props: fieldProps,
-  emits: ['field-changed', 'chip-clicked'],
-  setup (props, { emit }) {
-    function emptyModel () { return [] }
-    return useField(props, emit, { emptyModel })
-  },
-  data () {
-    return {
-      icon: _.get(this.properties, 'field.icon', true),
-      input: '',
-      chips: [],
-      selectedChip: null
-      // Missing Component: KIconChooser
-      // iconChooser: null
-    }
-  },
-  watch: {
-    model (newModel) {
-      this.chips = newModel ? newModel.slice() : []
-    }
-  },
-  computed: {
-    inputActions () {
-      const actions = []
-      const index = (this.icon
-        ? _.findIndex(this.chips, { value: this.input })
-        : _.findIndex(this.chips, this.input))
-      if (index === -1) {
-        actions.push({ icon: 'send', content: true, handler: () => this.onChipAdded() })
-      }
-      actions.push({ icon: 'cancel', content: true, handler: () => { this.input = '' } })
-      return actions
-    }
-  },
-  methods: {
-    emptyModel () {
-      return []
-    },
-    fill (value) {
-      this.model = value
-      this.chips = value ? value.slice() : []
-    },
-    chipIcon (chip) {
-      return (this.icon ? getIconName(chip) : undefined)
-    },
-    chipColor (chip) {
-      return (this.icon ? _.get(chip, 'icon.color', 'dark') : 'dark')
-    },
-    chipValue (chip) {
-      return (this.icon ? chip.value || chip.name : chip)
-    },
-    onChipAdded () {
-      const chip = (this.icon
-        ? {
-            value: this.input,
-            icon: {
-              name: _.get(this.properties.field, 'icon.name', ''),
-              color: _.get(this.properties.field, 'icon.color', 'dark')
-            }
-          }
-        : this.input)
-      this.chips.push(chip)
-      this.input = ''
-      this.updateModel()
-    },
-    onChipRemoved (oldChip) {
-      this.chips = this.chips.filter(chip => (this.icon ? chip.value !== oldChip.value : chip !== oldChip))
-      this.updateModel()
-    },
-    onChipClicked (chip) {
-      if (!this.icon) return
-      this.selectedChip = chip
-      // Missing Component: KIconChooser
-      // this.$refs.iconChooser.open(chip.icon)
-      this.$emit('chip-clicked', chip)
-    },
-    // Missing Component: KIconChooser
-    // onIconChoosed (icon) {
-    //   this.selectedChip.icon = Object.assign({}, icon)
-    //   this.updateModel()
-    // },
-    updateModel () {
-      // filter rendering properties only
-      this.model = this.chips
-      this.onChanged()
-    }
+const props = defineProps(fieldProps)
+const emit = defineEmits(['field-changed', 'chip-clicked'])
+
+function emptyModel() { return [] }
+
+const {
+  model, label,
+  hasHelper, helperLabel, helperIcon, helperTooltip, helperUrl, helperDialog, helperContext,
+  hasFocus, hasError, errorLabel, disabled,
+  value, isEmpty, clear, updateValue, validate, invalidate, onChanged, apply, submitted, onHelperDialogConfirmed
+} = useField(props, emit, { emptyModel })
+
+const icon = ref(_.get(props.properties, 'field.icon', true))
+const input = ref('')
+const chips = ref([])
+const selectedChip = ref(null)
+
+watch(model, (newModel) => {
+  chips.value = newModel ? newModel.slice() : []
+})
+
+const inputActions = computed(() => {
+  const actions = []
+  const index = icon.value
+    ? _.findIndex(chips.value, { value: input.value })
+    : _.findIndex(chips.value, input.value)
+  if (index === -1) {
+    actions.push({ icon: 'send', content: true, handler: () => onChipAdded() })
   }
+  actions.push({ icon: 'cancel', content: true, handler: () => { input.value = '' } })
+  return actions
+})
+
+function fill(val) {
+  model.value = val
+  chips.value = val ? val.slice() : []
 }
+
+function chipIcon(chip) {
+  return icon.value ? getIconName(chip) : undefined
+}
+
+function chipColor(chip) {
+  return icon.value ? _.get(chip, 'icon.color', 'dark') : 'dark'
+}
+
+function chipValue(chip) {
+  return icon.value ? chip.value || chip.name : chip
+}
+
+function onChipAdded() {
+  const chip = icon.value
+    ? {
+        value: input.value,
+        icon: {
+          name: _.get(props.properties.field, 'icon.name', ''),
+          color: _.get(props.properties.field, 'icon.color', 'dark')
+        }
+      }
+    : input.value
+  chips.value.push(chip)
+  input.value = ''
+  updateModel()
+}
+
+function onChipRemoved(oldChip) {
+  chips.value = chips.value.filter(chip => icon.value ? chip.value !== oldChip.value : chip !== oldChip)
+  updateModel()
+}
+
+function onChipClicked(chip) {
+  if (!icon.value) return
+  selectedChip.value = chip
+  // Missing Component: KIconChooser
+  // iconChooser.open(chip.icon)
+  emit('chip-clicked', chip)
+}
+
+// Missing Component: KIconChooser
+// function onIconChoosed(icon) {
+//   selectedChip.value.icon = Object.assign({}, icon)
+//   updateModel()
+// }
+
+function updateModel() {
+  model.value = chips.value
+  onChanged()
+}
+
+defineExpose({
+  fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, updateValue,
+  chips, input, selectedChip,
+  onChipAdded, onChipRemoved, onChipClicked, updateModel,
+  chipIcon, chipColor, chipValue
+})
 </script>
 
 <style>

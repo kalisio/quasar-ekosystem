@@ -28,33 +28,29 @@
   </q-input>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash-es'
+import { ref } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
-export default {
-  // Missing Mixin: baseField
-  // mixins: [baseField],
-  props: fieldProps,
-  emits: ['field-changed'],
-  setup (props, { emit }) {
-    return useField(props, emit)
-  },
-  data () {
-    return {
-      showPassword: true,
-      autocomplete: _.get(this.properties, 'field.autocomplete', 'on')
-    }
-  },
-  created () {
-    // generate a default password if required
-    // Missing: generateRandomPassword
-    // if (_.get(this.properties, 'field.suggest')) {
-    //   const length = _.get(this.properties.field.suggest, 'length', 12)
-    //   const rules = _.get(this.properties.field.suggest, 'rules', /[\w\d?-]/)
-    //   _.set(this.properties, 'default', generateRandomPassword(length, false, rules))
-    // }
-  }
-}
+const props = defineProps(fieldProps)
+const emit = defineEmits(['field-changed'])
+
+const {
+  model, label, hasFocus, hasError, errorLabel, disabled,
+  fill, emptyModel, isEmpty, clear, value, validate, invalidate, onChanged, apply, submitted
+} = useField(props, emit)
+
+const showPassword = ref(true)
+const autocomplete = ref(_.get(props.properties, 'field.autocomplete', 'on'))
+
+// Missing: generateRandomPassword
+// if (_.get(props.properties, 'field.suggest')) {
+//   const length = _.get(props.properties.field.suggest, 'length', 12)
+//   const rules = _.get(props.properties.field.suggest, 'rules', /[\w\d?-]/)
+//   _.set(props.properties, 'default', generateRandomPassword(length, false, rules))
+// }
+
+defineExpose({ fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, onChanged, hasError, showPassword, autocomplete })
 </script>

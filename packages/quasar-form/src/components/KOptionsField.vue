@@ -34,31 +34,31 @@
   </q-field>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash-es'
+import { useI18n } from 'vue-i18n'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
-export default {
-  // Missing Mixin: baseField
-  // mixins: [baseField],
-  props: fieldProps,
-  emits: ['field-changed'],
-  setup (props, { emit }) {
-    return useField(props, emit)
-  },
-  methods: {
-    options () {
-      const options = _.get(this.properties, 'field.options', [])
-      return options.map(option => {
-        // Check if we have a translation key or directly the label content
-        const label = _.get(option, 'label', '')
-        return Object.assign({}, option, { label: this.$t(label) })
-      })
-    },
-    selectedClass () {
-      return _.get(this.properties, 'field.selectedClass', 'text-weight-regular')
-    }
-  }
+const props = defineProps(fieldProps)
+const emit = defineEmits(['field-changed'])
+const { t } = useI18n()
+
+const {
+  model, label, hasError, errorLabel, disabled,
+  fill, emptyModel, isEmpty, clear, value, validate, invalidate, onChanged, apply, submitted
+} = useField(props, emit)
+
+function options() {
+  return _.get(props.properties, 'field.options', []).map(option => {
+    const label = _.get(option, 'label', '')
+    return Object.assign({}, option, { label: t(label) })
+  })
 }
+
+function selectedClass() {
+  return _.get(props.properties, 'field.selectedClass', 'text-weight-regular')
+}
+
+defineExpose({ fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, onChanged, hasError, options, selectedClass })
 </script>

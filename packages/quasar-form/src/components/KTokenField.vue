@@ -40,62 +40,62 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash-es'
+import { ref, computed } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
-export default {
-  // Missing Mixin: baseField
-  // mixins: [baseField],
-  props: fieldProps,
-  emits: ['field-changed'],
-  setup (props, { emit }) {
-    return useField(props, emit)
-  },
-  data () {
-    return {
-      fieldValues: [],
-      fields: []
-    }
-  },
-  computed: {
-    text () {
-      return this.model
-    },
-    tokenLength () {
-      return _.get(this.properties, 'field.tokenLength', _.get(this.properties, 'tokenLength', 6))
-    },
-    labelClass () {
-      return {
-        'row justify-center': true,
-        'text-red': !!this.errorLabel
-      }
-    }
-  },
-  methods: {
-    updateModel (index) {
-      this.model = _.join(this.fieldValues, '')
-      this.onChanged()
-      this.focusNextInput(index)
-    },
-    updateFieldRef (element, index) {
-      if (element) this.fields[index] = element
-    },
-    focusNextInput (index) {
-      if (_.inRange(index, 0, this.tokenLength)) this.fields[index]?.select?.()
-    },
-    clearInput (index) {
-      this.fieldValues[index] = ''
-    },
-    onKeyUp (event, index) {
-      const key = event.key
-      if (key === 'ArrowLeft' || key === 'Backspace') {
-        this.focusNextInput(index - 1)
-        this.clearInput(index - 1)
-      }
-      if (key === 'ArrowRight') this.focusNextInput(index + 1)
-    }
-  }
+const props = defineProps(fieldProps)
+const emit = defineEmits(['field-changed'])
+
+const {
+  model, label,
+  hasHelper, helperLabel, helperIcon, helperTooltip, helperUrl, helperDialog, helperContext,
+  hasFocus, hasError, errorLabel, disabled,
+  fill, emptyModel, isEmpty, clear, value, validate, invalidate, onChanged, apply, submitted, onHelperDialogConfirmed
+} = useField(props, emit)
+
+const fieldValues = ref([])
+const fields = ref([])
+
+const text = computed(() => model.value)
+const tokenLength = computed(() => _.get(props.properties, 'field.tokenLength', _.get(props.properties, 'tokenLength', 6)))
+const labelClass = computed(() => ({
+  'row justify-center': true,
+  'text-red': !!errorLabel.value
+}))
+
+function updateModel(index) {
+  model.value = _.join(fieldValues.value, '')
+  onChanged()
+  focusNextInput(index)
 }
+
+function updateFieldRef(element, index) {
+  if (element) fields.value[index] = element
+}
+
+function focusNextInput(index) {
+  if (_.inRange(index, 0, tokenLength.value)) fields.value[index]?.select?.()
+}
+
+function clearInput(index) {
+  fieldValues.value[index] = ''
+}
+
+function onKeyUp(event, index) {
+  const key = event.key
+  if (key === 'ArrowLeft' || key === 'Backspace') {
+    focusNextInput(index - 1)
+    clearInput(index - 1)
+  }
+  if (key === 'ArrowRight') focusNextInput(index + 1)
+}
+
+defineExpose({
+  fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, onChanged, hasError,
+  fieldValues, fields, text, tokenLength, labelClass,
+  updateModel, updateFieldRef, focusNextInput, clearInput, onKeyUp
+})
 </script>

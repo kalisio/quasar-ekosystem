@@ -35,35 +35,34 @@
   </q-input>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash-es'
+import { computed } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
-export default {
-  // Missing Mixin: baseField
-  // mixins: [baseField],
-  props: fieldProps,
-  emits: ['field-changed'],
-  setup (props, { emit }) {
-    return useField(props, emit)
-  },
-  computed: {
-    text () {
-      if (_.startsWith(this.model, 'http://') || _.startsWith(this.model, 'https://')) {
-        return `<a href='${this.model}' target="_blank">${this.model}</a>`
-      } else {
-        return this.model
-      }
-    },
-    debounce () {
-      return _.get(this.properties, 'field.debounce', 0)
-    }
-  },
-  methods: {
-    inputClass () {
-      return _.get(this.properties, 'field.inputClass', 'text-weight-regular')
-    }
+const props = defineProps(fieldProps)
+const emit = defineEmits(['field-changed'])
+
+const {
+  model, label,
+  hasHelper, helperLabel, helperIcon, helperTooltip, helperUrl, helperDialog, helperContext,
+  hasFocus, hasError, errorLabel, disabled,
+  fill, emptyModel, isEmpty, clear, value, validate, invalidate, onChanged, apply, submitted, onHelperDialogConfirmed
+} = useField(props, emit)
+
+const text = computed(() => {
+  if (_.startsWith(model.value, 'http://') || _.startsWith(model.value, 'https://')) {
+    return `<a href='${model.value}' target="_blank">${model.value}</a>`
   }
+  return model.value
+})
+
+const debounce = computed(() => _.get(props.properties, 'field.debounce', 0))
+
+function inputClass() {
+  return _.get(props.properties, 'field.inputClass', 'text-weight-regular')
 }
+
+defineExpose({ fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, onChanged, hasError })
 </script>

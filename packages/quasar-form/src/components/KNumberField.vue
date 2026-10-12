@@ -33,24 +33,25 @@
   </q-input>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash-es'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
-export default {
-  // Missing Mixin: baseField
-  // mixins: [baseField],
-  props: fieldProps,
-  emits: ['field-changed'],
-  setup (props, { emit }) {
-    return useField(props, emit)
-  },
-  methods: {
-    onUpdated (value) {
-      this.model = _.isNumber(value) ? value : null
-      this.onChanged()
-    }
-  }
+const props = defineProps(fieldProps)
+const emit = defineEmits(['field-changed'])
+
+const {
+  model, label,
+  hasHelper, helperLabel, helperIcon, helperTooltip, helperUrl, helperDialog, helperContext,
+  hasFocus, hasError, errorLabel, disabled,
+  fill, emptyModel, isEmpty, clear, value, validate, invalidate, onChanged, apply, submitted, onHelperDialogConfirmed
+} = useField(props, emit)
+
+function onUpdated(val) {
+  model.value = _.isNumber(val) ? val : null
+  onChanged()
 }
+
+defineExpose({ fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, onChanged, hasError })
 </script>
