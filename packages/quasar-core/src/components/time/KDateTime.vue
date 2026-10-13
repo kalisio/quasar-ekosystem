@@ -187,15 +187,9 @@ watch(() => props.max, (value) => {
 // Functions
 function checkDate (date) {
   const { YYYY, MM, DD } = toYMD(date)
-  const dateToCheck = moment({
-    year: YYYY,
-    month: MM,
-    date: DD,
-    hour: dateTime.value ? dateTime.value.hour() : 0,
-    minute: dateTime.value ? dateTime.value.minute() : 0
-  })
-  if (dateToCheck.isBefore(minDateTime.value)) return false
-  if (dateToCheck.isAfter(maxDateTime.value)) return false
+  const dateToCheck = moment({ year: YYYY, month: MM, date: DD, hour: 0, minute: 0 })
+  if (dateToCheck.isBefore(minDateTime.value.clone().startOf('day'))) return false
+  if (dateToCheck.isAfter(maxDateTime.value.clone().startOf('day'))) return false
   return true
 }
 function checkTime (hours, minutes, seconds) {
