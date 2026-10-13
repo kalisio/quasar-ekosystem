@@ -70,11 +70,11 @@ const computedButton = computed(() => {
   // if (_.isEmpty(format)) format = _.get(Time.getFormat(), 'date.short')
   if (_.isEmpty(format)) format = 'iso'
   // compute label
-  // const label = _.isEmpty(computedModel.value) ? tie(props.placeholder) : moment.tz(computedModel.value, mask, Time.getFormatTimezone()).format(format)
+  const label = _.isEmpty(computedModel.value) ? tie(props.placeholder) : moment(computedModel.value, mask).format(format)
   // define button spec
   const spec = {
     id: 'date-button',
-    // label,
+    label,
     flat: true,
     noCaps: true,
     disable: props.disabled,
