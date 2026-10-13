@@ -80,115 +80,91 @@
   </q-select>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash-es'
+import { ref, computed, watch, nextTick } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 import { string } from '@kalisio/common-core/utilities'
 
-export default {
-  // Missing Mixin: baseField
-  // mixins: [baseField],
-  props: fieldProps,
-  emits: ['field-changed'],
-  setup (props, { emit }) {
-    function emptyModel () {
-      return _.get(props.properties, 'multiselect', false) ? [] : null
-    }
-    return { ...useField(props, emit, { emptyModel }), emptyModel }
-  },
-  data () {
-    return {
-      filter: null
-    }
-  },
-  watch: {
-    options: {
-      immediate: true,
-      handler (opts) {
-        if (_.isEmpty(this.filter) && opts.length === 1 && this.required) {
-          this.$nextTick(() => {
-            this.fill(opts[0].value)
-            this.onChanged(opts[0].value)
-          })
-        }
-      }
-    }
-  },
-  computed: {
-    multiple () {
-      return this.isMultiselect()
-    },
-    chips () {
-      return this.hasChips()
-    },
-    options () {
-      let opts = _.map(_.get(this.properties, 'field.options', []), option => {
-        const label = this.$t(_.get(option, 'label', ''))
-        return Object.assign({}, option, { label })
-      })
-      if (this.filter) {
-        opts = _.filter(opts, option => {
-          const regExp = new RegExp(string.makeDiacriticPattern(this.filter))
-          return regExp.test(option.label.toLowerCase())
-        })
-      }
-      return opts
-    },
-    hasNoOption () {
-      return !_.isEmpty(_.get(this.properties, 'field.noOption', {}))
-    },
-    noOption () {
-      return _.get(this.properties, 'field.noOption', null)
-    }
-    // Missing: noOptionComponent, noOptionsAttributes (require loadComponent from KDK)
-    // noOptionComponent () { return loadComponent(this.properties.field.noOption.component) },
-    // noOptionsAttributes () { return _.omit(this.properties.field.noOption, 'component') }
-  },
-  methods: {
-    isMultiselect () {
-      return _.get(this.properties, 'multiselect', false)
-    },
-    isClearable () {
-      return _.get(this.properties, 'field.clearable', true)
-    },
-    hasChips () {
-      return _.get(this.properties, 'field.chips', false)
-    },
-    getId (option) {
-      let id = option.value
-      // Complex object ?
-      if (typeof id === 'object') {
-        // Extract value property or use label if none
-        const valueField = _.get(this.properties, 'field.valueField')
-        if (valueField) id = _.get(id, valueField)
-        else id = option.label
-      } else {
-        // Ensure string not eg number
-        id = id.toString()
-      }
-      return _.kebabCase(id)
-    },
-    isEmpty () {
-      return this.multiple ? _.isEmpty(this.model) : _.isNil(this.model)
-    },
-    clear () {
-      this.fill(_.get(this.properties, 'default', this.emptyModel()))
-    },
-    selectedClass () {
-      return _.get(this.properties, 'field.selectedClass', 'text-weight-regular')
-    },
-    onFilter (pattern, update) {
-      if (pattern === '') {
-        update(() => {
-          this.filter = null
-        })
-        return
-      }
-      update(() => {
-        this.filter = pattern.toLowerCase()
-      })
-    }
-  }
+const props = defineProps(fieldProps)
+const emit = defineEmits(['field-changed'])
+const { t } = useI18n()
+
+function emptyModel() {
+  return _.get(props.properties, 'multiselect', false) ? [] : null
 }
+
+const {
+  model, label, hasHelper, helperLabel, helperIcon, helperTooltip, helperUrl,
+  helperDialog, helperContext, hasFocus, hasError, errorLabel, disabled,
+  fill, value, validate, invalidate, onChanged, apply, submitted, onHelperDialogConfirmed
+} = useField(props, emit, { emptyModel })
+
+const filter = ref(null)
+
+const multiple = computed(() => isMultiselect())
+const chips = computed(() => hasChips())
+const options = computed(() => {
+  let opts = _.map(_.get(props.properties, 'field.options', []), option => {
+    const lbl = t(_.get(option, 'label', ''))
+    return Object.assign({}, option, { label: lbl })
+  })
+  if (filter.value) {
+    opts = _.filter(opts, option => {
+      const regExp = new RegExp(string.makeDiacriticPattern(filter.value))
+      return regExp.test(option.label.toLowerCase())
+    })
+  }
+  return opts
+})
+const hasNoOption = computed(() => !_.isEmpty(_.get(props.properties, 'field.noOption', {})))
+const noOption = computed(() => _.get(props.properties, 'field.noOption', null))
+
+watch(options, (opts) => {
+  if (_.isEmpty(filter.value) && opts.length === 1 && props.required) {
+    nextTick(() => {
+      fill(opts[0].value)
+      onChanged()
+    })
+  }
+}, { immediate: true })
+
+function isMultiselect() { return _.get(props.properties, 'multiselect', false) }
+function isClearable() { return _.get(props.properties, 'field.clearable', true) }
+function hasChips() { return _.get(props.properties, 'field.chips', false) }
+function getId(option) {
+  let id = option.value
+  if (typeof id === 'object') {
+    const valueField = _.get(props.properties, 'field.valueField')
+    if (valueField) id = _.get(id, valueField)
+    else id = option.label
+  } else {
+    id = id.toString()
+  }
+  return _.kebabCase(id)
+}
+function isEmpty() {
+  return multiple.value ? _.isEmpty(model.value) : _.isNil(model.value)
+}
+function clear() {
+  fill(_.get(props.properties, 'default', emptyModel()))
+}
+function selectedClass() {
+  return _.get(props.properties, 'field.selectedClass', 'text-weight-regular')
+}
+function onFilter(pattern, update) {
+  if (pattern === '') {
+    update(() => { filter.value = null })
+    return
+  }
+  update(() => { filter.value = pattern.toLowerCase() })
+}
+
+defineExpose({
+  fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, onChanged, hasError,
+  options, filter, multiple, chips, hasNoOption, noOption,
+  isMultiselect, isClearable, hasChips, getId, selectedClass, onFilter
+})
 </script>

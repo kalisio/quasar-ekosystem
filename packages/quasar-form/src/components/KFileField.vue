@@ -60,110 +60,71 @@
   </q-file>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash-es'
+import { ref, computed } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
-// Missing: Reader, Storage, Notify, formatSize (needed for upload/submit)
-// import { markRaw } from 'vue'
-// import { Notify } from 'quasar'
-// import { Reader } from '../../reader.js'
-// import { Storage } from '../../storage.js'
-// import { formatSize } from '../../utils/utils.files.js'
 
-export default {
-  // Missing Mixin: baseField
-  // mixins: [baseField],
-  props: fieldProps,
-  emits: ['field-changed'],
-  setup (props, { emit }) {
-    function emptyModel () {
-      return _.get(props.properties, 'field.multiple', false) ? [] : null
-    }
-    return { ...useField(props, emit, { emptyModel }), emptyModel }
-  },
-  data () {
-    return {
-      files: null
-    }
-  },
-  computed: {
-    multiple () {
-      return _.get(this.properties, 'field.multiple', false)
-    },
-    isModelEmpty () {
-      return _.isEmpty(this.model)
-    },
-    displayName () {
-      if (_.isArray(this.model)) return _.map(this.model, 'name').join(', ')
-      return _.get(this.model, 'name', '')
-    },
-    acceptedTypes () {
-      return _.get(this.properties, 'field.mimeTypes', '')
-    },
-    maxFiles () {
-      return _.get(this.properties, 'field.maxFiles', this.multiple ? 9 : 1)
-    },
-    maxFileSize () {
-      return _.get(this.properties, 'field.maxFileSize', 1048576)
-    },
-    maxTotalSize () {
-      return _.get(this.properties, 'field.maxTotalSize', this.maxFileSize)
-    },
-    isClearable () {
-      return _.get(this.properties, 'field.clearable', true)
-    }
-  },
-  methods: {
-    isEmpty () {
-      return _.isEmpty(this.model)
-    },
-    clear () {
-      this.fill(_.get(this.properties, 'default', this.emptyModel()))
-    },
-    onFileCleared () {
-      this.files = null
-      this.model = this.emptyModel()
-      this.onChanged()
-    },
-    async onFilesChanged () {
-      if (_.isEmpty(this.files)) {
-        // field cleared
-        this.model = this.emptyModel()
-        return
-      }
-      // field updated
-      const selectedFiles = this.multiple ? this.files : [this.files]
-      const result = []
-      for (const file of selectedFiles) {
-        // Check whether the file will be uploaded without being read
-        if (!_.get(this.properties, 'field.readContent', true)) {
-          result.push({ name: file.name, type: file.type, File: file })
-          continue
-        }
-        // Missing: Reader — fallback to simple object
-        // const accepted = Reader.filter([file])
-        // if (accepted.length === 1) { ... }
-        result.push({ name: file.name, type: file.type, File: file })
-      }
-      if (this.multiple) this.model = result
-      else this.model = _.get(result, '0', null)
-      this.onChanged()
-    },
-    filterSelectedFiles (files) {
-      const filter = _.get(this.properties, 'field.filter')
-      if (!filter) return files
-      return _.filter(files, file => file.name.includes(filter))
-    },
-    onFileRejected (errs) {
-      // Missing: i18n, formatSize — rejection errors are not translated
-      // const errors = [].concat(errs)
-      // for (const error of errors) { ... }
-    }
-    // Missing: apply, upload, submitted (require Storage, Reader, Notify, i18n)
-    // async apply (object, field) { ... }
-    // async upload (object, field) { ... }
-    // async submitted (object, field) { ... }
-  }
+const props = defineProps(fieldProps)
+const emit = defineEmits(['field-changed'])
+
+function emptyModel() {
+  return _.get(props.properties, 'field.multiple', false) ? [] : null
 }
+
+const {
+  model, label, hasHelper, helperLabel, helperIcon, helperTooltip, helperUrl,
+  helperDialog, helperContext, hasError, errorLabel, disabled,
+  fill, value, validate, invalidate, onChanged, apply, submitted, onHelperDialogConfirmed
+} = useField(props, emit, { emptyModel })
+
+const files = ref(null)
+
+const multiple = computed(() => _.get(props.properties, 'field.multiple', false))
+const isModelEmpty = computed(() => _.isEmpty(model.value))
+const displayName = computed(() => {
+  if (_.isArray(model.value)) return _.map(model.value, 'name').join(', ')
+  return _.get(model.value, 'name', '')
+})
+const acceptedTypes = computed(() => _.get(props.properties, 'field.mimeTypes', ''))
+const maxFiles = computed(() => _.get(props.properties, 'field.maxFiles', multiple.value ? 9 : 1))
+const maxFileSize = computed(() => _.get(props.properties, 'field.maxFileSize', 1048576))
+const maxTotalSize = computed(() => _.get(props.properties, 'field.maxTotalSize', maxFileSize.value))
+const isClearable = computed(() => _.get(props.properties, 'field.clearable', true))
+
+function isEmpty() { return _.isEmpty(model.value) }
+function clear() { fill(_.get(props.properties, 'default', emptyModel())) }
+
+function onFileCleared() {
+  files.value = null
+  model.value = emptyModel()
+  onChanged()
+}
+async function onFilesChanged() {
+  if (_.isEmpty(files.value)) {
+    model.value = emptyModel()
+    return
+  }
+  const selectedFiles = multiple.value ? files.value : [files.value]
+  const result = []
+  for (const file of selectedFiles) {
+    result.push({ name: file.name, type: file.type, File: file })
+  }
+  if (multiple.value) model.value = result
+  else model.value = _.get(result, '0', null)
+  onChanged()
+}
+function filterSelectedFiles(fileList) {
+  const filterStr = _.get(props.properties, 'field.filter')
+  if (!filterStr) return fileList
+  return _.filter(fileList, file => file.name.includes(filterStr))
+}
+function onFileRejected(errs) {}
+
+defineExpose({
+  fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, onChanged, hasError,
+  files, multiple, isModelEmpty, displayName, acceptedTypes, maxFiles, maxFileSize, maxTotalSize, isClearable,
+  onFileCleared, onFilesChanged, filterSelectedFiles, onFileRejected
+})
 </script>

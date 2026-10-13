@@ -45,48 +45,38 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash-es'
+import { ref, computed } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
-export default {
-  // Missing Mixin: baseField
-  // mixins: [baseField],
-  props: fieldProps,
-  emits: ['field-changed'],
-  setup (props, { emit }) {
-    function emptyModel () { return _.get(props.properties, 'default', '') }
-    return { ...useField(props, emit, { emptyModel }), emptyModel }
-  },
-  data () {
-    return {
-      picker: false
-    }
-  },
-  computed: {
-    color () {
-      return this.model || 'transparent'
-    }
-  },
-  methods: {
-    isEmpty () {
-      return !this.model
-    },
-    clear () {
-      this.fill(this.emptyModel())
-    },
-    onReferenceCreated (ref) {
-      // https://github.com/quasarframework/quasar/issues/8956
-      if (ref) {
-        ref.$el.onclick = () => { this.picker = true }
-      }
-    },
-    isClearable () {
-      return _.get(this.properties, 'field.clearable', true)
-    }
-  }
+const props = defineProps(fieldProps)
+const emit = defineEmits(['field-changed'])
+
+function emptyModel() { return _.get(props.properties, 'default', '') }
+
+const {
+  model, label, hasHelper, helperLabel, helperIcon, helperTooltip, helperUrl,
+  helperDialog, helperContext, hasError, errorLabel, disabled,
+  fill, value, validate, invalidate, onChanged, apply, submitted, onHelperDialogConfirmed
+} = useField(props, emit, { emptyModel })
+
+const picker = ref(false)
+const color = computed(() => model.value || 'transparent')
+
+function isEmpty() { return !model.value }
+function clear() { fill(emptyModel()) }
+function onReferenceCreated(r) {
+  // https://github.com/quasarframework/quasar/issues/8956
+  if (r) r.$el.onclick = () => { picker.value = true }
 }
+function isClearable() { return _.get(props.properties, 'field.clearable', true) }
+
+defineExpose({
+  fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, onChanged, hasError,
+  color, picker, onReferenceCreated, isClearable
+})
 </script>
 
 <style scoped>

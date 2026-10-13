@@ -45,38 +45,38 @@
   </q-select>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash-es'
-import { inject } from 'vue'
+import { computed, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
-export default {
-  // Missing Mixin: baseField
-  // mixins: [baseField],
-  props: fieldProps,
-  emits: ['field-changed'],
-  setup (props, { emit }) {
-    // Inject a getUnits function: (quantity) => unit[] where each unit has { name, label }
-    // Falls back to using properties.field.options directly
-    const getUnits = inject('getUnits', null)
-    return { ...useField(props, emit), getUnits }
-  },
-  computed: {
-    options () {
-      const { t } = useI18n()
-      let units
-      if (this.getUnits) {
-        units = this.getUnits(_.get(this.properties, 'field.quantity'))
-        const unitsFilter = _.get(this.properties, 'field.filter', [])
-        if (!_.isEmpty(unitsFilter)) units = _.filter(units, unit => _.includes(unitsFilter, unit.name))
-        return units.map(unit => ({ value: unit.name, label: t(_.get(unit, 'label', '')) }))
-      }
-      // Fallback: use field.options directly (same format as KSelectField)
-      units = _.get(this.properties, 'field.options', [])
-      return units.map(unit => ({ value: unit.value ?? unit.name, label: t(_.get(unit, 'label', '')) }))
-    }
+const props = defineProps(fieldProps)
+const emit = defineEmits(['field-changed'])
+const { t } = useI18n()
+const getUnits = inject('getUnits', null)
+
+const {
+  model, label, hasHelper, helperLabel, helperIcon, helperTooltip, helperUrl,
+  helperDialog, helperContext, hasFocus, hasError, errorLabel, disabled,
+  fill, emptyModel, isEmpty, clear, value, validate, invalidate, onChanged, apply, submitted, onHelperDialogConfirmed
+} = useField(props, emit)
+
+const options = computed(() => {
+  let units
+  if (getUnits) {
+    units = getUnits(_.get(props.properties, 'field.quantity'))
+    const unitsFilter = _.get(props.properties, 'field.filter', [])
+    if (!_.isEmpty(unitsFilter)) units = _.filter(units, unit => _.includes(unitsFilter, unit.name))
+    return units.map(unit => ({ value: unit.name, label: t(_.get(unit, 'label', '')) }))
   }
-}
+  units = _.get(props.properties, 'field.options', [])
+  return units.map(unit => ({ value: unit.value ?? unit.name, label: t(_.get(unit, 'label', '')) }))
+})
+
+defineExpose({
+  fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, onChanged, hasError,
+  options
+})
 </script>
