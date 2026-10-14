@@ -275,10 +275,11 @@ async function onClicked (event) {
       location.href = props.route.url
     } else {
       // process route params
-      router.push(Object.assign({
+      router.push({
         query: bindRouteParams('query'),
-        params: bindRouteParams('params')
-      }, _.omit(props.route, ['query', 'params']))).catch(() => {})
+        params: bindRouteParams('params'),
+        ..._.omit(props.route, ['query', 'params'])
+      }).catch(() => {})
     }
   }
   // handle the dialog case
