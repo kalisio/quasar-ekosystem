@@ -43,12 +43,13 @@ const height = ref(0)
 const cssHeight = computed(() => {
   return `${height.value}px`
 })
+const width = props.visible ? (props.dense ? '4px' : '8px') : '0px'
 const cssThumbStyle = computed(() => {
   return {
     right: '4px',
     borderRadius: '4px',
     backgroundColor: getCssVar('primary'),
-    width: props.visible ? props.dense ? '4px' : '8px' : '0px'
+    width
   }
 })
 
