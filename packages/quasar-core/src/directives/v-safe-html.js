@@ -1,4 +1,4 @@
-import { sanitize } from '@kalisio/common-core/operators/sanitize'
+import { sanitize } from '@kalisio/common-core'
 
 function sanitizeHtml (el, binding) {
   const isObject = typeof binding.value === 'object' && binding.value !== null

@@ -13,7 +13,7 @@ _JSON Schema-driven form builder for Quasar_
 
 It is organized around 3 modules:
 
-- [components](#components) — `KForm` and a library of 27 field types
+- [components](#components) — `KForm` and a library of 26 field types
 - [composables](#composables) — `useSchema` and `useField` for reusable field logic
 - [utilities](#utilities) — schema registry and field helpers
 
@@ -49,13 +49,15 @@ The `field.component` property in each schema property selects which field compo
 
 `KForm` exposes the following methods:
 
-| Method | Description |
-|---|---|
-| `fill(values)` | Distributes values to matching fields |
-| `values()` | Returns the current field values as an object |
-| `validate()` | Validates the form against the schema and returns `{ isValid, errors }` |
-| `apply(object)` | Writes the current values into a target object |
-| `clear()` | Resets all fields |
+| Method | Returns | Description |
+|---|---|---|
+| `fill(values)` | — | Distributes values to matching fields |
+| `values()` | `object` | Returns the current field values |
+| `validate()` | `{ isValid, values }` | Validates against the schema; invalidates fields on error |
+| `apply(object)` | — | Writes current values into a target object |
+| `submitted(object)` | — | Calls each field's post-submit hook |
+| `clear()` | — | Resets all fields to their empty value |
+| `getField(name)` | field ref | Returns the ref of a named field |
 
 #### Field components
 

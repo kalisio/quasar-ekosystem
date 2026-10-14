@@ -13,7 +13,7 @@
       <slot :name="field.name">
         <component
           v-if="!field.group"
-          :ref="onFieldRefCreated"
+          :ref="(r) => onFieldRefCreated(r, field)"
           :is="field.component"
           v-bind="$props"
           :required="field.required"
@@ -54,7 +54,7 @@
               <slot v-if="field.group === id" :name="'before-' + field.name"/>
               <slot v-if="field.group === id" :name="field.name">
                 <component
-                  :ref="onFieldRefCreated"
+                  :ref="(r) => onFieldRefCreated(r, field)"
                   :is="field.component"
                   :required="field.required"
                   v-bind="$props"
@@ -143,22 +143,17 @@ function getField (name) {
   if (field) return field
   logger.error('Cannot find field {name}', { name })
 }
-function onFieldRefCreated (reference) {
-  if (reference) {
-    const name = reference.properties.name
-    const field = getField(name)
-    if (field.reference) return
-    // Assign the reference
-    field.reference = reference
-    // clear this field
-    if (!props.values) field.reference.clear()
-    // Check whether the form is ready
-    nbReadyFields.value++
-    if (nbReadyFields.value === fields.value.length) {
-      logger.debug('Schema {id} ready', { id: schema.value.$id })
-      isReady.value = true
-      emit('form-ready')
-    }
+function onFieldRefCreated (reference, fieldDescriptor) {
+  if (!reference) return
+  const field = getField(fieldDescriptor.name)
+  if (!field || field.reference) return
+  field.reference = reference
+  if (!props.values) field.reference.clear()
+  nbReadyFields.value++
+  if (nbReadyFields.value === fields.value.length) {
+    logger.debug('Schema {id} ready', { id: schema.value.$id })
+    isReady.value = true
+    emit('form-ready')
   }
 }
 function onFieldChanged (field, value) {
