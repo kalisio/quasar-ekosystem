@@ -79,7 +79,7 @@
           return { page }
         }
       })
-      app.use(QuasarForm, { i18n })
+      app.use(QuasarForm, { i18n, buildMode: 'SPA' })
       app.use(Quasar, {
         plugins: { Notify },
         components: {
