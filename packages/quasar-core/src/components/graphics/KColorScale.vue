@@ -80,7 +80,7 @@ const callRefresh = _.debounce(() => { refresh() }, 200)
 // Computed
 const labelText = computed(() => {
   let text = props.label
-  // if (text && props.unit) text += ` (${units.getSymbol(props.unit)})`
+  if (text && props.unit) text += ` (${units.getSymbol(props.unit)})`
   return text
 })
 const labelSize = computed(() => {
