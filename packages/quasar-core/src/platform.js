@@ -1,7 +1,7 @@
 import { merge, omit, get } from 'lodash-es'
 import { assert, is } from '@kalisio/common-core/predicates'
 import { getLogger } from '@logtape/logtape'
-import { getFingerprint, getFingerprintData } from '@thumbmarkjs/thumbmarkjs'
+import { getThumbmark } from '@thumbmarkjs/thumbmarkjs'
 import { Platform as QPlatform } from 'quasar'
 
 const logger = getLogger(['quasar-core', 'platform'])
@@ -16,8 +16,9 @@ export const Platform = {
     // use Quasar platform data
     merge(this, omit(QPlatform, ['install', '__installed']))
     // use fingerprint data
-    this.fingerprint = await getFingerprint()
-    this.fingerprintData = await getFingerprintData()
+    const { thumbmark, components } = await getThumbmark()
+    this.fingerprint = thumbmark
+    this.fingerprintData = components
     // use build data
     this.is.pwa = buildMode === 'PWA'
     logger.debug('[quasar-core] Platform initialized with:', this)

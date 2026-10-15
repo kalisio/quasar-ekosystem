@@ -8,15 +8,17 @@ vi.mock('@logtape/logtape', () => ({
 }))
 
 vi.mock('@thumbmarkjs/thumbmarkjs', () => ({
-  getFingerprint: vi.fn().mockResolvedValue('fp-abc123'),
-  getFingerprintData: vi.fn().mockResolvedValue({
-    permissions: { notifications: 'granted' },
-    system: {
-      browser: { name: 'Chrome', version: '124' },
-      platform: 'Win32'
-    },
-    locales: 'en-US',
-    hardware: { videocard: 'NVIDIA GeForce RTX 3080' }
+  getThumbmark: vi.fn().mockResolvedValue({
+    thumbmark: 'fp-abc123',
+    components: {
+      permissions: { notifications: 'granted' },
+      system: {
+        browser: { name: 'Chrome', version: '124' },
+        platform: 'Win32'
+      },
+      locales: 'en-US',
+      hardware: { videocard: 'NVIDIA GeForce RTX 3080' }
+    }
   })
 }))
 
