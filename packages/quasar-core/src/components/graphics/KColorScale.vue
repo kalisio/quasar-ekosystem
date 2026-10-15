@@ -304,10 +304,8 @@ function refresh () {
   if (props.classes) {
     if (props.direction === 'horizontal') drawDiscreteHorizontalScale()
     else drawDiscreteVerticalScale()
-  } else {
-    if (props.direction === 'horizontal') drawContinuousHorizontalScale()
-    else drawContinuousVerticalScale()
-  }
+  } else if (props.direction === 'horizontal') drawContinuousHorizontalScale()
+  else drawContinuousVerticalScale()
 }
 function onResized (size) {
   expectedSize = size
