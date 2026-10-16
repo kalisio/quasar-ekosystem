@@ -10,7 +10,7 @@ export default {
           <k-shape :options="{ shape: 'rect', size: [32, 32] }" tooltip="Rect" />
           <k-shape :options="{ shape: 'diamond', size: [32, 32] }" tooltip="Diamond" />
           <k-shape :options="{ shape: 'triangle', size: [32, 32] }" tooltip="Triangle" />
-          <k-shape :options="{ shape: 'star5', size: [32, 32] }" tooltip="Star" />
+          <k-shape :options="{ shape: 'star-5', size: [32, 32] }" tooltip="Star" />
           <k-shape :options="{ shape: 'hexagon', size: [32, 32] }" tooltip="Hexagon" />
         </q-card-section>
       </q-card>

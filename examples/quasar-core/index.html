@@ -21,12 +21,18 @@
                 :outline="page === 'graphics'"
                 @click="page = 'graphics'"
               ></q-btn>
+              <q-btn color="white" label="useRequest"
+                :flat="page !== 'use-request'"
+                :outline="page === 'use-request'"
+                @click="page = 'use-request'"
+              ></q-btn>
             </template>
           </q-banner>
         </q-header>
         <q-page-container>
           <q-page padding>
             <graphics-page v-if="page === 'graphics'"></graphics-page>
+            <use-request-page v-if="page === 'use-request'"></use-request-page>
           </q-page>
         </q-page-container>
       </q-layout>
@@ -42,9 +48,10 @@
       } from 'quasar'
       import 'quasar/dist/quasar.css'
       import GraphicsPage from './components/graphics-page.js'
+      import UseRequestPage from './components/use-request-page.js'
 
       const app = createApp({
-        components: { GraphicsPage },
+        components: { GraphicsPage, UseRequestPage },
         setup () {
           const page = ref('graphics')
           return { page }
