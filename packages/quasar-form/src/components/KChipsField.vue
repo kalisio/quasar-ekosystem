@@ -91,6 +91,7 @@ const {
   value, isEmpty, clear, updateValue, validate, invalidate, onChanged, apply, submitted, onHelperDialogConfirmed
 } = useField(props, emit, { emptyModel })
 
+const iconChooser = ref(null)
 const icon = ref(_.get(props.properties, 'field.icon', true))
 const input = ref('')
 const chips = ref([])
@@ -152,16 +153,14 @@ function onChipRemoved(oldChip) {
 function onChipClicked(chip) {
   if (!icon.value) return
   selectedChip.value = chip
-  // Missing Component: KIconChooser
-  // iconChooser.open(chip.icon)
+  iconChooser.value?.open?.(chip.icon)
   emit('chip-clicked', chip)
 }
 
-// Missing Component: KIconChooser
-// function onIconChoosed(icon) {
-//   selectedChip.value.icon = Object.assign({}, icon)
-//   updateModel()
-// }
+function onIconChoosed(chosenIcon) {
+  selectedChip.value.icon = { ...chosenIcon }
+  updateModel()
+}
 
 function updateModel() {
   model.value = chips.value
@@ -171,7 +170,7 @@ function updateModel() {
 defineExpose({
   fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, updateValue,
   chips, input, selectedChip,
-  onChipAdded, onChipRemoved, onChipClicked, updateModel,
+  onChipAdded, onChipRemoved, onChipClicked, onIconChoosed, updateModel,
   chipIcon, chipColor, chipValue
 })
 </script>

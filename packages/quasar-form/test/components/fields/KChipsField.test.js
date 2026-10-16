@@ -16,7 +16,7 @@ function makeProps (propertiesOverride = {}) {
 describe('KChipsField', () => {
   // chipsFieldStub renders the default slot so chips+input are visible in edit mode
   // keyupInputStub re-emits native keyup as component event so @keyup.enter fires
-  const stubs = { 'q-field': chipsFieldStub, 'q-chip': true, 'q-input': keyupInputStub }
+  const stubs = { 'q-field': chipsFieldStub, 'q-chip': true, 'q-input': keyupInputStub, 'k-icon-chooser': true }
 
   // Edit mode renders a text input for typing chip values.
   it('renders an input in edit mode', () => {
