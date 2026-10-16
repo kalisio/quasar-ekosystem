@@ -270,19 +270,17 @@ export default {
       const prefix = (this.iconSet === 'line-awesome' ? 'la' : 'fa')
       if (!value.styles) {
         this.addFontAwsomeIcon(list, key, `${prefix}-${key}`)
+      } else if (value.styles.includes('brands')) {
+        this.addFontAwsomeIcon(list, key, `${prefix}b ${prefix}-${key}`)
       } else {
-        if (value.styles.includes('brands')) {
-          this.addFontAwsomeIcon(list, key, `${prefix}b ${prefix}-${key}`)
-        } else {
-          if (value.styles.includes('regular')) {
-            this.addFontAwsomeIcon(list, key, `${prefix}r ${prefix}-${key}`)
-          }
-          if (value.styles.includes('solid')) {
-            this.addFontAwsomeIcon(list, key, `${prefix}s ${prefix}-${key}`)
-          }
-          if (value.styles.includes('light')) {
-            this.addFontAwsomeIcon(list, key, `${prefix}l ${prefix}-${key}`)
-          }
+        if (value.styles.includes('regular')) {
+          this.addFontAwsomeIcon(list, key, `${prefix}r ${prefix}-${key}`)
+        }
+        if (value.styles.includes('solid')) {
+          this.addFontAwsomeIcon(list, key, `${prefix}s ${prefix}-${key}`)
+        }
+        if (value.styles.includes('light')) {
+          this.addFontAwsomeIcon(list, key, `${prefix}l ${prefix}-${key}`)
         }
       }
     },
