@@ -49,6 +49,7 @@
     "@logtape/logtape": "catalog:",
     "@thumbmarkjs/thumbmarkjs": "catalog:",
     "chroma-js": "catalog:",
+    "js-yaml": "catalog:",
     "lodash-es": "catalog:",
     "mathjs": "catalog:",
     "moment": "catalog:",

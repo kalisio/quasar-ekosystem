@@ -22,13 +22,12 @@
           flat
           icon="las la-icons"
           @click="onIconClicked" />
-        <!-- Missing Component: KIconChooser -->
-        <!-- <k-icon-chooser
+        <k-icon-chooser
           id="icon-chooser"
           ref="iconChooser"
           :icon-set="iconSet"
           :palette="color"
-          @icon-choosed="onIconChoosed" /> -->
+        @icon-choosed="onIconChoosed" />
       </template>
       <!-- Content -->
       <template v-slot:default>

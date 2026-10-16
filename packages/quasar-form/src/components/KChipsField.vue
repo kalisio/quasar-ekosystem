@@ -67,12 +67,9 @@
         />
       </template>
     </q-field>
-    <!-- Missing Component: KIconChooser -->
-    <!--
     <k-icon-chooser
       ref="iconChooser"
       @icon-choosed="onIconChoosed" />
-    -->
   </div>
 </template>
 
