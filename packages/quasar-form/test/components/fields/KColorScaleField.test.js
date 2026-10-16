@@ -24,13 +24,13 @@ describe('KColorScaleField', () => {
     expect(wrapper.find('select').exists()).toBe(true)
   })
 
-  // In readOnly mode the selected scale label is rendered as text
-  it('renders text in readOnly mode when model is set', () => {
+  // In readOnly mode KColorScale is rendered
+  it('renders KColorScale in readOnly mode when model is set', () => {
     const wrapper = mount(KColorScaleField, {
       props: { ...makeProps({ field: { options: colorScaleOptions } }), readOnly: true, values: { test: colorScaleOptions[0].value } },
-      global: { stubs }
+      global: { stubs: { ...stubs, KColorScale: true } }
     })
-    expect(wrapper.text()).toContain('Reds')
+    expect(wrapper.findComponent({ name: 'KColorScale' }).exists()).toBe(true)
   })
 
   // getLabel looks up the option label by matching the full value object

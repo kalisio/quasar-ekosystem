@@ -1,10 +1,6 @@
 <template>
   <div v-if="readOnly">
-    <!-- Missing Component: KColorScale -->
-    <!-- <KColorScale v-bind="model" style="max-height: 46px" /> -->
-    <div :id="properties.name + '-field'" class="k-color-scale-preview">
-      <span v-if="model">{{ getLabel(model) }}</span>
-    </div>
+    <KColorScale v-bind="model" style="max-height: 46px" />
   </div>
   <q-select v-else
     :for="properties.name + '-field'"
@@ -28,9 +24,11 @@
       <q-item class="full-width">
         <q-item-section>
           <q-item-label>
-            <!-- Missing Component: KColorScale -->
-            <!-- <KColorScale :key="scope.opt.label" v-bind="scope.opt.value" style="max-height: 46px;" /> -->
-            <div class="k-color-scale-bar" :style="getScaleStyle(scope.opt.value)" />
+            <KColorScale
+              :key="scope.opt.label"
+              v-bind="scope.opt.value"
+              style="max-height: 46px;"
+            />
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -43,9 +41,10 @@
       >
         <q-item-section>
           <q-item-label>
-            <!-- Missing Component: KColorScale -->
-            <!-- <KColorScale v-bind="scope.opt.value" style="max-height: 46px;" /> -->
-            <div class="k-color-scale-bar" :style="getScaleStyle(scope.opt.value)" />
+            <KColorScale
+              v-bind="scope.opt.value"
+              style="max-height: 46px;"
+            />
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -70,12 +69,7 @@
 import _ from 'lodash-es'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
-// Missing Component: KColorScale
-// import { KColorScale } from '../media'
-
 export default {
-  // Missing Component: KColorScale
-  // components: { KColorScale },
   // Missing Mixin: baseField
   // mixins: [baseField],
   props: fieldProps,
