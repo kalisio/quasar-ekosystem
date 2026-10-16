@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { filter, get, isArray, isEmpty, map } from 'lodash-es'
 import { ref, computed } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
@@ -70,7 +70,7 @@ const props = defineProps(fieldProps)
 const emit = defineEmits(['field-changed'])
 
 function emptyModel() {
-  return _.get(props.properties, 'field.multiple', false) ? [] : null
+  return get(props.properties, 'field.multiple', false) ? [] : null
 }
 
 const {
@@ -81,20 +81,20 @@ const {
 
 const files = ref(null)
 
-const multiple = computed(() => _.get(props.properties, 'field.multiple', false))
-const isModelEmpty = computed(() => _.isEmpty(model.value))
+const multiple = computed(() => get(props.properties, 'field.multiple', false))
+const isModelEmpty = computed(() => isEmpty(model.value))
 const displayName = computed(() => {
-  if (_.isArray(model.value)) return _.map(model.value, 'name').join(', ')
-  return _.get(model.value, 'name', '')
+  if (isArray(model.value)) return map(model.value, 'name').join(', ')
+  return get(model.value, 'name', '')
 })
-const acceptedTypes = computed(() => _.get(props.properties, 'field.mimeTypes', ''))
-const maxFiles = computed(() => _.get(props.properties, 'field.maxFiles', multiple.value ? 9 : 1))
-const maxFileSize = computed(() => _.get(props.properties, 'field.maxFileSize', 1048576))
-const maxTotalSize = computed(() => _.get(props.properties, 'field.maxTotalSize', maxFileSize.value))
-const isClearable = computed(() => _.get(props.properties, 'field.clearable', true))
+const acceptedTypes = computed(() => get(props.properties, 'field.mimeTypes', ''))
+const maxFiles = computed(() => get(props.properties, 'field.maxFiles', multiple.value ? 9 : 1))
+const maxFileSize = computed(() => get(props.properties, 'field.maxFileSize', 1048576))
+const maxTotalSize = computed(() => get(props.properties, 'field.maxTotalSize', maxFileSize.value))
+const isClearable = computed(() => get(props.properties, 'field.clearable', true))
 
-function isEmpty() { return _.isEmpty(model.value) }
-function clear() { fill(_.get(props.properties, 'default', emptyModel())) }
+function isEmpty() { return isEmpty(model.value) }
+function clear() { fill(get(props.properties, 'default', emptyModel())) }
 
 function onFileCleared() {
   files.value = null
@@ -102,7 +102,7 @@ function onFileCleared() {
   onChanged()
 }
 async function onFilesChanged() {
-  if (_.isEmpty(files.value)) {
+  if (isEmpty(files.value)) {
     model.value = emptyModel()
     return
   }
@@ -112,13 +112,13 @@ async function onFilesChanged() {
     result.push({ name: file.name, type: file.type, File: file })
   }
   if (multiple.value) model.value = result
-  else model.value = _.get(result, '0', null)
+  else model.value = get(result, '0', null)
   onChanged()
 }
 function filterSelectedFiles(fileList) {
-  const filterStr = _.get(props.properties, 'field.filter')
+  const filterStr = get(props.properties, 'field.filter')
   if (!filterStr) return fileList
-  return _.filter(fileList, file => file.name.includes(filterStr))
+  return filter(fileList, file => file.name.includes(filterStr))
 }
 function onFileRejected(errs) {}
 

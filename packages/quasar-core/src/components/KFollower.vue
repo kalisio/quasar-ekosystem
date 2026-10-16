@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { omit } from 'lodash-es'
 import { ref, computed, onMounted } from 'vue'
 
 // Props
@@ -38,7 +38,7 @@ const targetElement = ref(null)
 
 // Computed
 const computedProps = computed(() => {
-  return _.omit(props.follower, ['component'])
+  return omit(props.follower, ['component'])
 })
 const computedStyle = computed(() => {
   const hOffset = `${props.offset[0]}px`

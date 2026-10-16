@@ -1,4 +1,4 @@
-import _ from 'lodash-es'
+import { cloneDeep, forOwn, intersection, split } from 'lodash-es'
 import { ref, readonly } from 'vue'
 import { schemaRegistry as registry } from '../utils/index.js'
 
@@ -9,18 +9,18 @@ export function useSchema () {
   async function compile (schemaNameOrObject, propertiesFilter) {
     if (typeof schemaNameOrObject === 'string') {
       const schemaModule = await import(`@schemas/${schemaNameOrObject}.json`)
-      schema.value = _.cloneDeep(schemaModule.default)
+      schema.value = cloneDeep(schemaModule.default)
     } else {
-      schema.value = _.cloneDeep(schemaNameOrObject)
+      schema.value = cloneDeep(schemaNameOrObject)
     }
     if (propertiesFilter) {
       let properties = propertiesFilter
-      if (typeof propertiesFilter === 'string') properties = _.split(propertiesFilter, ',')
-      _.forOwn(schema.value.properties, (_value, key) => {
+      if (typeof propertiesFilter === 'string') properties = split(propertiesFilter, ',')
+      forOwn(schema.value.properties, (_value, key) => {
         if (!properties.includes(key)) delete schema.value.properties[key]
       })
       schema.value.$id += properties.join()
-      schema.value.required = _.intersection(schema.value.required, properties)
+      schema.value.required = intersection(schema.value.required, properties)
     }
     validator.value = registry.register(schema.value)
   }

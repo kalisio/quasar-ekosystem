@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { get, isEmpty } from 'lodash-es'
 import { computed } from 'vue'
 import { uid } from 'quasar'
 import { content } from '../utilities/content.js'
@@ -62,15 +62,15 @@ const emit = defineEmits(['triggered'])
 
 // Computed
 const filteredComponents = computed(() => {
-  if (_.isEmpty(props.content)) return []
+  if (isEmpty(props.content)) return []
   // Retrieve the components
   let components = props.content
-  if (!Array.isArray(components)) components = _.get(components, props.mode, [])
+  if (!Array.isArray(components)) components = get(components, props.mode, [])
   // Filter the components
-  if (!_.isEmpty(props.filter)) components = filter(components, props.filter)
+  if (!isEmpty(props.filter)) components = filter(components, props.filter)
   // Configure the components
   for (const component of components) {
-    component.name = _.get(component, 'component', 'action/KAction')
+    component.name = get(component, 'component', 'action/KAction')
     component.uid = uid()
     component.isHidden = getVisibility(component, 'hidden', false)
     component.isVisible = getVisibility(component, 'visible', true)
@@ -81,7 +81,7 @@ const filteredComponents = computed(() => {
 
 // Functions
 function getVisibility (component, property, defaultValue) {
-  let isVisible = _.get(component, property, defaultValue)
+  let isVisible = get(component, property, defaultValue)
   // Can be a functional call
   if (typeof isVisible === 'function') {
     isVisible = isVisible(props.context)

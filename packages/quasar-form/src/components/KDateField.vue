@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import _ from 'lodash-es'
+import { get } from 'lodash-es'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
@@ -66,7 +66,7 @@ export default {
       return false
     },
     clear () {
-      this.fill(_.get(this.properties, 'default', this.emptyModel()))
+      this.fill(get(this.properties, 'default', this.emptyModel()))
     }
   }
 }

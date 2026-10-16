@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { isEmpty } from 'lodash-es'
 import { computed } from 'vue'
 import { useQuasar } from 'quasar'
 
@@ -54,6 +54,6 @@ const $q = useQuasar()
 
 // computed
 const canShowIcon = computed(() => {
-  return !_.isEmpty(props.icon)
+  return !isEmpty(props.icon)
 })
 </script>

@@ -177,7 +177,7 @@ export default {
 </script>
 
 <script setup>
-import _ from 'lodash-es'
+import { cloneDeep, get, has, merge, omit } from 'lodash-es'
 import { ref, toRef, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, openURL } from 'quasar'
@@ -195,7 +195,7 @@ const route = useRoute()
 const router = useRouter()
 const $q = useQuasar()
 const { tie } = useI18n()
-const isToggled = _.has(props, 'toggle.value') ? toRef(props.toggle, 'value') : ref(props.toggled)
+const isToggled = has(props, 'toggle.value') ? toRef(props.toggle, 'value') : ref(props.toggled)
 
 // Emit
 const emit = defineEmits(['triggered', 'toggled', 'dialog-confirmed', 'dialog-canceled'])
@@ -203,26 +203,26 @@ const emit = defineEmits(['triggered', 'toggled', 'dialog-confirmed', 'dialog-ca
 // Computed
 const computedLabel = computed(() => {
   // Check also for translation key or already translated message
-  if (isToggled.value && _.has(props.toggle, 'label')) return tie(props.toggle.label)
+  if (isToggled.value && has(props.toggle, 'label')) return tie(props.toggle.label)
   return tie(props.label)
 })
 const computedIcon = computed(() => {
-  if (isToggled.value && _.has(props.toggle, 'icon')) return props.toggle.icon
+  if (isToggled.value && has(props.toggle, 'icon')) return props.toggle.icon
   return props.icon
 })
 const computedColor = computed(() => {
-  if (isToggled.value) return _.get(props.toggle, 'color', 'primary')
+  if (isToggled.value) return get(props.toggle, 'color', 'primary')
   return props.color
 })
 const computedTooltip = computed(() => {
   if (computedDisabled.value) return
   // Check also for translation key or already translated message
-  if (isToggled.value && _.has(props.toggle, 'tooltip')) return tie(props.toggle.tooltip)
+  if (isToggled.value && has(props.toggle, 'tooltip')) return tie(props.toggle.tooltip)
   return tie(props.tooltip)
 })
 const computedBadgeLabel = computed(() => {
   // Check also for translation key or already translated message
-  if (props.badge && _.has(props.badge, 'label')) return tie(props.badge.label)
+  if (props.badge && has(props.badge, 'label')) return tie(props.badge.label)
   // Take care that changing this to null or '' breaks the display in Quasar
   return undefined
 })
@@ -246,11 +246,11 @@ function bindRouteParams (path) {
   // A parameter like ':xxx' in config means xxx is a dynamic property of
   // the current route or the context object, not a static value.
   // We bind the target params object to both possible context.
-  const currentParams = _.get(route, path, {})
-  const targetParams = _.get(props.route, path, {})
+  const currentParams = get(route, path, {})
+  const targetParams = get(props.route, path, {})
   const routeParams = bindParams(targetParams, currentParams)
   const contextParams = bindParams(targetParams, props.context)
-  return _.merge(routeParams, contextParams)
+  return merge(routeParams, contextParams)
 }
 async function onClicked (event) {
   if (!props.propagate) event.stopPropagation()
@@ -278,18 +278,18 @@ async function onClicked (event) {
       router.push({
         query: bindRouteParams('query'),
         params: bindRouteParams('params'),
-        ..._.omit(props.route, ['query', 'params'])
+        ...omit(props.route, ['query', 'params'])
       }).catch(() => {})
     }
   }
   // handle the dialog case
   if (props.dialog) {
     let dialog = props.dialog
-    const component = _.get(props.dialog, 'component')
+    const component = get(props.dialog, 'component')
     if (component) {
       dialog = {
         component: 'KDialog',
-        componentProps: bindProperties(_.cloneDeep(dialog), props.context)
+        componentProps: bindProperties(cloneDeep(dialog), props.context)
       }
     }
     $q.dialog(dialog)

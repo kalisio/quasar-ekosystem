@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import _ from 'lodash-es'
+import { clone, defaults, differenceWith, filter, find, get, isArray, isEmpty, isNil, kebabCase } from 'lodash-es'
 import { inject } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
@@ -70,7 +70,7 @@ export default {
   watch: {
     model: {
       handler (newModel) {
-        this.items = newModel ? _.clone(newModel) : (this.properties.multiselect ? [] : null)
+        this.items = newModel ? clone(newModel) : (this.properties.multiselect ? [] : null)
       },
       immediate: true,
       flush: 'sync'
@@ -78,22 +78,22 @@ export default {
   },
   computed: {
     isClearable () {
-      return _.get(this.properties, 'field.clearable', true)
+      return get(this.properties, 'field.clearable', true)
     }
   },
   methods: {
     getId (item) {
-      return _.kebabCase(item.name)
+      return kebabCase(item.name)
     },
     isEmpty () {
-      return this.properties.multiselect ? _.isEmpty(this.model) : _.isNil(this.model)
+      return this.properties.multiselect ? isEmpty(this.model) : isNil(this.model)
     },
     fill (value) {
       this.model = value
       this.onChanged()
     },
     clear () {
-      this.fill(_.get(this.properties, 'default', this.emptyModel()))
+      this.fill(get(this.properties, 'default', this.emptyModel()))
     },
     // Missing Component: KPanel
     // getActions (item) {
@@ -101,22 +101,22 @@ export default {
     //   return [{ ... }]
     // },
     async onSearch (pattern, update, abort) {
-      if (pattern.length < _.get(this.properties, 'minCharsToSearch', 2)) {
+      if (pattern.length < get(this.properties, 'minCharsToSearch', 2)) {
         abort()
         return
       }
       this.searchString = pattern
-      const results = await this.search(_.get(this.properties, 'services', []), pattern)
+      const results = await this.search(get(this.properties, 'services', []), pattern)
       update(() => {
         if (this.properties.multiselect) {
-          this.options = _.differenceWith(results, this.items || [], (a, b) => a.name === b.name && a.color === b.color)
+          this.options = differenceWith(results, this.items || [], (a, b) => a.name === b.name && a.color === b.color)
         } else this.options = results
 
-        const hasInvalidMinLength = pattern.length < _.get(this.properties, 'minLength', 0)
-        const hasInvalidMaxLength = pattern.length > _.get(this.properties, 'maxLength', 256)
+        const hasInvalidMinLength = pattern.length < get(this.properties, 'minLength', 0)
+        const hasInvalidMaxLength = pattern.length > get(this.properties, 'maxLength', 256)
         if (hasInvalidMinLength || hasInvalidMaxLength) return
-        this.options = _.filter(this.options, item => !item.create)
-        if (pattern !== '' && !_.find(results, { name: pattern })) {
+        this.options = filter(this.options, item => !item.create)
+        if (pattern !== '' && !find(results, { name: pattern })) {
           this.options.push({ name: pattern, color: 'grey', create: true })
         }
       })
@@ -129,15 +129,15 @@ export default {
       this.onChanged()
 
       if (!this.model) return
-      const tagList = _.isArray(this.model) ? this.model : [this.model]
+      const tagList = isArray(this.model) ? this.model : [this.model]
       for (const item of tagList) {
         if (item.create) {
-          const hasInvalidMinLength = item.name.length < _.get(this.properties, 'minLength', 0)
-          const hasInvalidMaxLength = item.name.length > _.get(this.properties, 'maxLength', 256)
+          const hasInvalidMinLength = item.name.length < get(this.properties, 'minLength', 0)
+          const hasInvalidMaxLength = item.name.length > get(this.properties, 'maxLength', 256)
           if (hasInvalidMinLength || hasInvalidMaxLength) return
-          _.defaults(item, {
-            service: _.get(this.properties, 'field.service'),
-            property: _.get(this.properties, 'field.property'),
+          defaults(item, {
+            service: get(this.properties, 'field.service'),
+            property: get(this.properties, 'field.property'),
             scope: 'user',
             color: 'grey',
             description: ''

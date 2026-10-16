@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { debounce, get, isNil } from 'lodash-es'
 import * as math from 'mathjs'
 import { computed, watch, onMounted } from 'vue'
 import { uid } from 'quasar'
@@ -75,7 +75,7 @@ const canvasId = uid()
 let canvas = null
 let canvasContext = null
 let expectedSize = null
-const callRefresh = _.debounce(() => { refresh() }, 200)
+const callRefresh = debounce(() => { refresh() }, 200)
 
 // Computed
 const labelText = computed(() => {
@@ -84,40 +84,40 @@ const labelText = computed(() => {
   return text
 })
 const labelSize = computed(() => {
-  return _.get(props.layout, 'label.size', 12)
+  return get(props.layout, 'label.size', 12)
 })
 const labelFont = computed(() => {
-  return labelSize.value + 'px ' + _.get(props.layout, 'label.font', 'Arial')
+  return labelSize.value + 'px ' + get(props.layout, 'label.font', 'Arial')
 })
 const labelColor = computed(() => {
-  return _.get(props.layout, 'label.color', 'black')
+  return get(props.layout, 'label.color', 'black')
 })
 const labelAlign = computed(() => {
-  return _.get(props.layout, 'label.align', 'left')
+  return get(props.layout, 'label.align', 'left')
 })
 const barHeight = computed(() => {
-  return _.get(props.layout, 'bar.height', props.direction === 'horizontal' ? 16 : undefined)
+  return get(props.layout, 'bar.height', props.direction === 'horizontal' ? 16 : undefined)
 })
 const barWidth = computed(() => {
-  return _.get(props.layout, 'bar.width', props.direction === 'vertical' ? 16 : undefined)
+  return get(props.layout, 'bar.width', props.direction === 'vertical' ? 16 : undefined)
 })
 const ticksSize = computed(() => {
-  return _.get(props.layout, 'ticks.size', 10)
+  return get(props.layout, 'ticks.size', 10)
 })
 const ticksFont = computed(() => {
-  return ticksSize.value + 'px ' + _.get(props.layout, 'ticks.font', 'Arial')
+  return ticksSize.value + 'px ' + get(props.layout, 'ticks.font', 'Arial')
 })
 const ticksColor = computed(() => {
-  return _.get(props.layout, 'ticks.color', 'black')
+  return get(props.layout, 'ticks.color', 'black')
 })
 const ticksFormat = computed(() => {
-  return _.get(props.layout, 'ticks.format', { notation: 'auto', precision: 3 })
+  return get(props.layout, 'ticks.format', { notation: 'auto', precision: 3 })
 })
 const gutter = computed(() => {
-  return _.get(props.layout, 'gutter', 4)
+  return get(props.layout, 'gutter', 4)
 })
 const reversed = computed(() => {
-  return _.get(props.domain, '[1]', 1) < _.get(props.domain, '[0]', 0)
+  return get(props.domain, '[1]', 1) < get(props.domain, '[0]', 0)
 })
 
 // Functions
@@ -128,7 +128,7 @@ function normalize (x, domain) {
   return Math.min(1, Math.max(0, (x - domain[0]) / (domain[domain.length - 1] - domain[0])))
 }
 function drawLabel () {
-  if (_.isNil(labelText.value)) return
+  if (isNil(labelText.value)) return
   canvasContext.font = labelFont.value
   canvasContext.fillStyle = labelColor.value
   canvasContext.textAlign = labelAlign.value
@@ -147,7 +147,7 @@ function drawLabel () {
 function drawDiscreteHorizontalScale () {
   drawLabel()
   // draw colorbar
-  const yBar = _.isNil(props.label) ? 0 : labelSize.value + gutter.value
+  const yBar = isNil(props.label) ? 0 : labelSize.value + gutter.value
   const length = props.classes.length - 1
   const boxWidth = canvas.width / length
   const colorScale = color.scale(props)
@@ -176,7 +176,7 @@ function drawDiscreteHorizontalScale () {
       canvasContext.textAlign = 'center'
       tickValue = props.classes[i]
     }
-    if (!_.isNil(tickValue)) {
+    if (!isNil(tickValue)) {
       const tick = formatTick(tickValue, previousTickValue)
       // Tick to be displayed or not ?
       if (tick) {
@@ -189,7 +189,7 @@ function drawDiscreteHorizontalScale () {
 function drawDiscreteVerticalScale () {
   drawLabel()
   // draw colorbar
-  const yBar = _.isNil(props.label) ? 0 : labelSize.value + gutter.value
+  const yBar = isNil(props.label) ? 0 : labelSize.value + gutter.value
   const length = props.classes.length - 1
   const boxHeight = (canvas.height - yBar) / length
   const colorScale = color.scale(props)
@@ -212,7 +212,7 @@ function drawDiscreteVerticalScale () {
     } else {
       tickValue = props.classes[i]
     }
-    if (!_.isNil(tickValue)) {
+    if (!isNil(tickValue)) {
       const tick = formatTick(tickValue, previousTickValue)
       // Tick to be displayed or not ?
       if (tick) {
@@ -225,7 +225,7 @@ function drawDiscreteVerticalScale () {
 function drawContinuousHorizontalScale () {
   drawLabel()
   // draw colorbar
-  const yBar = _.isNil(props.label) ? 0 : labelSize.value + gutter.value
+  const yBar = isNil(props.label) ? 0 : labelSize.value + gutter.value
   const length = canvas.width
   const colors = color.scale(props).colors(length)
   if (reversed.value) colors.reverse()
@@ -248,7 +248,7 @@ function drawContinuousHorizontalScale () {
     } else {
       canvasContext.textAlign = 'center'
     }
-    if (!_.isNil(tickValue)) {
+    if (!isNil(tickValue)) {
       const tick = formatTick(tickValue, previousTickValue)
       // Tick to be displayed or not ?
       if (tick) {
@@ -261,7 +261,7 @@ function drawContinuousHorizontalScale () {
 function drawContinuousVerticalScale () {
   drawLabel()
   // draw colorbar
-  const yBar = _.isNil(props.label) ? 0 : labelSize.value + gutter.value
+  const yBar = isNil(props.label) ? 0 : labelSize.value + gutter.value
   const length = canvas.height - yBar
   const colors = color.scale(props).colors(length)
   if (reversed.value) colors.reverse()
@@ -285,7 +285,7 @@ function drawContinuousVerticalScale () {
     } else {
       tickValue = domain[i]
     }
-    if (!_.isNil(tickValue)) {
+    if (!isNil(tickValue)) {
       const tick = formatTick(tickValue, previousTickValue)
       // Tick to be displayed or not ?
       if (tick) {

@@ -54,7 +54,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { get, split } from 'lodash-es'
 import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useField } from '../composables/index.js'
@@ -79,7 +79,7 @@ const computedClass = computed(() => {
   if (props.properties.center) classObject['justify-center'] = true
   return classObject
 })
-const borderless = computed(() => _.get(props.properties, 'field.borderless', false))
+const borderless = computed(() => get(props.properties, 'field.borderless', false))
 const readonly = computed(() => resolution.value?.readonly ?? true)
 const resolutions = computed(() => [
   { label: t('KResolutionField.SD_LABEL'), description: t('KResolutionField.SD_DESCRIPTION'), value: '640x480', readonly: true },
@@ -96,7 +96,7 @@ watch(resolution, (val) => {
     resolution.value = resolutions.value[1]
     return
   }
-  const size = _.split(val.value, 'x')
+  const size = split(val.value, 'x')
   width.value = Number(size[0])
   height.value = Number(size[1])
   updateModel()

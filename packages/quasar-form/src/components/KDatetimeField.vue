@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import _ from 'lodash-es'
+import { get } from 'lodash-es'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
@@ -52,7 +52,7 @@ export default {
   emits: ['field-changed'],
   setup (props, { emit }) {
     function emptyModel () {
-      const offset = _.get(props.properties, 'field.defaultOffset', 0)
+      const offset = get(props.properties, 'field.defaultOffset', 0)
       return new Date(Date.now() + offset * 1000).toISOString()
     }
     return { ...useField(props, emit, { emptyModel }), emptyModel }
@@ -67,7 +67,7 @@ export default {
       return false
     },
     clear () {
-      this.fill(_.get(this.properties, 'default', this.emptyModel()))
+      this.fill(get(this.properties, 'default', this.emptyModel()))
     }
   }
 }

@@ -69,7 +69,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { debounce, isEmpty } from 'lodash-es'
 import { getLogger } from '@logtape/logtape'
 const logger = getLogger(['quasar-core', 'KDateTimeRange'])
 import moment from 'moment'
@@ -172,15 +172,15 @@ const rangeModel = ref({
   max: 100
 })
 const isMounted = ref(false)
-const triggerEmit = _.debounce(() => {
+const triggerEmit = debounce(() => {
   emit('update:modelValue', { start: startTimeModel.value, end: endTimeModel.value })
 }, 100)
 
 // Computed
 const canDisplaySlider = computed(() => {
-  return !_.isEmpty(props.slider) &&
-         !_.isEmpty(props.min) &&
-         !_.isEmpty(props.max)
+  return !isEmpty(props.slider) &&
+         !isEmpty(props.min) &&
+         !isEmpty(props.max)
 })
 
 // Watch
@@ -207,7 +207,7 @@ watch(() => props.modelValue, (value) => {
   }
 }, { immediate: true })
 watch(() => [props.min, props.max], () => {
-  if (_.isEmpty(props.max) || _.isEmpty(props.min)) return
+  if (isEmpty(props.max) || isEmpty(props.min)) return
   const min = moment(props.min)
   const max = moment(props.max)
   const duration = moment.duration(max.diff(min)).asMilliseconds()
@@ -237,7 +237,7 @@ watch(() => [props.min, props.max], () => {
 
 // Functions
 function onRangeChanged () {
-  if (!_.isEmpty(props.min) && !_.isEmpty(props.max)) {
+  if (!isEmpty(props.min) && !isEmpty(props.max)) {
     const min = moment(props.min)
     const max = moment(props.max)
     const start = moment(startTimeModel.value)

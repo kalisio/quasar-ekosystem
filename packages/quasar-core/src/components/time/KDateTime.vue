@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { debounce, isEmpty, merge } from 'lodash-es'
 import moment from 'moment'
 import { ref, computed, watch } from 'vue'
 // import { Time } from '../../time.js'
@@ -153,13 +153,13 @@ const computedTimeModel = computed({
 })
 const computedDatePicker = computed(() => {
   let picker = {}
-  if (!_.isEmpty(props.min) || !_.isEmpty(props.max)) picker = { options: checkDate }
-  return _.merge({}, props.datePicker, picker)
+  if (!isEmpty(props.min) || !isEmpty(props.max)) picker = { options: checkDate }
+  return merge({}, props.datePicker, picker)
 })
 const computedTimePicker = computed(() => {
   let picker = {}
-  if (!_.isEmpty(props.min) || !_.isEmpty(props.max)) picker = { options: checkTime }
-  return _.merge({}, props.timePicker, picker)
+  if (!isEmpty(props.min) || !isEmpty(props.max)) picker = { options: checkTime }
+  return merge({}, props.timePicker, picker)
 })
 
 // Watch
@@ -233,7 +233,7 @@ function toHMS (value) {
     ss: value.substring(6, 8)
   }
 }
-const triggerEmit = _.debounce(() => {
+const triggerEmit = debounce(() => {
   emit('update:modelValue', dateTime.value.toISOString())
 }, 100)
 

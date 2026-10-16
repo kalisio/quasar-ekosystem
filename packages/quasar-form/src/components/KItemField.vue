@@ -69,7 +69,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { clone, differenceWith, find, get, isEmpty, isNil, kebabCase, uniqBy } from 'lodash-es'
 import { ref, computed, watch, inject } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
@@ -80,7 +80,7 @@ const emit = defineEmits(['field-changed'])
 const search = inject('search', async () => [])
 
 function emptyModel() {
-  return _.get(props.properties, 'multiselect', false) ? [] : null
+  return get(props.properties, 'multiselect', false) ? [] : null
 }
 
 const {
@@ -93,50 +93,50 @@ const select = ref(null)
 const items = ref(null)
 const options = ref([])
 
-const multiple = computed(() => _.get(props.properties, 'multiselect', false))
+const multiple = computed(() => get(props.properties, 'multiselect', false))
 const hasSingleService = computed(() => {
-  const services = _.uniqBy(_.get(props.properties, 'services', []), 'service')
+  const services = uniqBy(get(props.properties, 'services', []), 'service')
   return services.length === 1
 })
 
 watch(model, (newModel) => {
-  items.value = newModel ? _.clone(newModel) : (multiple.value ? [] : null)
+  items.value = newModel ? clone(newModel) : (multiple.value ? [] : null)
 }, { immediate: true, flush: 'sync' })
 
 function getServiceForItem(item) {
   return hasSingleService.value
-    ? _.get(props.properties, 'services[0]')
-    : _.find(_.get(props.properties, 'services', []), { service: item.service })
+    ? get(props.properties, 'services[0]')
+    : find(get(props.properties, 'services', []), { service: item.service })
 }
-function getId(item) { return _.kebabCase(getLabel(item)) }
+function getId(item) { return kebabCase(getLabel(item)) }
 function getLabel(item) {
   const service = getServiceForItem(item)
-  return _.get(item, service?.field || 'name', '')
+  return get(item, service?.field || 'name', '')
 }
 function getDescription(item) {
   const service = getServiceForItem(item)
-  return _.get(item, service?.description || 'description', '')
+  return get(item, service?.description || 'description', '')
 }
-function getIcon(item) { return _.get(item, 'icon.name', _.get(item, 'icon', '')) }
+function getIcon(item) { return get(item, 'icon.name', get(item, 'icon', '')) }
 
 function isEmpty() {
-  return multiple.value ? _.isEmpty(model.value) : _.isNil(model.value)
+  return multiple.value ? isEmpty(model.value) : isNil(model.value)
 }
 function fill(val) {
   model.value = val
   onChanged()
 }
 function clear() {
-  fill(_.get(props.properties, 'default', emptyModel()))
+  fill(get(props.properties, 'default', emptyModel()))
 }
 
 async function onSearch(pattern, update, abort) {
   if (pattern.length < 2) { abort(); return }
-  const results = await search(_.get(props.properties, 'services', []), pattern)
+  const results = await search(get(props.properties, 'services', []), pattern)
   update(() => {
     if (multiple.value) {
-      options.value = _.differenceWith(results, items.value || [], (item1, item2) => {
-        return _.get(item1, item1.field) === _.get(item2, item2.field) && item1.service === item2.service
+      options.value = differenceWith(results, items.value || [], (item1, item2) => {
+        return get(item1, item1.field) === get(item2, item2.field) && item1.service === item2.service
       })
     } else options.value = results
   })

@@ -33,7 +33,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { isEmpty } from 'lodash-es'
 import { ref, computed } from 'vue'
 import { uid } from 'quasar'
 import { sanitize } from '@kalisio/common-core/operators/sanitize'
@@ -162,7 +162,7 @@ const computedColor = computed(() => {
   return props.outline ? 'transparent' : palette.resolve(props.color, props.color)
 })
 const computedTextColor = computed(() => {
-  if (_.isEmpty(props.textColor)) {
+  if (isEmpty(props.textColor)) {
     if (props.outline) return computedBorderColor.value
     const resolved = palette.resolve(props.color, '#757575')
     return color.is(resolved) ? color.contrast(resolved) : 'white'

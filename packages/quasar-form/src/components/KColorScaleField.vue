@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import _ from 'lodash-es'
+import { find, get, isEmpty, isEqual, isString, kebabCase } from 'lodash-es'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 export default {
@@ -79,24 +79,24 @@ export default {
   },
   methods: {
     getId (option) {
-      return _.kebabCase(option.label)
+      return kebabCase(option.label)
     },
     getOptions () {
-      return _.get(this.properties, 'field.options', [])
+      return get(this.properties, 'field.options', [])
     },
     isClearable () {
-      return _.get(this.properties, 'field.clearable', true)
+      return get(this.properties, 'field.clearable', true)
     },
     getLabel (value) {
       const options = this.getOptions()
-      const opt = _.find(options, o => _.isEqual(o.value, value))
+      const opt = find(options, o => isEqual(o.value, value))
       return opt?.label || ''
     },
     getScaleStyle (value) {
       if (!value) return {}
-      const colors = _.get(value, 'colors', _.get(value, 'scale', []))
-      if (_.isEmpty(colors)) return {}
-      const stops = colors.map((c, i) => `${_.isString(c) ? c : c.color} ${Math.round((i / (colors.length - 1)) * 100)}%`)
+      const colors = get(value, 'colors', get(value, 'scale', []))
+      if (isEmpty(colors)) return {}
+      const stops = colors.map((c, i) => `${isString(c) ? c : c.color} ${Math.round((i / (colors.length - 1)) * 100)}%`)
       return { background: `linear-gradient(to right, ${stops.join(', ')})`, height: '16px', borderRadius: '4px', width: '100%' }
     }
   }

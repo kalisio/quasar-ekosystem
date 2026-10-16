@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import _ from 'lodash-es'
+import { get } from 'lodash-es'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
@@ -62,36 +62,36 @@ export default {
   emits: ['field-changed'],
   setup (props, { emit }) {
     function emptyModel () {
-      const startField = _.get(props.properties, 'field.start', 'start')
-      const endField = _.get(props.properties, 'field.end', 'end')
+      const startField = get(props.properties, 'field.start', 'start')
+      const endField = get(props.properties, 'field.end', 'end')
       return { [startField]: '', [endField]: '' }
     }
     return { ...useField(props, emit, { emptyModel }), emptyModel }
   },
   computed: {
     startField () {
-      return _.get(this.properties, 'field.start', 'start')
+      return get(this.properties, 'field.start', 'start')
     },
     endField () {
-      return _.get(this.properties, 'field.end', 'end')
+      return get(this.properties, 'field.end', 'end')
     },
     startValue () {
-      return _.get(this.model, this.startField, '')
+      return get(this.model, this.startField, '')
     },
     endValue () {
-      return _.get(this.model, this.endField, '')
+      return get(this.model, this.endField, '')
     },
     minStart () {
-      return _.get(this.properties, 'field.minStart', '')
+      return get(this.properties, 'field.minStart', '')
     },
     maxStart () {
-      return this.endValue || _.get(this.properties, 'field.maxStart', '')
+      return this.endValue || get(this.properties, 'field.maxStart', '')
     },
     minEnd () {
-      return this.startValue || _.get(this.properties, 'field.minEnd', '')
+      return this.startValue || get(this.properties, 'field.minEnd', '')
     },
     maxEnd () {
-      return _.get(this.properties, 'field.maxEnd', '')
+      return get(this.properties, 'field.maxEnd', '')
     },
     formattedDateTimeRange () {
       if (!this.startValue && !this.endValue) return ''
@@ -103,7 +103,7 @@ export default {
       return !this.startValue && !this.endValue
     },
     clear () {
-      this.fill(_.get(this.properties, 'default', this.emptyModel()))
+      this.fill(get(this.properties, 'default', this.emptyModel()))
     },
     onStartChanged (event) {
       this.model = { ...this.emptyModel(), ...this.model, [this.startField]: event.target.value }

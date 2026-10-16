@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { isArray, size } from 'lodash-es'
 import { computed } from 'vue'
 import { palette } from '../../utilities/palette.js'
 const width = 500
@@ -43,7 +43,7 @@ const props = defineProps({
     type: Array,
     default: [50, 50],
     validator: (value) => {
-      return _.isArray(value) && _.size(value) === 2
+      return isArray(value) && size(value) === 2
     }
   }
 })

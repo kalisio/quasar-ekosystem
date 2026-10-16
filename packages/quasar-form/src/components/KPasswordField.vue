@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { get, set } from 'lodash-es'
 import { ref } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
@@ -43,13 +43,13 @@ const {
 } = useField(props, emit)
 
 const showPassword = ref(true)
-const autocomplete = ref(_.get(props.properties, 'field.autocomplete', 'on'))
+const autocomplete = ref(get(props.properties, 'field.autocomplete', 'on'))
 
 // Missing: generateRandomPassword
-// if (_.get(props.properties, 'field.suggest')) {
-//   const length = _.get(props.properties.field.suggest, 'length', 12)
-//   const rules = _.get(props.properties.field.suggest, 'rules', /[\w\d?-]/)
-//   _.set(props.properties, 'default', generateRandomPassword(length, false, rules))
+// if (get(props.properties, 'field.suggest')) {
+//   const length = get(props.properties.field.suggest, 'length', 12)
+//   const rules = get(props.properties.field.suggest, 'rules', /[\w\d?-]/)
+//   set(props.properties, 'default', generateRandomPassword(length, false, rules))
 // }
 
 defineExpose({ fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, onChanged, hasError, showPassword, autocomplete })

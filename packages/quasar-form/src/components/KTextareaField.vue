@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import _ from 'lodash-es'
+import { forEach, get } from 'lodash-es'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 // Missing Component: KTextArea
@@ -93,8 +93,8 @@ export default {
           ['clear']
         ]
       }
-      _.forEach(this.properties.toolbar || _.get(this.properties, 'field.toolbar') || defaultToolbar, (value, key) => {
-        if (_.get(this.$q.screen, key)) {
+      forEach(this.properties.toolbar || get(this.properties, 'field.toolbar') || defaultToolbar, (value, key) => {
+        if (get(this.$q.screen, key)) {
           configuration = value
           return false
         }
@@ -118,7 +118,7 @@ export default {
       return this.model === ''
     },
     clear () {
-      this.fill(_.get(this.properties, 'default', ''))
+      this.fill(get(this.properties, 'default', ''))
     }
   }
 }

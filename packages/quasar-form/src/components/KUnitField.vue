@@ -46,7 +46,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { filter, get, includes, isEmpty } from 'lodash-es'
 import { computed, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useField } from '../composables/index.js'
@@ -66,13 +66,13 @@ const {
 const options = computed(() => {
   let units
   if (getUnits) {
-    units = getUnits(_.get(props.properties, 'field.quantity'))
-    const unitsFilter = _.get(props.properties, 'field.filter', [])
-    if (!_.isEmpty(unitsFilter)) units = _.filter(units, unit => _.includes(unitsFilter, unit.name))
-    return units.map(unit => ({ value: unit.name, label: t(_.get(unit, 'label', '')) }))
+    units = getUnits(get(props.properties, 'field.quantity'))
+    const unitsFilter = get(props.properties, 'field.filter', [])
+    if (!isEmpty(unitsFilter)) units = filter(units, unit => includes(unitsFilter, unit.name))
+    return units.map(unit => ({ value: unit.name, label: t(get(unit, 'label', '')) }))
   }
-  units = _.get(props.properties, 'field.options', [])
-  return units.map(unit => ({ value: unit.value ?? unit.name, label: t(_.get(unit, 'label', '')) }))
+  units = get(props.properties, 'field.options', [])
+  return units.map(unit => ({ value: unit.value ?? unit.name, label: t(get(unit, 'label', '')) }))
 })
 
 defineExpose({

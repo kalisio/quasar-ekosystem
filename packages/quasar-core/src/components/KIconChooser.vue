@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import _ from 'lodash-es'
+import { findIndex, forOwn, kebabCase } from 'lodash-es'
 import { load as yamlLoad } from 'js-yaml'
 import KModal from './KModal.vue'
 import KPalette from './KPalette.vue'
@@ -95,7 +95,7 @@ export default {
   },
   methods: {
     getIconId (name) {
-      return _.kebabCase(name)
+      return kebabCase(name)
     },
     getIconColor (name) {
       let color = 'grey-7'
@@ -167,7 +167,7 @@ export default {
         } else {
           Object.assign(this.selectedIcon, defaultIcon)
         }
-        index = _.findIndex(this.allIcons, icon => { return icon.name === this.selectedIcon.name })
+        index = findIndex(this.allIcons, icon => { return icon.name === this.selectedIcon.name })
       }
       if (index === -1) this.currentPage = 1
       else this.currentPage = Math.ceil(index / this.iconsPerPage)
@@ -237,7 +237,7 @@ export default {
         const icons = []
 
         const yamlCodes = yamlLoad(text)
-        _.forOwn(yamlCodes, (value, key) => {
+        forOwn(yamlCodes, (value, key) => {
           this.addFontAwsomeIcons(icons, value, key)
         })
 

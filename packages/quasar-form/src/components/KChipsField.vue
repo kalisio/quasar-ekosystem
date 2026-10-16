@@ -74,7 +74,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { findIndex, get } from 'lodash-es'
 import { ref, computed, watch } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps, getIconName } from '../utils/index.js'
@@ -92,7 +92,7 @@ const {
 } = useField(props, emit, { emptyModel })
 
 const iconChooser = ref(null)
-const icon = ref(_.get(props.properties, 'field.icon', true))
+const icon = ref(get(props.properties, 'field.icon', true))
 const input = ref('')
 const chips = ref([])
 const selectedChip = ref(null)
@@ -104,8 +104,8 @@ watch(model, (newModel) => {
 const inputActions = computed(() => {
   const actions = []
   const index = icon.value
-    ? _.findIndex(chips.value, { value: input.value })
-    : _.findIndex(chips.value, input.value)
+    ? findIndex(chips.value, { value: input.value })
+    : findIndex(chips.value, input.value)
   if (index === -1) {
     actions.push({ icon: 'send', content: true, handler: () => onChipAdded() })
   }
@@ -123,7 +123,7 @@ function chipIcon(chip) {
 }
 
 function chipColor(chip) {
-  return icon.value ? _.get(chip, 'icon.color', 'dark') : 'dark'
+  return icon.value ? get(chip, 'icon.color', 'dark') : 'dark'
 }
 
 function chipValue(chip) {
@@ -135,8 +135,8 @@ function onChipAdded() {
     ? {
         value: input.value,
         icon: {
-          name: _.get(props.properties.field, 'icon.name', ''),
-          color: _.get(props.properties.field, 'icon.color', 'dark')
+          name: get(props.properties.field, 'icon.name', ''),
+          color: get(props.properties.field, 'icon.color', 'dark')
         }
       }
     : input.value

@@ -34,7 +34,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { isNumber } from 'lodash-es'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
@@ -49,7 +49,7 @@ const {
 } = useField(props, emit)
 
 function onUpdated(val) {
-  model.value = _.isNumber(val) ? val : null
+  model.value = isNumber(val) ? val : null
   onChanged()
 }
 

@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { get, map, upperCase } from 'lodash-es'
 import { useI18n } from 'vue-i18n'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
@@ -40,7 +40,7 @@ const { t } = useI18n()
 
 function emptyModel() {
   const defaultRoleNames = ['owner', 'manager', 'member']
-  const roleNames = _.get(props.properties, 'field.roles', defaultRoleNames)
+  const roleNames = get(props.properties, 'field.roles', defaultRoleNames)
   return roleNames.length ? roleNames[0] : ''
 }
 
@@ -54,8 +54,8 @@ function isEmpty() { return false }
 function roles() {
   const defaultRoleNames = ['owner', 'manager', 'member']
   // Missing: RoleNames — using default list
-  const roleNames = _.get(props.properties, 'field.roles', defaultRoleNames)
-  return roleNames ? _.map(roleNames, role => ({ label: t(_.upperCase(role)), value: role })) : []
+  const roleNames = get(props.properties, 'field.roles', defaultRoleNames)
+  return roleNames ? map(roleNames, role => ({ label: t(upperCase(role)), value: role })) : []
 }
 
 defineExpose({ fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, onChanged, hasError, roles })

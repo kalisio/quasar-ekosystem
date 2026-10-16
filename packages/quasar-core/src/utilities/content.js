@@ -1,5 +1,5 @@
 import { has, is } from '@kalisio/common-core/predicates'
-import _ from 'lodash-es'
+import { flatMapDeep, forEach, forOwn, get, isFinite, keys, mapValues, set, toNumber } from 'lodash-es'
 import sift from 'sift'
 
 const RESOLVERS = []
@@ -23,9 +23,9 @@ export const content = {
       if (result !== undefined) return result
     }
     const path = value.substring(1)
-    const n = _.toNumber(path)
-    if (_.isFinite(n)) return args[n]
-    if (has.path(context, path)) return _.get(context, path)
+    const n = toNumber(path)
+    if (isFinite(n)) return args[n]
+    if (has.path(context, path)) return get(context, path)
     return undefined
   },
 
@@ -33,7 +33,7 @@ export const content = {
     const isNot = name.startsWith('!')
     if (isNot) name = name.substring(1)
     return (...args) => {
-      const handler = _.get(context, name)
+      const handler = get(context, name)
       let result
       if (typeof handler === 'function') {
         result = params ? handler(...content.bindParams(params, context, args)) : handler(...args)
@@ -47,23 +47,23 @@ export const content = {
   bindParams (params, context, args) {
     if (is.nil(params)) return params
     if (is.array(params)) return params.map(p => content.bindParams(p, context, args))
-    if (typeof params === 'object') return _.mapValues(params, v => content.bindParams(v, context, args))
+    if (typeof params === 'object') return mapValues(params, v => content.bindParams(v, context, args))
     return content.resolve(params, context, args)
   },
 
   bindHandler (component, path, context) {
-    const handler = _.get(component, path)
+    const handler = get(component, path)
     if (is.array(handler)) {
       const hs = handler.map(h => content.generateHandler(context, h.name || h, h.params))
-      _.set(component, path, (...args) => hs.reduce((result, h) => result && h(...args), true))
+      set(component, path, (...args) => hs.reduce((result, h) => result && h(...args), true))
     } else if (handler && typeof handler === 'object') {
       if (handler.name && !handler.name.startsWith(':')) {
-        _.set(component, path, content.generateHandler(context, handler.name, handler.params))
+        set(component, path, content.generateHandler(context, handler.name, handler.params))
       }
     } else if (typeof handler === 'string' && !handler.startsWith(':')) {
-      _.set(component, path, content.generateHandler(context, handler))
+      set(component, path, content.generateHandler(context, handler))
     }
-    return _.get(component, path)
+    return get(component, path)
   },
 
   bindProperties (item, context, omit = []) {
@@ -71,7 +71,7 @@ export const content = {
       return item.map(i => content.bindProperties(i, context, omit))
     }
     if (typeof item === 'object' && item !== null) {
-      _.forOwn(item, (value, key) => {
+      forOwn(item, (value, key) => {
         if (![...RESERVED_BINDINGS, ...omit].includes(key)) {
           item[key] = typeof value === 'string'
             ? content.resolve(value, context)
@@ -83,8 +83,8 @@ export const content = {
   },
 
   bind (data, context, omit = []) {
-    const components = _.flatMapDeep(data)
-    _.forEach(components, component => {
+    const components = flatMapDeep(data)
+    forEach(components, component => {
       for (const path of HANDLERS) content.bindHandler(component, path, context)
       content.bindProperties(component, context, omit)
       if (component.content) content.bind(component.content, context, omit)
@@ -99,7 +99,7 @@ export const content = {
     if (!isArray) {
       if (filtered.content) filtered.content = content.filter(filtered.content, filter)
       else {
-        _.keys(filtered).forEach(mode => {
+        keys(filtered).forEach(mode => {
           filtered[mode] = content.filter(filtered[mode], filter)
         })
       }

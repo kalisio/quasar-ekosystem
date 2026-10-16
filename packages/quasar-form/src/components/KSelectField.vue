@@ -81,7 +81,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { filter, get, isEmpty, isNil, kebabCase, map } from 'lodash-es'
 import { ref, computed, watch, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useField } from '../composables/index.js'
@@ -93,7 +93,7 @@ const emit = defineEmits(['field-changed'])
 const { t } = useI18n()
 
 function emptyModel() {
-  return _.get(props.properties, 'multiselect', false) ? [] : null
+  return get(props.properties, 'multiselect', false) ? [] : null
 }
 
 const {
@@ -107,23 +107,23 @@ const filter = ref(null)
 const multiple = computed(() => isMultiselect())
 const chips = computed(() => hasChips())
 const options = computed(() => {
-  let opts = _.map(_.get(props.properties, 'field.options', []), option => {
-    const lbl = t(_.get(option, 'label', ''))
+  let opts = map(get(props.properties, 'field.options', []), option => {
+    const lbl = t(get(option, 'label', ''))
     return Object.assign({}, option, { label: lbl })
   })
   if (filter.value) {
-    opts = _.filter(opts, option => {
+    opts = filter(opts, option => {
       const regExp = new RegExp(string.makeDiacriticPattern(filter.value))
       return regExp.test(option.label.toLowerCase())
     })
   }
   return opts
 })
-const hasNoOption = computed(() => !_.isEmpty(_.get(props.properties, 'field.noOption', {})))
-const noOption = computed(() => _.get(props.properties, 'field.noOption', null))
+const hasNoOption = computed(() => !isEmpty(get(props.properties, 'field.noOption', {})))
+const noOption = computed(() => get(props.properties, 'field.noOption', null))
 
 watch(options, (opts) => {
-  if (_.isEmpty(filter.value) && opts.length === 1 && props.required) {
+  if (isEmpty(filter.value) && opts.length === 1 && props.required) {
     nextTick(() => {
       fill(opts[0].value)
       onChanged()
@@ -131,28 +131,28 @@ watch(options, (opts) => {
   }
 }, { immediate: true })
 
-function isMultiselect() { return _.get(props.properties, 'multiselect', false) }
-function isClearable() { return _.get(props.properties, 'field.clearable', true) }
-function hasChips() { return _.get(props.properties, 'field.chips', false) }
+function isMultiselect() { return get(props.properties, 'multiselect', false) }
+function isClearable() { return get(props.properties, 'field.clearable', true) }
+function hasChips() { return get(props.properties, 'field.chips', false) }
 function getId(option) {
   let id = option.value
   if (typeof id === 'object') {
-    const valueField = _.get(props.properties, 'field.valueField')
-    if (valueField) id = _.get(id, valueField)
+    const valueField = get(props.properties, 'field.valueField')
+    if (valueField) id = get(id, valueField)
     else id = option.label
   } else {
     id = id.toString()
   }
-  return _.kebabCase(id)
+  return kebabCase(id)
 }
 function isEmpty() {
-  return multiple.value ? _.isEmpty(model.value) : _.isNil(model.value)
+  return multiple.value ? isEmpty(model.value) : isNil(model.value)
 }
 function clear() {
-  fill(_.get(props.properties, 'default', emptyModel()))
+  fill(get(props.properties, 'default', emptyModel()))
 }
 function selectedClass() {
-  return _.get(props.properties, 'field.selectedClass', 'text-weight-regular')
+  return get(props.properties, 'field.selectedClass', 'text-weight-regular')
 }
 function onFilter(pattern, update) {
   if (pattern === '') {

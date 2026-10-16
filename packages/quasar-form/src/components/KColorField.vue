@@ -46,7 +46,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { get } from 'lodash-es'
 import { ref, computed } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
@@ -54,7 +54,7 @@ import { fieldProps } from '../utils/index.js'
 const props = defineProps(fieldProps)
 const emit = defineEmits(['field-changed'])
 
-function emptyModel() { return _.get(props.properties, 'default', '') }
+function emptyModel() { return get(props.properties, 'default', '') }
 
 const {
   model, label, hasHelper, helperLabel, helperIcon, helperTooltip, helperUrl,
@@ -71,7 +71,7 @@ function onReferenceCreated(r) {
   // https://github.com/quasarframework/quasar/issues/8956
   if (r) r.$el.onclick = () => { picker.value = true }
 }
-function isClearable() { return _.get(props.properties, 'field.clearable', true) }
+function isClearable() { return get(props.properties, 'field.clearable', true) }
 
 defineExpose({
   fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, onChanged, hasError,

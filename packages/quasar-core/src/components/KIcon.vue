@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { get, isString, omit } from 'lodash-es'
 import { computed } from 'vue'
 import { palette } from '../utilities/palette.js'
 
@@ -31,22 +31,22 @@ const defaultColor = 'grey-9'
 // Computed
 const computedIcon = computed(() => {
   if (!props.icon) return
-  if (_.isString(props.icon)) return { name: props.icon }
-  return _.omit(props.icon, ['overlay', 'color'])
+  if (isString(props.icon)) return { name: props.icon }
+  return omit(props.icon, ['overlay', 'color'])
 })
 const computedIconColor = computed(() => {
   if (!props.icon) return
-  if (_.isString(props.icon)) return defaultColor
+  if (isString(props.icon)) return defaultColor
   return palette.resolve(props.icon.color, defaultColor)
 })
 const computedOverlay = computed(() => {
-  return _.omit(_.get(props.icon, 'overlay', {}), ['color', 'rotation'])
+  return omit(get(props.icon, 'overlay', {}), ['color', 'rotation'])
 })
 const computedOverlayColor = computed(() => {
-  return palette.resolve(_.get(props.icon, 'overlay.color', defaultColor))
+  return palette.resolve(get(props.icon, 'overlay.color', defaultColor))
 })
 const computedOverlayTransform = computed(() => {
-  return `rotate(${_.get(props.icon, 'overlay.rotation', 0)}deg)`
+  return `rotate(${get(props.icon, 'overlay.rotation', 0)}deg)`
 })
 </script>
 

@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { isEmpty } from 'lodash-es'
 import { computed } from 'vue'
 import KContent from './KContent.vue'
 
@@ -54,7 +54,7 @@ const emit = defineEmits(['triggered'])
 
 // Computed
 const hasContent = computed(() => {
-  return !_.isEmpty(props.content)
+  return !isEmpty(props.content)
 })
 
 // Functions

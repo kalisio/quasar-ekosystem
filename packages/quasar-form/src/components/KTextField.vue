@@ -36,7 +36,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { get, startsWith } from 'lodash-es'
 import { computed } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
@@ -52,16 +52,16 @@ const {
 } = useField(props, emit)
 
 const text = computed(() => {
-  if (_.startsWith(model.value, 'http://') || _.startsWith(model.value, 'https://')) {
+  if (startsWith(model.value, 'http://') || startsWith(model.value, 'https://')) {
     return `<a href='${model.value}' target="_blank">${model.value}</a>`
   }
   return model.value
 })
 
-const debounce = computed(() => _.get(props.properties, 'field.debounce', 0))
+const debounce = computed(() => get(props.properties, 'field.debounce', 0))
 
 function inputClass() {
-  return _.get(props.properties, 'field.inputClass', 'text-weight-regular')
+  return get(props.properties, 'field.inputClass', 'text-weight-regular')
 }
 
 defineExpose({ fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, onChanged, hasError })

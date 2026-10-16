@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { get } from 'lodash-es'
 import { useI18n } from 'vue-i18n'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
@@ -50,14 +50,14 @@ const {
 } = useField(props, emit)
 
 function options() {
-  return _.get(props.properties, 'field.options', []).map(option => {
-    const label = _.get(option, 'label', '')
+  return get(props.properties, 'field.options', []).map(option => {
+    const label = get(option, 'label', '')
     return Object.assign({}, option, { label: t(label) })
   })
 }
 
 function selectedClass() {
-  return _.get(props.properties, 'field.selectedClass', 'text-weight-regular')
+  return get(props.properties, 'field.selectedClass', 'text-weight-regular')
 }
 
 defineExpose({ fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, onChanged, hasError, options, selectedClass })

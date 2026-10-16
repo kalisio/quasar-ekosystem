@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { has, isEmpty, mapKeys, merge, replace } from 'lodash-es'
 import { getLogger } from '@logtape/logtape'
 const logger = getLogger(['quasar-core', 'KDialog'])
 import { ref, computed, useAttrs } from 'vue'
@@ -83,14 +83,14 @@ const emit = defineEmits([...useDialogPluginComponent.emits, 'update:modelValue'
 const { dialogRef, onDialogOK, onDialogCancel } = useDialogPluginComponent()
 const componentRef = ref()
 const attrs = useAttrs()
-const useModel = _.has(attrs, 'v-model')
+const useModel = has(attrs, 'v-model')
 const model = ref(attrs['v-model'])
 const loading = ref(false)
 
 // Computed
 const computedButtons = computed(() => {
   const buttons = []
-  if (!_.isEmpty(props.cancelAction)) {
+  if (!isEmpty(props.cancelAction)) {
     if (typeof props.cancelAction === 'string') {
       // create a basic action that close the dialog
       buttons.push({
@@ -103,7 +103,7 @@ const computedButtons = computed(() => {
       })
     } else {
       // clone the action to overload the handler
-      const cancelButton = _.merge({ disabled: loading.value }, props.cancelAction)
+      const cancelButton = merge({ disabled: loading.value }, props.cancelAction)
       if (cancelButton.handler) {
         cancelButton.handler = async () => {
           // ! call the original handler to avoid recursive call
@@ -125,7 +125,7 @@ const computedButtons = computed(() => {
     })
   } else {
     // clone the action to overload the handler
-    const okButton = _.merge({ loading: loading.value }, props.okAction)
+    const okButton = merge({ loading: loading.value }, props.okAction)
     if (okButton.handler) {
       // overload the handler to call Quasar onDialogOK
       okButton.handler = async () => {
@@ -145,7 +145,7 @@ const computedComponent = computed(() => {
   return props.component
 })
 const computedHandlers = computed(() => {
-  if (_.isEmpty(props.handlers)) return {}
+  if (isEmpty(props.handlers)) return {}
   return props.handlers
 })
 const computedModel = computed({
@@ -158,8 +158,8 @@ const computedModel = computed({
   }
 })
 const computedAttrs = computed(() => {
-  return _.mapKeys(attrs, (value, key) => {
-    return _.replace(key, 'component.', '')
+  return mapKeys(attrs, (value, key) => {
+    return replace(key, 'component.', '')
   })
 })
 

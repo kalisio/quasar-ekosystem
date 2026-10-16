@@ -28,7 +28,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { get } from 'lodash-es'
 import { computed } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
@@ -36,10 +36,10 @@ import { fieldProps } from '../utils/index.js'
 const props = defineProps(fieldProps)
 const emit = defineEmits(['field-changed'])
 
-const min = computed(() => _.get(props.properties, 'field.min', 0))
-const max = computed(() => _.get(props.properties, 'field.max', 100))
-const step = computed(() => _.get(props.properties, 'field.step', 1))
-const markers = computed(() => _.get(props.properties, 'field.markers', false))
+const min = computed(() => get(props.properties, 'field.min', 0))
+const max = computed(() => get(props.properties, 'field.max', 100))
+const step = computed(() => get(props.properties, 'field.step', 1))
+const markers = computed(() => get(props.properties, 'field.markers', false))
 
 function emptyModel() { return min.value }
 

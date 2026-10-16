@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { get, isEmpty, merge } from 'lodash-es'
 import moment from 'moment'
 import { computed } from 'vue'
 import { useI18n } from '../../composables'
@@ -67,10 +67,10 @@ const computedModel = computed({
 const computedButton = computed(() => {
   // compute format
   let format = props.format
-  // if (_.isEmpty(format)) format = _.get(Time.getFormat(), 'date.short')
-  if (_.isEmpty(format)) format = 'iso'
+  // if (isEmpty(format)) format = get(Time.getFormat(), 'date.short')
+  if (isEmpty(format)) format = 'iso'
   // compute label
-  const label = _.isEmpty(computedModel.value) ? tie(props.placeholder) : moment(computedModel.value, mask).format(format)
+  const label = isEmpty(computedModel.value) ? tie(props.placeholder) : moment(computedModel.value, mask).format(format)
   // define button spec
   const spec = {
     id: 'date-button',
@@ -87,6 +87,6 @@ const computedButton = computed(() => {
 })
 const computedPicker = computed(() => {
   const picker = { mask }
-  return _.merge({}, props.picker, picker)
+  return merge({}, props.picker, picker)
 })
 </script>

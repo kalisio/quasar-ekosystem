@@ -72,7 +72,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { clone, find, forEach, forOwn, get, has, includes, isEmpty, mapValues } from 'lodash-es'
 import { getLogger } from '@logtape/logtape'
 
 const logger = getLogger(['quasar-form', 'KForm'])
@@ -120,8 +120,8 @@ let buildInProgress = false
 // Computed
 const groups = computed(() => {
   if (schema.value && schema.value.groups) {
-    return _.mapValues(schema.value.groups, (group, id) => Object.assign({
-      hasFields: _.find(fields.value, { group: id })
+    return mapValues(schema.value.groups, (group, id) => Object.assign({
+      hasFields: find(fields.value, { group: id })
     }, group))
   }
   return {}
@@ -139,7 +139,7 @@ watch(() => props.filter, async (value) => {
 
 // Functions
 function getField (name) {
-  const field = _.find(fields.value, { name })
+  const field = find(fields.value, { name })
   if (field) return field
   logger.error('Cannot find field {name}', { name })
 }
@@ -196,12 +196,12 @@ async function build () {
   // Compile the schema
   await compileSchema(props.schema, props.filter)
   // Build the fields
-  if (!_.isEmpty(schema.value.properties)) {
-    _.forOwn(schema.value.properties, (field, property) => {
+  if (!isEmpty(schema.value.properties)) {
+    forOwn(schema.value.properties, (field, property) => {
       // clone and configure the field
-      const cloneField = _.clone(field)
+      const cloneField = clone(field)
       cloneField.name = property // assign a name to allow binding between properties and fields
-      let component = _.get(field.field, 'component', '')
+      let component = get(field.field, 'component', '')
       if (!component) {
         // Provide a default component based on schema value type when none is specified
         if (field.type === 'number' || field.type === 'integer') component = 'KNumberField'
@@ -210,7 +210,7 @@ async function build () {
       }
       cloneField.component = component.split('/').pop()
       cloneField.reference = null // will be set once te field is rendered
-      cloneField.required = _.includes(schema.value.required, property) // add extra required info
+      cloneField.required = includes(schema.value.required, property) // add extra required info
       // add the field to the list of fields to be rendered
       fields.value.push(cloneField)
     })
@@ -219,7 +219,7 @@ async function build () {
 }
 function values () {
   const values = {}
-  _.forEach(fields.value, field => {
+  forEach(fields.value, field => {
     if (!(field.required && field.reference.isEmpty())) values[field.name] = field.reference.value()
   })
   return values
@@ -227,9 +227,9 @@ function values () {
 function fill (values) {
   if (!isReady.value) throw new Error('Cannot fill the form while not ready')
   logger.debug('Filling form {id}', { id: schema.value.$id })
-  _.forEach(fields.value, field => {
-    if (_.has(values, field.name)) {
-      getField(field.name).reference.fill(_.get(values, field.name), values)
+  forEach(fields.value, field => {
+    if (has(values, field.name)) {
+      getField(field.name).reference.fill(get(values, field.name), values)
     } else {
       // The field has no value, then assign a default one
       getField(field.name).reference.clear()
@@ -239,7 +239,7 @@ function fill (values) {
 function clear () {
   if (!isReady.value) throw new Error('Cannot clear the form while not ready')
   logger.debug('Clearing form {id}', { id: schema.value.$id })
-  _.forEach(fields.value, field => field.reference.clear())
+  forEach(fields.value, field => field.reference.clear())
 }
 function validate () {
   if (!isReady.value) throw new Error('Cannot validate the form while not ready')
@@ -247,7 +247,7 @@ function validate () {
   const fieldValues = values()
   const { isValid, errors } = validateSchema(fieldValues)
   if (!isValid) {
-    _.forEach(fields.value, field => {
+    forEach(fields.value, field => {
       const error = hasFieldError(field.name, errors)
       if (error) {
         field.reference.invalidate(error.message)
@@ -257,7 +257,7 @@ function validate () {
     })
     return { isValid, values: fieldValues }
   }
-  _.forEach(fields.value, field => field.reference.validate())
+  forEach(fields.value, field => field.reference.validate())
   return { isValid, values: fieldValues }
 }
 async function apply (object) {
@@ -275,16 +275,16 @@ async function submitted (object) {
   }
 }
 function getHelperIcon (helper) {
-  return _.get(helper, 'icon', undefined)
+  return get(helper, 'icon', undefined)
 }
 function getHelperTooltip (helper) {
-  return _.get(helper, 'tooltip', '')
+  return get(helper, 'tooltip', '')
 }
 function getHelperUrl (helper) {
-  return _.get(helper, 'url', null)
+  return get(helper, 'url', null)
 }
 function getHelperDialog (helper) {
-  return _.get(helper, 'dialog', null)
+  return get(helper, 'dialog', null)
 }
 
 // Hooks

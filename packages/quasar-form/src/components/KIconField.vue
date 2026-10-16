@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import _ from 'lodash-es'
+import { get } from 'lodash-es'
 import { useField } from '../composables/index.js'
 import { fieldProps, getIconName } from '../utils/index.js'
 // Missing Component: KIconChooser
@@ -72,7 +72,7 @@ export default {
   setup (props, { emit }) {
     // emptyModel depends on this.color (data), so we read from props here
     function emptyModel () {
-      const color = _.get(props.properties, 'field.color', true)
+      const color = get(props.properties, 'field.color', true)
       return color ? { name: '', color: '' } : ''
     }
     return { ...useField(props, emit, { emptyModel }), emptyModel }
@@ -86,14 +86,14 @@ export default {
     },
     iconColor () {
       // We support icon without a color
-      return _.get(this.model, 'color', 'dark')
+      return get(this.model, 'color', 'dark')
     }
   },
   data () {
     return {
-      iconSet: _.get(this.properties.field, 'iconSet', 'font-awesome'),
-      color: _.get(this.properties.field, 'color', true),
-      inverted: _.get(this.properties.field, 'inverted', false)
+      iconSet: get(this.properties.field, 'iconSet', 'font-awesome'),
+      color: get(this.properties.field, 'color', true),
+      inverted: get(this.properties.field, 'inverted', false)
     }
   },
   methods: {
@@ -102,13 +102,13 @@ export default {
       return (this.color ? { name: '', color: '' } : '')
     },
     isEmpty () {
-      return this.color ? !_.get(this.model, 'name') : !this.model
+      return this.color ? !get(this.model, 'name') : !this.model
     },
     clear () {
-      this.fill(_.get(this.properties, 'default', this.emptyModel()))
+      this.fill(get(this.properties, 'default', this.emptyModel()))
     },
     isClearable () {
-      return _.get(this.properties, 'field.clearable', true)
+      return get(this.properties, 'field.clearable', true)
     },
     onCleared () {
       this.model = this.emptyModel()

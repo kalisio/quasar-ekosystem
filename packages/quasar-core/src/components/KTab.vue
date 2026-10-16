@@ -32,7 +32,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { get, isEmpty, keys, nth } from 'lodash-es'
 import { ref, computed, watch } from 'vue'
 import { useI18n } from '../composables'
 import KContent from './KContent.vue'
@@ -78,13 +78,13 @@ const current = ref(null)
 
 // Computed
 const hasTabs = computed(() => {
-  return !_.isEmpty(tabs.value)
+  return !isEmpty(tabs.value)
 })
 const tabs = computed(() => {
   return getModes()
 })
 const panel = computed(() => {
-  return _.get(props.content, current.value)
+  return get(props.content, current.value)
 })
 
 // Watch
@@ -94,10 +94,10 @@ watch(() => props.mode, (mode) => {
 
 // Function
 function getModes () {
-  return _.keys(props.content)
+  return keys(props.content)
 }
 function getLabel (index) {
-  const label = _.nth(props.labels, index)
+  const label = nth(props.labels, index)
   if (label) return tie(label)
 }
 function onTabChanged (params) {

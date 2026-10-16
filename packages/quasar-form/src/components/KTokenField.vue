@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-import _ from 'lodash-es'
+import { get, inRange, join } from 'lodash-es'
 import { ref, computed } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
@@ -60,14 +60,14 @@ const fieldValues = ref([])
 const fields = ref([])
 
 const text = computed(() => model.value)
-const tokenLength = computed(() => _.get(props.properties, 'field.tokenLength', _.get(props.properties, 'tokenLength', 6)))
+const tokenLength = computed(() => get(props.properties, 'field.tokenLength', get(props.properties, 'tokenLength', 6)))
 const labelClass = computed(() => ({
   'row justify-center': true,
   'text-red': !!errorLabel.value
 }))
 
 function updateModel(index) {
-  model.value = _.join(fieldValues.value, '')
+  model.value = join(fieldValues.value, '')
   onChanged()
   focusNextInput(index)
 }
@@ -77,7 +77,7 @@ function updateFieldRef(element, index) {
 }
 
 function focusNextInput(index) {
-  if (_.inRange(index, 0, tokenLength.value)) fields.value[index]?.select?.()
+  if (inRange(index, 0, tokenLength.value)) fields.value[index]?.select?.()
 }
 
 function clearInput(index) {
