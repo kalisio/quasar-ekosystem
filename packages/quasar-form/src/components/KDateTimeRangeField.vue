@@ -50,69 +50,53 @@
   </q-field>
 </template>
 
-<script>
+<script setup>
 import { get } from 'lodash-es'
+import { computed } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
-export default {
-  // Missing Mixin: baseField
-  // mixins: [baseField],
-  props: fieldProps,
-  emits: ['field-changed'],
-  setup (props, { emit }) {
-    function emptyModel () {
-      const startField = get(props.properties, 'field.start', 'start')
-      const endField = get(props.properties, 'field.end', 'end')
-      return { [startField]: '', [endField]: '' }
-    }
-    return { ...useField(props, emit, { emptyModel }), emptyModel }
-  },
-  computed: {
-    startField () {
-      return get(this.properties, 'field.start', 'start')
-    },
-    endField () {
-      return get(this.properties, 'field.end', 'end')
-    },
-    startValue () {
-      return get(this.model, this.startField, '')
-    },
-    endValue () {
-      return get(this.model, this.endField, '')
-    },
-    minStart () {
-      return get(this.properties, 'field.minStart', '')
-    },
-    maxStart () {
-      return this.endValue || get(this.properties, 'field.maxStart', '')
-    },
-    minEnd () {
-      return this.startValue || get(this.properties, 'field.minEnd', '')
-    },
-    maxEnd () {
-      return get(this.properties, 'field.maxEnd', '')
-    },
-    formattedDateTimeRange () {
-      if (!this.startValue && !this.endValue) return ''
-      return `${this.startValue} — ${this.endValue}`
-    }
-  },
-  methods: {
-    isEmpty () {
-      return !this.startValue && !this.endValue
-    },
-    clear () {
-      this.fill(get(this.properties, 'default', this.emptyModel()))
-    },
-    onStartChanged (event) {
-      this.model = { ...this.emptyModel(), ...this.model, [this.startField]: event.target.value }
-      this.onChanged()
-    },
-    onEndChanged (event) {
-      this.model = { ...this.emptyModel(), ...this.model, [this.endField]: event.target.value }
-      this.onChanged()
-    }
-  }
+const props = defineProps(fieldProps)
+const emit = defineEmits(['field-changed'])
+
+// Missing Mixin: baseField
+// mixins: [baseField],
+
+function emptyModel () {
+  const startField = get(props.properties, 'field.start', 'start')
+  const endField = get(props.properties, 'field.end', 'end')
+  return { [startField]: '', [endField]: '' }
 }
+
+const {
+  model, label, hasHelper, helperLabel, helperIcon, helperTooltip, helperUrl,
+  helperDialog, helperContext, hasFocus, hasError, errorLabel, disabled,
+  fill, value, validate, invalidate, onChanged, apply, submitted, onHelperDialogConfirmed
+} = useField(props, emit, { emptyModel })
+
+const startField = computed(() => get(props.properties, 'field.start', 'start'))
+const endField = computed(() => get(props.properties, 'field.end', 'end'))
+const startValue = computed(() => get(model.value, startField.value, ''))
+const endValue = computed(() => get(model.value, endField.value, ''))
+const minStart = computed(() => get(props.properties, 'field.minStart', ''))
+const maxStart = computed(() => endValue.value || get(props.properties, 'field.maxStart', ''))
+const minEnd = computed(() => startValue.value || get(props.properties, 'field.minEnd', ''))
+const maxEnd = computed(() => get(props.properties, 'field.maxEnd', ''))
+const formattedDateTimeRange = computed(() => {
+  if (!startValue.value && !endValue.value) return ''
+  return `${startValue.value} — ${endValue.value}`
+})
+
+function isEmpty () { return !startValue.value && !endValue.value }
+function clear () { fill(get(props.properties, 'default', emptyModel())) }
+function onStartChanged (event) {
+  model.value = { ...emptyModel(), ...model.value, [startField.value]: event.target.value }
+  onChanged()
+}
+function onEndChanged (event) {
+  model.value = { ...emptyModel(), ...model.value, [endField.value]: event.target.value }
+  onChanged()
+}
+
+defineExpose({ fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, onChanged, hasError, startValue, endValue, formattedDateTimeRange, maxStart, minEnd, onStartChanged, onEndChanged })
 </script>

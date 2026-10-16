@@ -66,7 +66,7 @@
 </template>
 
 <script setup>
-import { castArray, differenceWith, get, isEmpty, isNil, kebabCase, map } from 'lodash-es'
+import { castArray, differenceWith, get, isEmpty as _isEmpty, isNil, kebabCase, map } from 'lodash-es'
 import { ref, computed, inject } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
@@ -92,7 +92,7 @@ const options = ref([])
 const multiple = computed(() => get(props.properties, 'field.multiple', false))
 
 function isEmpty() {
-  return multiple.value ? isEmpty(model.value) : isNil(model.value)
+  return multiple.value ? _isEmpty(model.value) : isNil(model.value)
 }
 function clear() {
   model.value = get(props.properties, 'default', emptyModel())

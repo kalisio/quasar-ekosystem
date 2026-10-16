@@ -46,7 +46,7 @@
 </template>
 
 <script setup>
-import { filter, get, includes, isEmpty } from 'lodash-es'
+import { filter, get, includes, isEmpty as _isEmpty } from 'lodash-es'
 import { computed, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useField } from '../composables/index.js'
@@ -68,7 +68,7 @@ const options = computed(() => {
   if (getUnits) {
     units = getUnits(get(props.properties, 'field.quantity'))
     const unitsFilter = get(props.properties, 'field.filter', [])
-    if (!isEmpty(unitsFilter)) units = filter(units, unit => includes(unitsFilter, unit.name))
+    if (!_isEmpty(unitsFilter)) units = filter(units, unit => includes(unitsFilter, unit.name))
     return units.map(unit => ({ value: unit.name, label: t(get(unit, 'label', '')) }))
   }
   units = get(props.properties, 'field.options', [])

@@ -46,80 +46,81 @@
   </q-field>
 </template>
 
-<script>
+<script setup>
 import { forEach, get } from 'lodash-es'
+import { computed } from 'vue'
+import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 // Missing Component: KTextArea
 // import KTextArea from '../KTextArea.vue'
 
-export default {
-  // Missing Component: KTextArea
-  // components: { KTextArea },
-  // Missing Mixin: baseField
-  // mixins: [baseField],
-  props: fieldProps,
-  emits: ['field-changed'],
-  setup (props, { emit }) {
-    function emptyModel () { return '' }
-    return { ...useField(props, emit, { emptyModel }), emptyModel }
-  },
-  computed: {
-    editorToolbar () {
-      let configuration
-      const defaultToolbar = {
-        xs: [
-          ['bold', 'italic', 'underline', 'strike', 'align'],
-          [{
-            label: '',
-            icon: this.$q.iconSet.editor.align,
-            list: 'only-icons',
-            options: ['left', 'center', 'right', 'justify']
-          }],
-          ['undo', 'redo'],
-          ['clear']
-        ],
-        'gt.xs': [
-          ['bold', 'italic', 'underline', 'strike', 'unordered', 'ordered'],
-          ['quote', 'link', 'hr'],
-          [{
-            label: this.$q.lang.editor.align,
-            icon: this.$q.iconSet.editor.align,
-            fixedLabel: true,
-            list: 'only-icons',
-            options: ['left', 'center', 'right', 'justify']
-          }],
-          ['undo', 'redo'],
-          ['clear']
-        ]
-      }
-      forEach(this.properties.toolbar || get(this.properties, 'field.toolbar') || defaultToolbar, (value, key) => {
-        if (get(this.$q.screen, key)) {
-          configuration = value
-          return false
-        }
-      })
-      return configuration
-    }
-  },
-  data () {
-    return {
-      definitions: {
-        clear: {
-          tip: this.$t('KTextAreaField.CLEAR_TOOLTIP'),
-          icon: 'cancel',
-          handler: this.clear
-        }
-      }
-    }
-  },
-  methods: {
-    isEmpty () {
-      return this.model === ''
-    },
-    clear () {
-      this.fill(get(this.properties, 'default', ''))
-    }
+// Missing Component: KTextArea
+// components: { KTextArea },
+// Missing Mixin: baseField
+// mixins: [baseField],
+
+const props = defineProps(fieldProps)
+const emit = defineEmits(['field-changed'])
+const $q = useQuasar()
+const { t } = useI18n()
+
+function emptyModel () { return '' }
+
+const {
+  model, label, hasHelper, helperLabel, helperIcon, helperTooltip, helperUrl,
+  helperDialog, helperContext, hasFocus, hasError, errorLabel, disabled,
+  fill, value, validate, invalidate, onChanged, apply, submitted, onHelperDialogConfirmed
+} = useField(props, emit, { emptyModel })
+
+function isEmpty () { return model.value === '' }
+function clear () { fill(get(props.properties, 'default', '')) }
+
+const definitions = {
+  clear: {
+    tip: t('KTextAreaField.CLEAR_TOOLTIP'),
+    icon: 'cancel',
+    handler: clear
   }
 }
+
+const editorToolbar = computed(() => {
+  let configuration
+  const defaultToolbar = {
+    xs: [
+      ['bold', 'italic', 'underline', 'strike', 'align'],
+      [{
+        label: '',
+        icon: $q.iconSet.editor.align,
+        list: 'only-icons',
+        options: ['left', 'center', 'right', 'justify']
+      }],
+      ['undo', 'redo'],
+      ['clear']
+    ],
+    'gt.xs': [
+      ['bold', 'italic', 'underline', 'strike', 'unordered', 'ordered'],
+      ['quote', 'link', 'hr'],
+      [{
+        label: $q.lang.editor.align,
+        icon: $q.iconSet.editor.align,
+        fixedLabel: true,
+        list: 'only-icons',
+        options: ['left', 'center', 'right', 'justify']
+      }],
+      ['undo', 'redo'],
+      ['clear']
+    ]
+  }
+  forEach(props.properties.toolbar || get(props.properties, 'field.toolbar') || defaultToolbar, (v, key) => {
+    if (get($q.screen, key)) {
+      configuration = v
+      return false
+    }
+  })
+  return configuration
+})
+
+defineExpose({ fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, onChanged, hasError })
 </script>

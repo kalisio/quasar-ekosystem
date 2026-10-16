@@ -65,42 +65,46 @@
   </q-select>
 </template>
 
-<script>
-import { find, get, isEmpty, isEqual, isString, kebabCase } from 'lodash-es'
+<script setup>
+import { find, get, isEmpty as _isEmpty, isEqual, isString, kebabCase } from 'lodash-es'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
-export default {
-  // Missing Mixin: baseField
-  // mixins: [baseField],
-  props: fieldProps,
-  emits: ['field-changed'],
-  setup (props, { emit }) {
-    return useField(props, emit)
-  },
-  methods: {
-    getId (option) {
-      return kebabCase(option.label)
-    },
-    getOptions () {
-      return get(this.properties, 'field.options', [])
-    },
-    isClearable () {
-      return get(this.properties, 'field.clearable', true)
-    },
-    getLabel (value) {
-      const options = this.getOptions()
-      const opt = find(options, o => isEqual(o.value, value))
-      return opt?.label || ''
-    },
-    getScaleStyle (value) {
-      if (!value) return {}
-      const colors = get(value, 'colors', get(value, 'scale', []))
-      if (isEmpty(colors)) return {}
-      const stops = colors.map((c, i) => `${isString(c) ? c : c.color} ${Math.round((i / (colors.length - 1)) * 100)}%`)
-      return { background: `linear-gradient(to right, ${stops.join(', ')})`, height: '16px', borderRadius: '4px', width: '100%' }
-    }
-  }
+
+const props = defineProps(fieldProps)
+const emit = defineEmits(['field-changed'])
+
+// Missing Mixin: baseField
+// mixins: [baseField],
+
+const {
+  model, label, hasHelper, helperLabel, helperIcon, helperTooltip, helperUrl,
+  helperDialog, helperContext, hasFocus, hasError, errorLabel, disabled,
+  fill, emptyModel, isEmpty, clear, value, apply, submitted, onChanged, onHelperDialogConfirmed
+} = useField(props, emit)
+
+function getId (option) {
+  return kebabCase(option.label)
 }
+function getOptions () {
+  return get(props.properties, 'field.options', [])
+}
+function isClearable () {
+  return get(props.properties, 'field.clearable', true)
+}
+function getLabel (val) {
+  const options = getOptions()
+  const opt = find(options, o => isEqual(o.value, val))
+  return opt?.label || ''
+}
+function getScaleStyle (val) {
+  if (!val) return {}
+  const colors = get(val, 'colors', get(val, 'scale', []))
+  if (_isEmpty(colors)) return {}
+  const stops = colors.map((c, i) => `${isString(c) ? c : c.color} ${Math.round((i / (colors.length - 1)) * 100)}%`)
+  return { background: `linear-gradient(to right, ${stops.join(', ')})`, height: '16px', borderRadius: '4px', width: '100%' }
+}
+
+defineExpose({ fill, emptyModel, isEmpty, clear, value, apply, submitted, onChanged, hasError, getId, getOptions, isClearable, getLabel, getScaleStyle })
 </script>
 
 <style scoped>

@@ -81,7 +81,7 @@
 </template>
 
 <script setup>
-import { filter, get, isEmpty, isNil, kebabCase, map } from 'lodash-es'
+import { filter as _filter, get, isEmpty as _isEmpty, isNil, kebabCase, map } from 'lodash-es'
 import { ref, computed, watch, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useField } from '../composables/index.js'
@@ -112,18 +112,18 @@ const options = computed(() => {
     return Object.assign({}, option, { label: lbl })
   })
   if (filter.value) {
-    opts = filter(opts, option => {
+    opts = _filter(opts, option => {
       const regExp = new RegExp(string.makeDiacriticPattern(filter.value))
       return regExp.test(option.label.toLowerCase())
     })
   }
   return opts
 })
-const hasNoOption = computed(() => !isEmpty(get(props.properties, 'field.noOption', {})))
+const hasNoOption = computed(() => !_isEmpty(get(props.properties, 'field.noOption', {})))
 const noOption = computed(() => get(props.properties, 'field.noOption', null))
 
 watch(options, (opts) => {
-  if (isEmpty(filter.value) && opts.length === 1 && props.required) {
+  if (_isEmpty(filter.value) && opts.length === 1 && props.required) {
     nextTick(() => {
       fill(opts[0].value)
       onChanged()
@@ -146,7 +146,7 @@ function getId(option) {
   return kebabCase(id)
 }
 function isEmpty() {
-  return multiple.value ? isEmpty(model.value) : isNil(model.value)
+  return multiple.value ? _isEmpty(model.value) : isNil(model.value)
 }
 function clear() {
   fill(get(props.properties, 'default', emptyModel()))

@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-import { filter, get, isArray, isEmpty, map } from 'lodash-es'
+import { filter, get, isArray, isEmpty as _isEmpty, map } from 'lodash-es'
 import { ref, computed } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
@@ -82,7 +82,7 @@ const {
 const files = ref(null)
 
 const multiple = computed(() => get(props.properties, 'field.multiple', false))
-const isModelEmpty = computed(() => isEmpty(model.value))
+const isModelEmpty = computed(() => _isEmpty(model.value))
 const displayName = computed(() => {
   if (isArray(model.value)) return map(model.value, 'name').join(', ')
   return get(model.value, 'name', '')
@@ -93,7 +93,7 @@ const maxFileSize = computed(() => get(props.properties, 'field.maxFileSize', 10
 const maxTotalSize = computed(() => get(props.properties, 'field.maxTotalSize', maxFileSize.value))
 const isClearable = computed(() => get(props.properties, 'field.clearable', true))
 
-function isEmpty() { return isEmpty(model.value) }
+function isEmpty() { return _isEmpty(model.value) }
 function clear() { fill(get(props.properties, 'default', emptyModel())) }
 
 function onFileCleared() {
@@ -102,7 +102,7 @@ function onFileCleared() {
   onChanged()
 }
 async function onFilesChanged() {
-  if (isEmpty(files.value)) {
+  if (_isEmpty(files.value)) {
     model.value = emptyModel()
     return
   }

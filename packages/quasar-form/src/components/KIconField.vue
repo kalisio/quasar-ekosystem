@@ -55,75 +55,61 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { get } from 'lodash-es'
+import { computed } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps, getIconName } from '../utils/index.js'
 // Missing Component: KIconChooser
 // import { KIconChooser } from '../input'
 
-export default {
-  // Missing Component: KIconChooser
-  // components: { KIconChooser },
-  // Missing Mixin: baseField
-  // mixins: [baseField],
-  props: fieldProps,
-  emits: ['field-changed'],
-  setup (props, { emit }) {
-    // emptyModel depends on this.color (data), so we read from props here
-    function emptyModel () {
-      const color = get(props.properties, 'field.color', true)
-      return color ? { name: '', color: '' } : ''
-    }
-    return { ...useField(props, emit, { emptyModel }), emptyModel }
-  },
-  computed: {
-    hasIcon () {
-      return !this.isEmpty()
-    },
-    iconName () {
-      return getIconName(this.model, 'name')
-    },
-    iconColor () {
-      // We support icon without a color
-      return get(this.model, 'color', 'dark')
-    }
-  },
-  data () {
-    return {
-      iconSet: get(this.properties.field, 'iconSet', 'font-awesome'),
-      color: get(this.properties.field, 'color', true),
-      inverted: get(this.properties.field, 'inverted', false)
-    }
-  },
-  methods: {
-    emptyModel () {
-      // We support icon without a color, in this case we have a string as model
-      return (this.color ? { name: '', color: '' } : '')
-    },
-    isEmpty () {
-      return this.color ? !get(this.model, 'name') : !this.model
-    },
-    clear () {
-      this.fill(get(this.properties, 'default', this.emptyModel()))
-    },
-    isClearable () {
-      return get(this.properties, 'field.clearable', true)
-    },
-    onCleared () {
-      this.model = this.emptyModel()
-      this.onChanged()
-    },
-    onIconClicked () {
-      // Missing Component: KIconChooser
-      // this.$refs.iconChooser.open(this.model)
-    },
-    onIconChoosed (icon) {
-      // We support icon without a color, in this case we have a string as model
-      // Missing Component: KIconChooser
-      // this.model = (this.color ? Object.assign({}, icon) : icon)
-      // this.onChanged()
-    }
-  }
+// Missing Component: KIconChooser
+// components: { KIconChooser },
+// Missing Mixin: baseField
+// mixins: [baseField],
+
+const props = defineProps(fieldProps)
+const emit = defineEmits(['field-changed'])
+
+const iconSet = get(props.properties.field, 'iconSet', 'font-awesome')
+const color = get(props.properties.field, 'color', true)
+const inverted = get(props.properties.field, 'inverted', false)
+
+function emptyModel () {
+  // We support icon without a color, in this case we have a string as model
+  return color ? { name: '', color: '' } : ''
 }
+
+const {
+  model, label, hasHelper, helperLabel, helperIcon, helperTooltip, helperUrl,
+  helperDialog, helperContext, hasFocus, hasError, errorLabel, disabled,
+  fill, value, validate, invalidate, onChanged, apply, submitted, onHelperDialogConfirmed
+} = useField(props, emit, { emptyModel })
+
+const hasIcon = computed(() => !isEmpty())
+const iconName = computed(() => getIconName(model.value, 'name'))
+const iconColor = computed(() => {
+  // We support icon without a color
+  return get(model.value, 'color', 'dark')
+})
+
+function isEmpty () { return color ? !get(model.value, 'name') : !model.value }
+function clear () { fill(get(props.properties, 'default', emptyModel())) }
+function isClearable () { return get(props.properties, 'field.clearable', true) }
+function onCleared () {
+  model.value = emptyModel()
+  onChanged()
+}
+function onIconClicked () {
+  // Missing Component: KIconChooser
+  // this.$refs.iconChooser.open(model.value)
+}
+function onIconChoosed (icon) {
+  // We support icon without a color, in this case we have a string as model
+  // Missing Component: KIconChooser
+  // model.value = (color ? Object.assign({}, icon) : icon)
+  // onChanged()
+}
+
+defineExpose({ fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, onChanged, hasError, hasIcon, iconName, iconColor, isClearable, onCleared })
 </script>

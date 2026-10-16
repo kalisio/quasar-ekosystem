@@ -42,111 +42,104 @@
   </q-select>
 </template>
 
-<script>
-import { clone, defaults, differenceWith, filter, find, get, isArray, isEmpty, isNil, kebabCase } from 'lodash-es'
-import { inject } from 'vue'
+<script setup>
+import { clone, defaults, differenceWith, filter, find, get, isArray, isEmpty as _isEmpty, isNil, kebabCase } from 'lodash-es'
+import { ref, computed, watch, inject } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
-export default {
-  // Missing Mixin: baseField
-  // mixins: [baseField],
-  props: fieldProps,
-  emits: ['field-changed'],
-  setup (props, { emit }) {
-    // Inject search and create functions — consumers must provide these via provide()
-    const search = inject('search', async () => [])
-    const createTag = inject('createTag', async () => null)
-    function emptyModel () { return props.properties.multiselect ? [] : null }
-    return { ...useField(props, emit, { emptyModel }), emptyModel, search, createTag }
-  },
-  data () {
-    return {
-      items: null,
-      options: [],
-      searchString: ''
-    }
-  },
-  watch: {
-    model: {
-      handler (newModel) {
-        this.items = newModel ? clone(newModel) : (this.properties.multiselect ? [] : null)
-      },
-      immediate: true,
-      flush: 'sync'
-    }
-  },
-  computed: {
-    isClearable () {
-      return get(this.properties, 'field.clearable', true)
-    }
-  },
-  methods: {
-    getId (item) {
-      return kebabCase(item.name)
-    },
-    isEmpty () {
-      return this.properties.multiselect ? isEmpty(this.model) : isNil(this.model)
-    },
-    fill (value) {
-      this.model = value
-      this.onChanged()
-    },
-    clear () {
-      this.fill(get(this.properties, 'default', this.emptyModel()))
-    },
-    // Missing Component: KPanel
-    // getActions (item) {
-    //   if (item.scope !== 'user') return []
-    //   return [{ ... }]
-    // },
-    async onSearch (pattern, update, abort) {
-      if (pattern.length < get(this.properties, 'minCharsToSearch', 2)) {
-        abort()
-        return
-      }
-      this.searchString = pattern
-      const results = await this.search(get(this.properties, 'services', []), pattern)
-      update(() => {
-        if (this.properties.multiselect) {
-          this.options = differenceWith(results, this.items || [], (a, b) => a.name === b.name && a.color === b.color)
-        } else this.options = results
+// Missing Mixin: baseField
+// mixins: [baseField],
 
-        const hasInvalidMinLength = pattern.length < get(this.properties, 'minLength', 0)
-        const hasInvalidMaxLength = pattern.length > get(this.properties, 'maxLength', 256)
-        if (hasInvalidMinLength || hasInvalidMaxLength) return
-        this.options = filter(this.options, item => !item.create)
-        if (pattern !== '' && !find(results, { name: pattern })) {
-          this.options.push({ name: pattern, color: 'grey', create: true })
-        }
+const props = defineProps(fieldProps)
+const emit = defineEmits(['field-changed'])
+
+// Inject search and create functions — consumers must provide these via provide()
+const search = inject('search', async () => [])
+const createTag = inject('createTag', async () => null)
+
+function emptyModel () { return props.properties.multiselect ? [] : null }
+
+const {
+  model, label, hasHelper, helperLabel, helperIcon, helperTooltip, helperUrl,
+  helperDialog, helperContext, hasFocus, hasError, errorLabel, disabled,
+  value, validate, invalidate, onChanged, apply, submitted, onHelperDialogConfirmed
+} = useField(props, emit, { emptyModel })
+
+const select = ref(null)
+const items = ref(null)
+const options = ref([])
+const searchString = ref('')
+
+watch(model, (newModel) => {
+  items.value = newModel ? clone(newModel) : (props.properties.multiselect ? [] : null)
+}, { immediate: true, flush: 'sync' })
+
+const isClearable = computed(() => get(props.properties, 'field.clearable', true))
+
+function getId (item) { return kebabCase(item.name) }
+function isEmpty () {
+  return props.properties.multiselect ? _isEmpty(model.value) : isNil(model.value)
+}
+function fill (newValue) {
+  model.value = newValue
+  onChanged()
+}
+function clear () {
+  fill(get(props.properties, 'default', emptyModel()))
+}
+// Missing Component: KPanel
+// getActions (item) {
+//   if (item.scope !== 'user') return []
+//   return [{ ... }]
+// },
+async function onSearch (pattern, update, abort) {
+  if (pattern.length < get(props.properties, 'minCharsToSearch', 2)) {
+    abort()
+    return
+  }
+  searchString.value = pattern
+  const results = await search(get(props.properties, 'services', []), pattern)
+  update(() => {
+    if (props.properties.multiselect) {
+      options.value = differenceWith(results, items.value || [], (a, b) => a.name === b.name && a.color === b.color)
+    } else options.value = results
+
+    const hasInvalidMinLength = pattern.length < get(props.properties, 'minLength', 0)
+    const hasInvalidMaxLength = pattern.length > get(props.properties, 'maxLength', 256)
+    if (hasInvalidMinLength || hasInvalidMaxLength) return
+    options.value = filter(options.value, item => !item.create)
+    if (pattern !== '' && !find(results, { name: pattern })) {
+      options.value.push({ name: pattern, color: 'grey', create: true })
+    }
+  })
+}
+async function onSelected (val) {
+  if (val) model.value = items.value
+  else model.value = emptyModel()
+  options.value = []
+  select.value?.updateInputValue?.('')
+  onChanged()
+
+  if (!model.value) return
+  const tagList = isArray(model.value) ? model.value : [model.value]
+  for (const item of tagList) {
+    if (item.create) {
+      const hasInvalidMinLength = item.name.length < get(props.properties, 'minLength', 0)
+      const hasInvalidMaxLength = item.name.length > get(props.properties, 'maxLength', 256)
+      if (hasInvalidMinLength || hasInvalidMaxLength) return
+      defaults(item, {
+        service: get(props.properties, 'field.service'),
+        property: get(props.properties, 'field.property'),
+        scope: 'user',
+        color: 'grey',
+        description: ''
       })
-    },
-    async onSelected (value) {
-      if (value) this.model = this.items
-      else this.model = this.emptyModel()
-      this.options = []
-      this.$refs.select?.updateInputValue?.('')
-      this.onChanged()
-
-      if (!this.model) return
-      const tagList = isArray(this.model) ? this.model : [this.model]
-      for (const item of tagList) {
-        if (item.create) {
-          const hasInvalidMinLength = item.name.length < get(this.properties, 'minLength', 0)
-          const hasInvalidMaxLength = item.name.length > get(this.properties, 'maxLength', 256)
-          if (hasInvalidMinLength || hasInvalidMaxLength) return
-          defaults(item, {
-            service: get(this.properties, 'field.service'),
-            property: get(this.properties, 'field.property'),
-            scope: 'user',
-            color: 'grey',
-            description: ''
-          })
-          delete item.create
-          await this.createTag(item)
-        }
-      }
+      delete item.create
+      await createTag(item)
     }
   }
 }
+
+defineExpose({ fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, onChanged, hasError, getId, isClearable, items, onSearch, onSelected, options })
 </script>

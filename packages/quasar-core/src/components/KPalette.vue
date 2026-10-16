@@ -13,29 +13,17 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { QUASAR_PALETTE } from '../utilities/palette.js'
 
-export default {
-  name: 'k-palette',
-  emits: ['update:modelValue'],
-  props: {
-    modelValue: {
-      type: String,
-      default: 'dark'
-    },
-    shape: {
-      type: String,
-      default: 'square',
-      validator: (value) => {
-        return ['round', 'square'].includes(value)
-      }
-    }
-  },
-  data () {
-    return {
-      colors: Object.keys(QUASAR_PALETTE)
-    }
-  }
-}
+defineOptions({ name: 'k-palette' })
+
+defineProps({
+  modelValue: { type: String, default: 'dark' },
+  shape: { type: String, default: 'square', validator: (v) => ['round', 'square'].includes(v) }
+})
+
+defineEmits(['update:modelValue'])
+
+const colors = Object.keys(QUASAR_PALETTE)
 </script>

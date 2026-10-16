@@ -40,34 +40,32 @@
   </q-field>
 </template>
 
-<script>
+<script setup>
 import { get } from 'lodash-es'
+import { computed } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
 
-export default {
-  // Missing Mixin: baseField
-  // mixins: [baseField],
-  props: fieldProps,
-  emits: ['field-changed'],
-  setup (props, { emit }) {
-    function emptyModel () {
-      return new Date().toISOString().slice(0, 10).replace(/-/g, '/')
-    }
-    return { ...useField(props, emit, { emptyModel }), emptyModel }
-  },
-  computed: {
-    formattedDate () {
-      return this.model
-    }
-  },
-  methods: {
-    isEmpty () {
-      return false
-    },
-    clear () {
-      this.fill(get(this.properties, 'default', this.emptyModel()))
-    }
-  }
+const props = defineProps(fieldProps)
+const emit = defineEmits(['field-changed'])
+
+// Missing Mixin: baseField
+// mixins: [baseField],
+
+function emptyModel () {
+  return new Date().toISOString().slice(0, 10).replace(/-/g, '/')
 }
+
+const {
+  model, label, hasHelper, helperLabel, helperIcon, helperTooltip, helperUrl,
+  helperDialog, helperContext, hasFocus, hasError, errorLabel, disabled,
+  fill, value, validate, invalidate, onChanged, apply, submitted, onHelperDialogConfirmed
+} = useField(props, emit, { emptyModel })
+
+const formattedDate = computed(() => model.value)
+
+function isEmpty () { return false }
+function clear () { fill(get(props.properties, 'default', emptyModel())) }
+
+defineExpose({ fill, emptyModel, isEmpty, clear, value, validate, invalidate, apply, submitted, onChanged, hasError })
 </script>

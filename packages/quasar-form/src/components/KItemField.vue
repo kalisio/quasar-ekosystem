@@ -69,7 +69,7 @@
 </template>
 
 <script setup>
-import { clone, differenceWith, find, get, isEmpty, isNil, kebabCase, uniqBy } from 'lodash-es'
+import { clone, differenceWith, find, get, isEmpty as _isEmpty, isNil, kebabCase, uniqBy } from 'lodash-es'
 import { ref, computed, watch, inject } from 'vue'
 import { useField } from '../composables/index.js'
 import { fieldProps } from '../utils/index.js'
@@ -120,7 +120,7 @@ function getDescription(item) {
 function getIcon(item) { return get(item, 'icon.name', get(item, 'icon', '')) }
 
 function isEmpty() {
-  return multiple.value ? isEmpty(model.value) : isNil(model.value)
+  return multiple.value ? _isEmpty(model.value) : isNil(model.value)
 }
 function fill(val) {
   model.value = val
