@@ -27,7 +27,7 @@ export default {
       <q-card>
         <q-card-section class="text-h6">KColorScale — continuous horizontal</q-card-section>
         <q-separator />
-        <q-card-section style="height: 80px;">
+        <q-card-section style="height: 80px; overflow: hidden;">
           <k-color-scale label="Temperature" colors="RdYlBu" :domain="[-20, 40]" />
         </q-card-section>
       </q-card>
@@ -35,7 +35,7 @@ export default {
       <q-card>
         <q-card-section class="text-h6">KColorScale — discrete horizontal</q-card-section>
         <q-separator />
-        <q-card-section style="height: 80px;">
+        <q-card-section style="height: 80px; overflow: hidden;">
           <k-color-scale label="Elevation" colors="OrRd" :domain="[0, 3000]" :classes="[0, 500, 1000, 2000, 3000]" />
         </q-card-section>
       </q-card>
@@ -43,7 +43,7 @@ export default {
       <q-card>
         <q-card-section class="text-h6">KColorScale — continuous vertical</q-card-section>
         <q-separator />
-        <q-card-section style="width: 120px; height: 200px;">
+        <q-card-section style="width: 120px; height: 200px; overflow: hidden;">
           <k-color-scale label="Wind" colors="Viridis" :domain="[0, 30]" direction="vertical" />
         </q-card-section>
       </q-card>
