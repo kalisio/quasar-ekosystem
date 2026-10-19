@@ -59,11 +59,11 @@ const FetcherWith = defineComponent({
       status.value = 'loading…'
       try {
         const res = await managedFetch(SLOW_URL)
-        if (!res) { status.value = 'annulée (composant démonté)'; return }
+        if (!res) { status.value = 'cancelled (component unmounted)'; return }
         const json = await res.json()
         status.value = 'done — got ' + JSON.stringify(json).slice(0, 40)
       } catch (e) {
-        status.value = 'erreur : ' + e.message
+        status.value = 'error: ' + e.message
       }
     }
 
