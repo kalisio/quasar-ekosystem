@@ -68,7 +68,7 @@ const iconsPerPage = 70
 const selectedIcon = ref({ name: '', color: 'dark' })
 
 const icons = computed(() =>
-  selectedCategory.value ? getIconsForCategory(selectedCategory.value.value) : allIcons.value
+  selectedCategory.value ? getIconsForCategory() : allIcons.value
 )
 const maxPage = computed(() => Math.ceil(icons.value.length / iconsPerPage))
 const iconsPage = computed(() => {
