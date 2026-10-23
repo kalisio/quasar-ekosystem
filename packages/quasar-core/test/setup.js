@@ -13,7 +13,20 @@ installQuasarPlugin({ plugins: { Dialog, Notify } })
 const i18n = createI18n({
   legacy: false,
   locale: 'en',
-  messages: {}
+  messages: {
+    en: {
+      directives: {
+        DROP_FILES: 'Drop file here | Drop files here',
+        ALL_FILES_ARE_UNSUPPORTED: 'Oops ! File is not supported | Oops ! None of the files are supported',
+        SOME_FILES_ARE_UNSUPPORTED: 'Some files will be ignored due to unsupported types'
+      },
+      errors: {
+        MAX_FILES_REACHED: 'Oops ! You can only drop one file | Oops! You can only drop up to {n} files at once',
+        MAX_FILE_SIZE_REACHED: 'Oops ! The file exceeds the maximum allowed size of {maxSize}',
+        MAX_TOTAL_SIZE_FILES_REACHED: 'Oops ! The total size files exceeds the maximum allowed total limit of {maxSize}'
+      }
+    }
+  }
 })
 I18n.setInstance(i18n)
 config.global.config = {

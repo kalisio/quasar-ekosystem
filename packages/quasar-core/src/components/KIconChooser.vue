@@ -6,7 +6,7 @@
           v-if="categories"
           :label="$t('KIconChooser.SEARCH_CATEGORY_LABEL')"
           :options="categoryOptions"
-          :value="selectedCategory ? selectedCategory.label : ''"
+          :model-value="selectedCategory ? selectedCategory.label : ''"
           @filter="filterCategoryAutocomplete"
           @update:model-value="onSelectCategory"
           use-input

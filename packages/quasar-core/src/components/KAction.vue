@@ -168,14 +168,6 @@
   </q-btn>
 </template>
 
-<script>
-// WARNING for now we must declare the inheritAttrs this way. Lint will try to move it. Don't do it.
-// TODO: need to updated when switch to vue > 3.3 to be able to declare options
-export default {
-  inheritAttrs: false
-}
-</script>
-
 <script setup>
 import { cloneDeep, get, has, merge, omit } from 'lodash-es'
 import { ref, toRef, computed, watch } from 'vue'
@@ -185,6 +177,7 @@ import { useI18n } from '../composables'
 import { actionProps } from '../utilities/actions.js'
 import { content } from '../utilities/content.js'
 const { bindParams, bindProperties } = content
+defineOptions({ inheritAttrs: false })
 import KIcon from './KIcon.vue'
 
 // Props
@@ -312,7 +305,8 @@ watch(() => props.toggled, (value) => {
 // Expose
 defineExpose({
   isToggled,
-  toggle
+  toggle,
+  onClicked
 })
 </script>
 

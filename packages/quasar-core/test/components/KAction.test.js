@@ -160,6 +160,69 @@ describe('KAction', () => {
     const wrapper = mount(KAction, { props: { id: 'test', renderer: 'tab', label: 'Tab 1' } })
     expect(wrapper.findComponent(QBtn).exists()).toBe(true)
   })
+
+  // fab-action renderer renders with k-fab-action class (stubbed: q-fab-action requires a q-fab parent)
+  it('fab-action renderer renders with k-fab-action class', () => {
+    const wrapper = mount(KAction, {
+      props: { id: 'test', renderer: 'fab-action', icon: 'la-star' },
+      global: { stubs: { 'q-fab-action': { template: '<div class="k-fab-action"><slot /></div>' } } }
+    })
+    expect(wrapper.find('.k-fab-action').exists()).toBe(true)
+  })
+
+  // tooltip rendered in button renderer when computedTooltip is set (Quasar teleports tooltip content)
+  it('button renderer includes tooltip component', () => {
+    const { QTooltip } = require('quasar')
+    const wrapper = mount(KAction, { props: { id: 'test', renderer: 'button', tooltip: 'a tip' } })
+    expect(wrapper.findComponent(QTooltip).exists()).toBe(true)
+  })
+
+  // item renderer shows badge when badge prop is set (lines 74-78)
+  it('item renderer shows badge', () => {
+    const wrapper = mount(KAction, { props: { id: 'test', renderer: 'item', icon: 'la-star', badge: { color: 'red', label: '3' } } })
+    expect(wrapper.html()).toContain('3')
+  })
+
+  // tab renderer shows tooltip when set (lines 159-163, Quasar teleports tooltip content)
+  it('tab renderer includes tooltip component', () => {
+    const { QTooltip } = require('quasar')
+    const wrapper = mount(KAction, { props: { id: 'test', renderer: 'tab', tooltip: 'tab tip' } })
+    expect(wrapper.findComponent(QTooltip).exists()).toBe(true)
+  })
+
+  // handler throws → toggle rolls back to original state (lines 260-261)
+  it('rolls back toggle when handler throws', async () => {
+    const handler = vi.fn().mockRejectedValue(new Error('fail'))
+    const wrapper = mount(KAction, { props: { id: 'test', renderer: 'button', toggle: {}, handler } })
+    await expect(wrapper.vm.onClicked(new window.MouseEvent('click'))).rejects.toThrow('fail')
+    expect(wrapper.vm.isToggled).toBe(false)
+  })
+
+  // dialog with component prop wraps in KDialog (line 283)
+  it('dialog with component prop is wrapped in KDialog', async () => {
+    const wrapper = mount(KAction, {
+      props: { id: 'test', renderer: 'button', dialog: { component: 'MyComp', title: 'hello' } }
+    })
+    const dialogSpy = vi.spyOn(wrapper.vm.$q, 'dialog').mockReturnValue({
+      onOk: () => ({ onCancel: () => ({}) })
+    })
+    await wrapper.findComponent(QBtn).trigger('click')
+    await nextTick()
+    expect(dialogSpy).toHaveBeenCalledWith(expect.objectContaining({ component: 'KDialog' }))
+  })
+
+  // dialog onCancel emits dialog-canceled (line 293)
+  it('emits dialog-canceled when dialog is cancelled', async () => {
+    const wrapper = mount(KAction, { props: { id: 'test', renderer: 'button', dialog: {} } })
+    vi.spyOn(wrapper.vm.$q, 'dialog').mockReturnValue({
+      onOk: () => ({
+        onCancel: (cb) => { cb(undefined); return {} }
+      })
+    })
+    await wrapper.findComponent(QBtn).trigger('click')
+    await nextTick()
+    expect(wrapper.emitted('dialog-canceled')).toBeTruthy()
+  })
 })
 
 describe('KAction — route prop', () => {
