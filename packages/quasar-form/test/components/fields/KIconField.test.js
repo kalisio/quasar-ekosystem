@@ -16,7 +16,7 @@ function makeProps (propertiesOverride = {}) {
 describe('KIconField', () => {
   // Renders both prepend and control slots so the q-btn inside prepend is accessible
   const iconFieldFieldStub = { template: '<div><slot name="prepend" /><slot name="control" /><slot name="default" /></div>', props: ['modelValue'] }
-  const stubs = { 'q-field': iconFieldFieldStub, 'q-btn': iconStub, 'q-dialog': dialogStub, 'q-card': true, 'q-card-section': true, 'q-card-actions': true, 'q-input': inputStub, 'q-icon': true }
+  const stubs = { 'q-field': iconFieldFieldStub, 'q-btn': iconStub, 'q-dialog': dialogStub, 'q-card': true, 'q-card-section': true, 'q-card-actions': true, 'q-input': inputStub, 'q-icon': true, 'k-icon-chooser': true }
 
   // In readOnly mode with a model, a q-icon is rendered
   it('renders a q-icon in readOnly mode when model is set', () => {

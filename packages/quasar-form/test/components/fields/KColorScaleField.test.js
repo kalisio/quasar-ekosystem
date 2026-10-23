@@ -11,7 +11,7 @@ function makeProps (propertiesOverride = {}) {
 }
 
 describe('KColorScaleField', () => {
-  const stubs = { 'q-select': selectStub, 'q-item': true, 'q-item-section': true, 'q-item-label': true }
+  const stubs = { 'q-select': selectStub, 'q-item': true, 'q-item-section': true, 'q-item-label': true, KColorScale: true }
 
   const colorScaleOptions = [
     { label: 'Reds', value: { colors: ['#fee', '#f00'] } },
