@@ -120,9 +120,7 @@ let buildInProgress = false
 // Computed
 const groups = computed(() => {
   if (schema.value && schema.value.groups) {
-    return mapValues(schema.value.groups, (group, id) => Object.assign({
-      hasFields: find(fields.value, { group: id })
-    }, group))
+    return mapValues(schema.value.groups, (group, id) => ({ hasFields: find(fields.value, { group: id }), ...group }))
   }
   return {}
 })

@@ -109,7 +109,7 @@ const chips = computed(() => hasChips())
 const options = computed(() => {
   let opts = map(get(props.properties, 'field.options', []), option => {
     const lbl = t(get(option, 'label', ''))
-    return Object.assign({}, option, { label: lbl })
+    return { ...option, label: lbl }
   })
   if (filter.value) {
     opts = _filter(opts, option => {

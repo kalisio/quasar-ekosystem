@@ -52,7 +52,7 @@ const {
 function options() {
   return get(props.properties, 'field.options', []).map(option => {
     const label = get(option, 'label', '')
-    return Object.assign({}, option, { label: t(label) })
+    return { ...option, label: t(label) }
   })
 }
 

@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-import { get, isEmpty, merge } from 'lodash-es'
+import { isEmpty, merge } from 'lodash-es'
 import moment from 'moment'
 import { computed } from 'vue'
 import { useI18n } from '../../composables'
