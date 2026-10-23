@@ -2,12 +2,10 @@ import { onBeforeUnmount } from 'vue'
 import { request } from '@kalisio/common-core/operators/request'
 
 export function useRequest (options = {}) {
+  // Data
   const req = request(options)
 
-  onBeforeUnmount(() => {
-    if (!req.aborted) req.abort()
-  })
-
+  // Functions
   async function fetch (input, fetchOptions) {
     try {
       return await req.fetch(input, fetchOptions)
@@ -16,6 +14,12 @@ export function useRequest (options = {}) {
     }
   }
 
+  // Hooks
+  onBeforeUnmount(() => {
+    if (!req.aborted) req.abort()
+  })
+
+  // Expose
   return {
     fetch,
     abort: (reason) => req.abort(reason),

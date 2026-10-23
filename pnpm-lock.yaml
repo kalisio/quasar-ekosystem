@@ -10,11 +10,11 @@ catalogs:
       specifier: 2.30.0
       version: 2.30.0
     '@kalisio/common-core':
-      specifier: 0.12.1
-      version: 0.12.1
+      specifier: 1.0.1
+      version: 1.0.1
     '@kalisio/common-graphics':
-      specifier: 0.12.1
-      version: 0.12.1
+      specifier: 1.0.1
+      version: 1.0.1
     '@kalisio/vitepress-theme':
       specifier: 2.1.0
       version: 2.1.0
@@ -242,10 +242,10 @@ importers:
     dependencies:
       '@kalisio/common-core':
         specifier: 'catalog:'
-        version: 0.12.1(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3)
+        version: 1.0.1(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3)
       '@kalisio/common-graphics':
         specifier: 'catalog:'
-        version: 0.12.1(@kalisio/common-core@0.12.1(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3))(@logtape/logtape@0.7.0)(chroma-js@3.2.0)(lru-cache@11.3.5)(sharp@0.34.5)
+        version: 1.0.1(@kalisio/common-core@1.0.1(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3))(chroma-js@3.2.0)(lru-cache@11.5.2)(sharp@0.34.5)
       '@logtape/logtape':
         specifier: 'catalog:'
         version: 0.7.0
@@ -312,7 +312,7 @@ importers:
     dependencies:
       '@kalisio/common-core':
         specifier: 'catalog:'
-        version: 0.12.1(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.5)(sift@17.1.3)
+        version: 1.0.1(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3)
       '@kalisio/quasar-core':
         specifier: workspace:*
         version: link:../quasar-core
@@ -1098,20 +1098,20 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@kalisio/common-core@0.12.1':
-    resolution: {integrity: sha512-nGTm7M9kpl/BlG1JLrRzLGf77LcWyMv8V72y3YK+6wOsXzqXmCFLPsWpiL44i6bqDGrABKmlzzZz6K3El1Zkxw==}
+  '@kalisio/common-core@1.0.1':
+    resolution: {integrity: sha512-ZYPJKoLNUek1bHWK1J7+cucVPsSg8T/Fy+hO7CZh1KZKsn+9eyA/Ob1tNKes0MdcAEdXBEUL2NfNTI6aXYcrLg==}
     engines: {node: '>=20'}
     peerDependencies:
-      '@xmldom/xmldom': ~0.9.11
-      ajv: ~8.20.0
-      fast-xml-parser: ~5.11.1
-      js-yaml: ~5.4.1
-      lodash-es: ~4.18.1
-      mathjs: ~15.2.0
-      moment: ~2.30.1
-      papaparse: ~5.7.0
-      sanitize-html: ~2.17.4
-      sift: ~17.1.3
+      '@xmldom/xmldom': 0.9.12
+      ajv: 8.20.0
+      fast-xml-parser: 5.11.1
+      js-yaml: 5.4.3
+      lodash-es: 4.18.1
+      mathjs: 15.2.0
+      moment: 2.30.1
+      papaparse: 5.7.0
+      sanitize-html: 2.17.4
+      sift: 17.1.3
     peerDependenciesMeta:
       '@xmldom/xmldom':
         optional: true
@@ -1134,15 +1134,14 @@ packages:
       sift:
         optional: true
 
-  '@kalisio/common-graphics@0.12.1':
-    resolution: {integrity: sha512-Pc1aH6ynx3mrbqtq13Ft35FhauzjRkT9M3I9axbX6tiQsjNx8mfR2vCIy/x2l/Cp7YtCyui/JUI/xSQL1rtjRg==}
+  '@kalisio/common-graphics@1.0.1':
+    resolution: {integrity: sha512-uP1k303zphsV0lRQiFuANd9Emjopp1A/g2wjncPs3lH+864BjiuwdvTKRGf4MVuE74Nf27gN4DRXf2/P6Yawgg==}
     engines: {node: '>=20'}
     peerDependencies:
-      '@kalisio/common-core': 0.12.1
-      '@logtape/logtape': ~0.7.0
-      chroma-js: ~3.2.0
-      lru-cache: ~11.5.2
-      sharp: ~0.34.5
+      '@kalisio/common-core': 1.0.1
+      chroma-js: 3.2.0
+      lru-cache: 11.5.2
+      sharp: 0.34.5
     peerDependenciesMeta:
       sharp:
         optional: true
@@ -3423,6 +3422,10 @@ packages:
     resolution: {integrity: sha512-NxVFwLAnrd9i7KUBxC4DrUhmgjzOs+1Qm50D3oF1/oL+r1NpZ4gA7xvG0/zJ8evR7zIKn4vLf7qTNduWFtCrRw==}
     engines: {node: 20 || >=22}
 
+  lru-cache@11.5.2:
+    resolution: {integrity: sha512-4pfM1Ff0x50o0tQwb5ucw/RzNyD0/YJME6IVcStalZuMWxdt3sR3huStTtxz4PUmvZfRguvDejasvQ2kifR11g==}
+    engines: {node: 20 || >=22}
+
   lucide-vue-next@1.0.0:
     resolution: {integrity: sha512-V6SPvx1IHTj/UY+FrIYWV5faISsPSb8BnWSFDxAtezWKvWc9ZZ40PDrdu1/Qb5vg4lHWr1hs1BAMGVGm6V1Xdg==}
     deprecated: Package deprecated. Please use @lucide/vue instead.
@@ -3972,9 +3975,6 @@ packages:
 
   sanitize-html@2.17.4:
     resolution: {integrity: sha512-2HW7v2ol/uAM7sX4hbD8Z59OGWmAPrvjL8E71UWlBcj6m+kcF6ilQBLny+cIgY214QJeJT5tQuxKKqX0SQqjGQ==}
-
-  sanitize-html@2.17.5:
-    resolution: {integrity: sha512-ZmU1joGRrvoyctKIiuwUxqR6moLoU2Wk+2bMccN6f7UwhAmwYDvWziqPxRDDN2Qip62NqnIrVrT9akbL6Wretg==}
 
   sass@1.99.0:
     resolution: {integrity: sha512-kgW13M54DUB7IsIRM5LvJkNlpH+WhMpooUcaWGFARkF1Tc82v9mIWkCbCYf+MBvpIUBSeSOTilpZjEPr2VYE6Q==}
@@ -5333,7 +5333,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@kalisio/common-core@0.12.1(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3)':
+  '@kalisio/common-core@1.0.1(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3)':
     optionalDependencies:
       ajv: 8.20.0
       js-yaml: 5.4.3
@@ -5343,22 +5343,11 @@ snapshots:
       sanitize-html: 2.17.4
       sift: 17.1.3
 
-  '@kalisio/common-core@0.12.1(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.5)(sift@17.1.3)':
-    optionalDependencies:
-      ajv: 8.20.0
-      js-yaml: 5.4.3
-      lodash-es: 4.18.1
-      mathjs: 15.2.0
-      moment: 2.30.1
-      sanitize-html: 2.17.5
-      sift: 17.1.3
-
-  '@kalisio/common-graphics@0.12.1(@kalisio/common-core@0.12.1(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3))(@logtape/logtape@0.7.0)(chroma-js@3.2.0)(lru-cache@11.3.5)(sharp@0.34.5)':
+  '@kalisio/common-graphics@1.0.1(@kalisio/common-core@1.0.1(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3))(chroma-js@3.2.0)(lru-cache@11.5.2)(sharp@0.34.5)':
     dependencies:
-      '@kalisio/common-core': 0.12.1(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3)
-      '@logtape/logtape': 0.7.0
+      '@kalisio/common-core': 1.0.1(ajv@8.20.0)(js-yaml@5.4.3)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3)
       chroma-js: 3.2.0
-      lru-cache: 11.3.5
+      lru-cache: 11.5.2
     optionalDependencies:
       sharp: 0.34.5
 
@@ -7786,6 +7775,8 @@ snapshots:
 
   lru-cache@11.3.5: {}
 
+  lru-cache@11.5.2: {}
+
   lucide-vue-next@1.0.0(vue@3.5.30):
     dependencies:
       vue: 3.5.30
@@ -8532,17 +8523,6 @@ snapshots:
       launder: 1.7.1
       parse-srcset: 1.0.2
       postcss: 8.5.18
-
-  sanitize-html@2.17.5:
-    dependencies:
-      deepmerge: 4.3.1
-      escape-string-regexp: 4.0.0
-      htmlparser2: 10.1.0
-      is-plain-object: 5.0.0
-      launder: 1.7.1
-      parse-srcset: 1.0.2
-      postcss: 8.5.18
-    optional: true
 
   sass@1.99.0:
     dependencies:
