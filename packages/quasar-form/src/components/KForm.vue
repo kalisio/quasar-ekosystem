@@ -170,8 +170,7 @@ function onFieldChanged (field, value) {
   getField(field).reference.validate()
 }
 function hasFieldError (field, errors) {
-  for (let i = 0; i < errors.length; i++) {
-    const error = errors[i]
+  for (const error of errors) {
     // Check whether the field is required
     if (error.keyword === 'required') {
       if (error.params.missingProperty === field) return error
@@ -260,15 +259,13 @@ function validate () {
 }
 async function apply (object) {
   if (!isReady.value) throw new Error('[KDK] Cannot apply the form while not ready')
-  for (let i = 0; i < fields.value.length; i++) {
-    const field = fields.value[i]
+  for (const field of fields.value) {
     await field.reference.apply(object, field.name)
   }
 }
 async function submitted (object) {
   if (!isReady.value) throw new Error('[KDK] Cannot run submitted on the form while not ready')
-  for (let i = 0; i < fields.value.length; i++) {
-    const field = fields.value[i]
+  for (const field of fields.value) {
     await field.reference.submitted(object, field.name)
   }
 }
