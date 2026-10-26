@@ -1,6 +1,5 @@
 <template>
-  <!-- Missing Component: KTextArea -->
-  <!-- <KTextArea v-if="readOnly" :text="model" :length="150" /> -->
+  <KTextArea v-if="readOnly" :text="model" :length="150" />
   <div v-if="readOnly" :id="properties.name + '-field'">
     {{ model }}
   </div>

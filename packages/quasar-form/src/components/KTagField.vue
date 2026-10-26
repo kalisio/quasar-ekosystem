@@ -72,7 +72,8 @@ const options = ref([])
 const searchString = ref('')
 
 watch(model, (newModel) => {
-  items.value = newModel ? clone(newModel) : (props.properties.multiselect ? [] : null)
+  if (newModel) items.value = clone(newModel)
+  else items.value = props.properties.multiselect ? [] : null
 }, { immediate: true, flush: 'sync' })
 
 const isClearable = computed(() => get(props.properties, 'field.clearable', true))
