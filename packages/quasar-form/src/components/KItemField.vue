@@ -100,7 +100,8 @@ const hasSingleService = computed(() => {
 })
 
 watch(model, (newModel) => {
-  items.value = newModel ? clone(newModel) : (multiple.value ? [] : null)
+  if (newModel) items.value = clone(newModel)
+  else items.value = multiple.value ? [] : null
 }, { immediate: true, flush: 'sync' })
 
 function getServiceForItem(item) {
