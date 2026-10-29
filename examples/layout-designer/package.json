@@ -1,0 +1,25 @@
+{
+  "name": "layout-designer",
+  "description": "layout-designer example",
+  "type": "module",
+  "private": true,
+  "packageManager": "pnpm@10.34.5",
+  "scripts": {
+    "dev": "vite",
+    "lint": "standard --fix"
+  },
+  "author": {
+    "name": "KALISIO &lt;contact@kalisio.com&gt;",
+    "email": "",
+    "url": "https://github.com/kalisio"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "devDependencies": {
+    "@kalisio/quasar-core": "workspace:*",
+    "@vitejs/plugin-vue": "catalog:",
+    "quasar": "catalog:",
+    "vue": "catalog:",
+    "vite": "catalog:"
+  }
+}

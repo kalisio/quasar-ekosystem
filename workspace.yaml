@@ -1,0 +1,8 @@
+catalog:
+  "@quasar/app-vite": "3.10.3"
+  "@quasar/extras": "2.1.0"
+  "@quasar/quasar-app-extension-testing-unit-vitest": "3.0.0"
+  "@quasar/vite-plugin": "2.0.2"
+  "@vitejs/plugin-vue": "6.0.10"
+  quasar: "2.35.2"
+  vite: "8.3.5"

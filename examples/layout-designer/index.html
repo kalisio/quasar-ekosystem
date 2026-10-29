@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet" type="text/css">
+    <link href="https://use.fontawesome.com/releases/v6.7.2/css/all.css" rel="stylesheet" type="text/css">
+  </head>
+
+  <body>
+    <div id="q-app">
+      <q-layout view="lhh LpR lff">
+        <q-header class="q-pa-md">
+          <q-banner class="bg-primary text-white">
+            <span class="text-h4">layout-designer</span>
+            <template v-slot:avatar>
+              <q-icon name="dashboard" color="white"></q-icon>
+            </template>
+          </q-banner>
+        </q-header>
+        <q-page-container>
+          <q-page padding>
+          </q-page>
+        </q-page-container>
+      </q-layout>
+    </div>
+
+    <script type="module">
+      import { createApp } from 'vue'
+      import QuasarCore from '@kalisio/quasar-core'
+      import {
+        Quasar,
+        QLayout, QHeader, QBanner, QIcon, QPageContainer, QPage
+      } from 'quasar'
+      import 'quasar/dist/quasar.css'
+
+      const app = createApp({})
+
+      app.use(QuasarCore, { buildMode: 'SPA' })
+      app.use(Quasar, {
+        components: {
+          QLayout, QHeader, QBanner, QIcon, QPageContainer, QPage
+        }
+      })
+
+      app.mount('#q-app')
+    </script>
+  </body>
+</html>
