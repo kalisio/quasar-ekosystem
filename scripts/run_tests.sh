@@ -16,7 +16,7 @@ slack_report() {
 ## Parse options
 ##
 
-NODE_VER=20
+NODE_VER=24
 MONGO_VER=""
 CI_STEP_NAME="Run tests"
 RUN_SONAR=false
