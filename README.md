@@ -1,5 +1,6 @@
 # quasar-ekosystem
 
+[![CI](https://github.com/kalisio/quasar-ekosystem/actions/workflows/main.yaml/badge.svg)](https://github.com/kalisio/quasar-ekosystem/actions/workflows/main.yaml)
 [![Quality Gate Status](https://sonar.portal.kalisio.com/api/project_badges/measure?project=kalisio-quasar-ekosystem&metric=alert_status&token=sqb_7c577539b6efa9fe53d73d22dc391b72bf683742)](https://sonar.portal.kalisio.com/dashboard?id=kalisio-quasar-ekosystem)
 [![Maintainability Rating](https://sonar.portal.kalisio.com/api/project_badges/measure?project=kalisio-quasar-ekosystem&metric=software_quality_maintainability_rating&token=sqb_7c577539b6efa9fe53d73d22dc391b72bf683742)](https://sonar.portal.kalisio.com/dashboard?id=kalisio-quasar-ekosystem)
 [![Security Rating](https://sonar.portal.kalisio.com/api/project_badges/measure?project=kalisio-quasar-ekosystem&metric=software_quality_security_rating&token=sqb_7c577539b6efa9fe53d73d22dc391b72bf683742)](https://sonar.portal.kalisio.com/dashboard?id=kalisio-quasar-ekosystem)
