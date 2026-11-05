@@ -50,22 +50,23 @@ if [ "$CI" != true ]; then
     WORKSPACE_DIR="$1"
 
     # Clone project in the workspace
-    git_shallow_clone "$KALISIO_GITHUB_URL/kalisio/kdk-ekosystem.git" "$WORKSPACE_DIR/quasar-ekosystem" "$WORKSPACE_REF"
+    git_shallow_clone "$KALISIO_GITHUB_URL/kalisio/quasar-ekosystem.git" "$WORKSPACE_DIR/quasar-ekosystem" "$WORKSPACE_REF"
 
     # unset KALISIO_DEVELOPMENT_DIR because we want kli to clone everything in $WORKSPACE_DIR
     unset KALISIO_DEVELOPMENT_DIR
 fi
 
-setup_lib_workspace "$WORKSPACE_DIR" "$KALISIO_GITHUB_URL/kalisio/development.git"
+git_shallow_clone "$KALISIO_GITHUB_URL/kalisio/development.git" "$WORKSPACE_DIR/development"
 
 # Only use kli when requested + on master branch
 # otherwise package.json version will be used
 if [ "$WORKSPACE_KIND" != "nokli" ]; then
     # On master branch we use kli, on other branches / tags we just install
     if [ "$WORKSPACE_REF" = "master" ]; then
-        run_kli "$WORKSPACE_DIR" "$WORKSPACE_NODE" "$WORKSPACE_DIR/development/workspaces/libs/quasar-ekosystem/dev/quasar-ekosystem.js" "$WORKSPACE_KIND"
+        KLI_FILE="$WORKSPACE_DIR/development/workspaces/libs/quasar-ekosystem/dev/quasar-ekosystem.js"
+        run_meta_kli "$WORKSPACE_DIR" "$WORKSPACE_NODE" "$KLI_FILE" "$WORKSPACE_KIND"
     else
-        cd "$WORKSPACE_DIR/kdk-ekosystem" && nvm exec "$WORKSPACE_NODE" pnpm install && cd ~-
+        cd "$WORKSPACE_DIR/quasar-ekosystem" && nvm exec "$WORKSPACE_NODE" pnpm install && cd ~-
     fi
 fi
 
