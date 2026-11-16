@@ -1,11 +1,16 @@
 ---
 title: palette
-description: Utility object for resolving and matching colors across Quasar, HTML, and CSS theme palettes.
+description: Utilities for resolving colors and finding the closest matching Quasar palette color.
 ---
 
 # palette
 
-Utility object for resolving and matching colors across Quasar, HTML, and CSS theme palettes.
+Utilities for resolving colors from Quasar, HTML/CSS named colors, and application theme variables, and finding the closest matching color in the Quasar palette.
+
+The implementation relies on:
+
+- [Quasar Color Palette](https://quasar.dev/style/color-palette/) for predefined colors and theme variables.
+- [chroma.js](https://gka.github.io/chroma.js/) for HTML/CSS named colors and perceptual color comparison.
 
 ## resolve
 
@@ -17,39 +22,71 @@ palette.resolve(color, defaultColor)
 
 ### Description
 
-Resolves a color value to a hex string. Accepts hex, HSL, RGB, Quasar palette names, HTML color names, and CSS theme variables (e.g. `primary`, `secondary`). Returns `defaultColor` if the color is empty or cannot be resolved.
+Resolves a color to its corresponding CSS color value.
+
+Supported inputs include:
+
+- Hexadecimal, RGB, RGBA, and HSL color strings, returned unchanged.
+- [Quasar palette colors](https://quasar.dev/style/color-palette/#color-list), such as `red`, `blue-3`, or `deep-purple-10`.
+- HTML/CSS named colors provided by [`chroma.colors`](https://gka.github.io/chroma.js/), such as `coral` or `navy`.
+- Quasar theme variables, such as `primary`, `secondary`, or `accent`, resolved from their CSS custom properties (`--q-primary`, etc.).
+
+When a color name exists in both the Quasar and HTML palettes, **the Quasar palette takes precedence**.
+
+If the color is empty or cannot be resolved, the function returns `defaultColor`.
 
 ### Parameters
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `color` | `string` | yes | The color to resolve. Can be a hex string, `hsl(...)`, `rgb(...)`, a Quasar palette name (e.g. `'red-5'`), an HTML color name (e.g. `'coral'`), or a CSS theme variable name (e.g. `'primary'`) |
-| `defaultColor` | `string` | no | Fallback value returned when `color` is empty or cannot be resolved |
+| `color` | `string` | Yes | Color value or name to resolve |
+| `defaultColor` | `string` | No | Fallback value when the color cannot be resolved |
 
 ### Returns
 
 | Type | Description |
 |------|-------------|
-| `string` | The resolved color string, or `defaultColor` if unresolvable |
+| `string \| undefined` | Resolved CSS color value, or `defaultColor` if resolution fails |
+
+The returned value is not necessarily hexadecimal. Explicit color strings retain their original representation.
 
 ### Examples
 
 ```js
+// Explicit color values
 palette.resolve('#ff0000')
 // '#ff0000'
 
+palette.resolve('rgb(255, 0, 0)')
+// 'rgb(255, 0, 0)'
+
+// Quasar palette
 palette.resolve('red-5')
 // '#ef5350'
 
+// Quasar takes precedence over HTML colors
+palette.resolve('red')
+// '#f44336' (Quasar), not '#ff0000' (HTML)
+
+// HTML/CSS named colors
 palette.resolve('coral')
-// '#FF7F50'
+// '#ff7f50'
 
+// Application theme variables
 palette.resolve('primary')
-// resolves the CSS variable --q-primary, e.g. '#1976d2'
+// Value of --q-primary, e.g. '#1976d2'
 
+// Fallback
 palette.resolve('', '#000000')
 // '#000000'
+
+palette.resolve('unknown-color', '#000000')
+// '#000000'
 ```
+
+::: tip
+Theme colors are resolved through Quasar's `getCssVar()` utility. Their values depend on the current application theme and require the corresponding CSS variables to be available.
+:::
 
 ## findClosest
 
@@ -61,19 +98,25 @@ palette.findClosest(color)
 
 ### Description
 
-Finds the closest color name in the Quasar palette to the given color, using the CIEDE2000 color difference algorithm.
+Finds the closest matching color in the [Quasar color palette](https://quasar.dev/style/color-palette/#color-list).
+
+Color similarity is calculated using the **CIEDE2000 (ΔE00)** perceptual color difference algorithm, implemented by [`chroma.deltaE()`](https://gka.github.io/chroma.js/).
+
+Unlike `resolve()`, this function does not resolve theme variables. It compares a valid color value against the predefined `QUASAR_PALETTE` entries.
 
 ### Parameters
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `color` | `string` | yes | A valid color value (hex, RGB, HSL, etc.) |
+| `color` | `string` | Yes | Valid color value (hex, RGB, HSL, etc.) |
 
 ### Returns
 
 | Type | Description |
 |------|-------------|
-| `string` | The key of the closest Quasar palette entry (e.g. `'red-5'`) |
+| `string` | Name of the closest Quasar palette entry |
+
+Some Quasar entries share identical values (e.g. `teal` and `teal-6`). In such cases, the first matching entry in `QUASAR_PALETTE` is returned.
 
 ### Throws
 
@@ -86,5 +129,10 @@ palette.findClosest('#e53935')
 // 'red-7'
 
 palette.findClosest('rgb(0, 150, 136)')
-// 'teal-6'
+// 'teal'
+
+palette.findClosest('#f44336')
+// 'red'
 ```
+
+
