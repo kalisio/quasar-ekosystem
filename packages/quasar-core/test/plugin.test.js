@@ -1,25 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { plugin } from '../src/plugin.js'
-
 import { I18n } from '../src/i18n.js'
-import { Platform } from '../src/platform.js'
+import { Platform } from '../src/utilities/platform.js'
 
 // --- mocks ---
 
-vi.mock('vue', () => ({
-  defineAsyncComponent: vi.fn((loader) => loader)
-}))
-
 vi.mock('../src/i18n.js', () => ({
   I18n: {
-    setInstance: vi.fn()
-  }
-}))
-
-vi.mock('../src/platform.js', () => ({
-  Platform: {
-    initialize: vi.fn().mockResolvedValue(undefined),
-    getData: vi.fn()
+    setInstance: vi.fn(),
+    tie: vi.fn()
   }
 }))
 
@@ -42,8 +31,10 @@ describe('plugin', () => {
   let app
 
   beforeEach(() => {
-    app = makeApp()
+    vi.restoreAllMocks()
     vi.clearAllMocks()
+    vi.spyOn(globalThis.HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null)
+    app = makeApp()
   })
 
   it('should register components', async () => {
@@ -56,9 +47,12 @@ describe('plugin', () => {
     expect(app.directive).toHaveBeenCalled()
   })
 
-  it('should initialize Platform with the provided build mode', async () => {
-    await plugin.install(app, { buildMode: 'PWA' })
-    expect(Platform.initialize).toHaveBeenCalledWith('PWA')
+  it.each([
+    ['PWA', true],
+    ['SPA', false]
+  ])('should initialize Platform in %s mode', async (buildMode, pwa) => {
+    await plugin.install(app, { buildMode })
+    expect(Platform.is.pwa).toBe(pwa)
   })
 
   it('should provide platform', async () => {
@@ -93,7 +87,7 @@ describe('plugin', () => {
   })
 
   it('should call I18n.tie when $tie is invoked', async () => {
-    I18n.tie = vi.fn().mockReturnValue('hello')
+    I18n.tie.mockReturnValue('hello')
     await plugin.install(app, { buildMode: 'SPA' })
     const result = app.config.globalProperties.$tie('app.welcome', { name: 'Alice' })
     expect(I18n.tie).toHaveBeenCalledWith('app.welcome', { name: 'Alice' })

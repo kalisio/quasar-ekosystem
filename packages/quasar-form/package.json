@@ -2,7 +2,6 @@
   "name": "@kalisio/quasar-form",
   "description": "Automatically create validated Quasar forms from JSON Schema",
   "version": "0.0.0",
-  "packageManager": "pnpm@10.34.5",
   "type": "module",
   "exports": {
     ".": {
@@ -15,12 +14,24 @@
     "dist"
   ],
   "standard": {
+    "globals": [
+      "describe",
+      "it",
+      "test",
+      "expect",
+      "beforeAll",
+      "afterAll",
+      "beforeEach",
+      "afterEach",
+      "vi"
+    ],
     "ignore": [
       "dist/**"
     ]
   },
   "scripts": {
     "build": "vite build",
+    "postbuild": "publint",
     "lint": "standard --fix",
     "test": "vitest run --coverage"
   },
@@ -36,34 +47,37 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/kalisio/quasar-ekosystem.git",
+    "url": "git+https://github.com/kalisio/quasar-ekosystem.git",
     "directory": "packages/quasar-form"
   },
   "bugs": {
     "url": "https://github.com/kalisio/quasar-ekosystem/issues"
   },
-  "homepage": "https://github.com/kalisio/quasar-ekosystem/tree/main/packages/check#readme",
-  "peerDependencies": {
+  "homepage": "https://github.com/kalisio/quasar-ekosystem/tree/main/packages/quasar-form#readme",
+  "dependencies": {
     "@kalisio/common-core": "catalog:",
-    "@kalisio/quasar-core": "workspace:*",
     "@logtape/logtape": "catalog:",
     "ajv": "catalog:",
     "ajv-formats": "catalog:",
     "ajv-keywords": "catalog:",
-    "lodash-es": "catalog:",
-    "quasar": "catalog:",
-    "vue": "catalog:",
-    "vue-i18n": "catalog:"
+    "lodash-es": "catalog:"
   },
   "devDependencies": {
     "@quasar/quasar-app-extension-testing-unit-vitest": "catalog:",
     "@quasar/vite-plugin": "catalog:",
+     "@vitejs/plugin-vue": "catalog:",
     "@vue/test-utils": "catalog:",
     "happy-dom": "catalog:",
     "quasar": "catalog:"
   },
+  "peerDependencies": {
+    "@kalisio/quasar-core": "workspace:*",
+    "quasar": "catalog:",
+    "vue": "catalog:",
+    "vue-i18n": "catalog:"
+  },
   "engines": {
-    "node": ">=20"
+    "node": ">=24"
   },
   "publishConfig": {
     "access": "public",

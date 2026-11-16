@@ -70,7 +70,8 @@
 
 <script setup>
 import { debounce, isEmpty } from 'lodash-es'
-import { getLogger } from '@logtape/logtape'
+import { getLogger } from '@kalisio/common-core/runtime'
+
 const logger = getLogger(['quasar-core', 'KDateTimeRange'])
 import moment from 'moment'
 import { ref, computed, watch, onMounted } from 'vue'

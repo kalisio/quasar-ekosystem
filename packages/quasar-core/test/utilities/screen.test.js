@@ -1,117 +1,139 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { Screen, AppFullscreen } from 'quasar'
+import { isReadonly, nextTick } from 'vue'
 
-import { screen } from '../../src/utilities'
+const logger = vi.hoisted(() => ({ debug: vi.fn(), warn: vi.fn() }))
+vi.mock('@kalisio/common-core/runtime', () => ({ getLogger: () => logger }))
 
-vi.mock('vue', () => ({
-  toRef: vi.fn(() => ({ value: false }))
-}))
+// Reactive Quasar Screen and AppFullscreen, reset before each test
+vi.mock('quasar', async () => {
+  const { reactive } = await import('vue')
+  return {
+    Screen: reactive({}),
+    AppFullscreen: reactive({ isActive: false, toggle: vi.fn() })
+  }
+})
 
-// --- tests ---
+function resetQuasar () {
+  Object.assign(quasar.Screen, {
+    width: 1024,
+    height: 768,
+    lt: { sm: false, md: false, lg: true, xl: true },
+    gt: { xs: true, sm: true, md: false, lg: false }
+  })
+  quasar.AppFullscreen.isActive = false
+  quasar.AppFullscreen.toggle.mockReset()
+}
 
-describe('screen', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-    Screen.width = 1024
-    Screen.height = 768
-    Screen.name = 'md'
+let quasar
+let Screen
+
+// Screen is a module singleton: reload it for each test
+beforeEach(async () => {
+  vi.clearAllMocks()
+  vi.resetModules()
+  quasar = await import('quasar')
+  resetQuasar()
+  ;({ Screen } = await import('../../src/utilities/index.js'))
+})
+
+describe('Screen', () => {
+  it('is read-only', () => {
+    expect(isReadonly(Screen)).toBe(true)
   })
 
-  describe('resolveWidth', () => {
-    it('should return the value as-is when it is above 100', () => {
-      expect(screen.resolveWidth(800)).toBe(800)
-    })
-
-    it('should resolve a percentage relative to Screen.width', () => {
-      expect(screen.resolveWidth(50)).toBe(512)
-    })
-
-    it('should resolve a breakpoint object', () => {
-      expect(screen.resolveWidth({ md: 800 })).toBe(800)
-    })
-
-    it('should resolve a breakpoint object with a percentage value', () => {
-      expect(screen.resolveWidth({ md: 50 })).toBe(512)
-    })
-
-    it('should return undefined for invalid input', () => {
-      expect(screen.resolveWidth('invalid')).toBeUndefined()
-    })
-
-    it('should return undefined when breakpoint is not found', () => {
-      expect(screen.resolveWidth({ xl: 800 })).toBeUndefined()
-    })
-
-    it('should return undefined when breakpoint value is not a number', () => {
-      expect(screen.resolveWidth({ md: 'wide' })).toBeUndefined()
-    })
+  it('does not expose the Quasar screen', () => {
+    expect(Screen.quasar).toBeUndefined()
   })
 
-  describe('resolveHeight', () => {
-    it('should return the value as-is when it is above 100', () => {
-      expect(screen.resolveHeight(400)).toBe(400)
+  describe('breakpoints', () => {
+    it('use sm by default, without initialization', () => {
+      expect(Screen.dense).toBe(false)
+      expect(Screen.wide).toBe(true)
+      quasar.Screen.lt.sm = true
+      quasar.Screen.gt.sm = false
+      expect(Screen.dense).toBe(true)
+      expect(Screen.wide).toBe(false)
     })
 
-    it('should resolve a percentage relative to Screen.height', () => {
-      expect(screen.resolveHeight(50)).toBe(384)
+    it('follow the breakpoints given at initialization', () => {
+      Screen.initialize({ dense: 'lg', wide: 'xs' })
+      expect(Screen.dense).toBe(true)
+      expect(Screen.wide).toBe(true)
+      expect(logger.debug).toHaveBeenCalledOnce()
     })
 
-    it('should resolve a breakpoint object', () => {
-      expect(screen.resolveHeight({ md: 400 })).toBe(400)
-    })
-  })
-
-  describe('resolveSize', () => {
-    it('should return the array as-is when it has exactly 2 elements', () => {
-      expect(screen.resolveSize([800, 400])).toEqual([800, 400])
+    it('reset a breakpoint that is not given to its default', () => {
+      Screen.initialize({ dense: 'lg', wide: 'xs' })
+      Screen.initialize({ dense: 'lg' })
+      quasar.Screen.gt.xs = false
+      expect(Screen.wide).toBe(true)
     })
 
-    it('should resolve a breakpoint object with [width, height] values', () => {
-      expect(screen.resolveSize({ md: [800, 400] })).toEqual([800, 400])
-    })
-
-    it('should return undefined for invalid input', () => {
-      expect(screen.resolveSize('invalid')).toBeUndefined()
+    it.each([
+      [{ dense: 'xs' }, /dense/],
+      [{ dense: 'huge' }, /dense/],
+      [{ wide: 'xl' }, /wide/]
+    ])('throw on the invalid breakpoints %j', (options, error) => {
+      expect(() => Screen.initialize(options)).toThrow(error)
     })
   })
 
   describe('orientation', () => {
-    it('should return landscape when width > height', () => {
-      Screen.width = 1024
-      Screen.height = 768
-      expect(screen.orientation()).toBe('landscape')
-    })
-
-    it('should return portrait when height > width', () => {
-      Screen.width = 768
-      Screen.height = 1024
-      expect(screen.orientation()).toBe('portrait')
+    it.each([
+      [1024, 768, 'landscape'],
+      [768, 1024, 'portrait'],
+      [800, 800, 'portrait']
+    ])('is computed from a %ix%i viewport as %s', (width, height, orientation) => {
+      Object.assign(quasar.Screen, { width, height })
+      expect(Screen.orientation).toBe(orientation)
     })
   })
 
-  describe('toggleFullscreen', () => {
-    it('should return true when toggled successfully', async () => {
-      vi.spyOn(AppFullscreen, 'toggle').mockResolvedValue()
-      expect(await screen.toggleFullscreen()).toBe(true)
+  describe('fullscreen', () => {
+    it('follows the Quasar fullscreen state', async () => {
+      expect(Screen.fullscreen).toBe(false)
+      quasar.AppFullscreen.isActive = true
+      await nextTick()
+      expect(Screen.fullscreen).toBe(true)
     })
 
-    it('should return false when toggle fails', async () => {
-      vi.spyOn(AppFullscreen, 'toggle').mockRejectedValue(new Error('not allowed'))
-      expect(await screen.toggleFullscreen()).toBe(false)
+    it('resolves true when toggled', async () => {
+      quasar.AppFullscreen.toggle.mockResolvedValue()
+      expect(await Screen.toggleFullscreen()).toBe(true)
+    })
+
+    it('resolves false and warns when it cannot be toggled', async () => {
+      quasar.AppFullscreen.toggle.mockRejectedValue(new Error('denied'))
+      expect(await Screen.toggleFullscreen()).toBe(false)
+      expect(logger.warn).toHaveBeenCalledOnce()
     })
   })
 
   describe('lockOrientation', () => {
-    it('should call window.screen.orientation.lock when available', async () => {
+    afterEach(() => {
+      delete window.screen.orientation
+    })
+
+    function mockOrientation (orientation) {
+      Object.defineProperty(window.screen, 'orientation', { value: orientation, configurable: true })
+    }
+
+    it('resolves false without warning when the API is missing', async () => {
+      mockOrientation(undefined)
+      expect(await Screen.lockOrientation('portrait')).toBe(false)
+      expect(logger.warn).not.toHaveBeenCalled()
+    })
+
+    it('resolves true when the orientation is locked', async () => {
       const lock = vi.fn().mockResolvedValue()
-      vi.stubGlobal('window', { screen: { orientation: { lock } } })
-      await screen.lockOrientation('portrait')
+      mockOrientation({ lock })
+      expect(await Screen.lockOrientation('portrait')).toBe(true)
       expect(lock).toHaveBeenCalledWith('portrait')
     })
 
-    it('should do nothing when screen.orientation.lock is unavailable', async () => {
-      vi.stubGlobal('window', { screen: { orientation: {} } })
-      await expect(screen.lockOrientation('portrait')).resolves.not.toThrow()
+    it('resolves false and warns when the browser refuses to lock', async () => {
+      mockOrientation({ lock: vi.fn().mockRejectedValue(new DOMException('Not supported', 'NotSupportedError')) })
+      expect(await Screen.lockOrientation('portrait')).toBe(false)
+      expect(logger.warn).toHaveBeenCalledOnce()
     })
   })
 })

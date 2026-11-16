@@ -31,7 +31,7 @@
 
 <script setup>
 import { has, isEmpty, mapKeys, merge, replace } from 'lodash-es'
-import { getLogger } from '@logtape/logtape'
+import { getLogger } from '@kalisio/common-core/runtime'
 const logger = getLogger(['quasar-core', 'KDialog'])
 import { ref, computed, useAttrs } from 'vue'
 import { useDialogPluginComponent } from 'quasar'

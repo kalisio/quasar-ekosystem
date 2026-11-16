@@ -1,20 +1,24 @@
 import { fileURLToPath } from 'node:url'
-import path from 'node:path'
+import { dirname } from 'node:path'
 import { defineConfig, mergeConfig } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
-import { baseConfig } from '../../vitest.base-config'
+import { baseConfig } from '../../vitest.base-config.js'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default mergeConfig(baseConfig, defineConfig({
   plugins: [
-    vue({ template: { transformAssetUrls } }),
+    vue({
+      template: {
+        transformAssetUrls
+      }
+    }),
     quasar()
   ],
   root: __dirname,
   test: {
-    name: 'quasar-form',
+    name: 'quasar-core',
     environment: 'happy-dom',
     setupFiles: ['./test/setup.js'],
     server: {
@@ -22,8 +26,5 @@ export default mergeConfig(baseConfig, defineConfig({
         inline: ['quasar']
       }
     }
-  },
-  resolve: {
-    conditions: ['development', 'import', 'browser', 'module', 'default']
   }
 }))

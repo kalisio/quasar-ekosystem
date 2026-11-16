@@ -2,7 +2,6 @@
   "name": "@kalisio/quasar-core",
   "description": "Core components for kalisio ekosystem",
   "version": "0.0.0",
-  "packageManager": "pnpm@10.34.5",
   "type": "module",
   "exports": {
     ".": {
@@ -15,12 +14,24 @@
     "dist"
   ],
   "standard": {
+    "globals": [
+      "describe",
+      "it",
+      "test",
+      "expect",
+      "beforeAll",
+      "afterAll",
+      "beforeEach",
+      "afterEach",
+      "vi"
+    ],
     "ignore": [
       "dist/**"
     ]
   },
   "scripts": {
     "build": "vite build",
+    "postbuild": "publint",
     "lint": "standard --fix",
     "test": "vitest run --coverage"
   },
@@ -43,34 +54,37 @@
     "url": "https://github.com/kalisio/quasar-ekosystem/issues"
   },
   "homepage": "https://github.com/kalisio/quasar-ekosystem/tree/main/packages/quasar-core",
-  "peerDependencies": {
+  "dependencies": {
     "@kalisio/common-core": "catalog:",
     "@kalisio/common-graphics": "catalog:",
-    "@logtape/logtape": "catalog:",
-    "@thumbmarkjs/thumbmarkjs": "catalog:",
     "chroma-js": "catalog:",
+    "idb-keyval": "catalog:",
     "js-yaml": "catalog:",
     "lodash-es": "catalog:",
     "mathjs": "catalog:",
     "moment": "catalog:",
-    "quasar": "catalog:",
     "sanitize-html": "catalog:",
-    "sift": "catalog:",
-    "vue": "catalog:",
-    "vue-i18n": "catalog:",
-    "vue-router": "catalog:"
+    "sift": "catalog:"
   },
   "devDependencies": {
     "@quasar/quasar-app-extension-testing-unit-vitest": "catalog:",
     "@quasar/vite-plugin": "catalog:",
+    "@vitejs/plugin-vue": "catalog:",
     "@vue/test-utils": "catalog:",
     "happy-dom": "catalog:",
+    "fake-indexeddb": "catalog:",
     "sass": "^1.99.0",
     "sharp": "catalog:",
     "vue-router-mock": "catalog:"
   },
+  "peerDependencies": {
+    "quasar": "catalog:",
+    "vue": "catalog:",
+    "vue-i18n": "catalog:",
+    "vue-router": "catalog:"
+  },
   "engines": {
-    "node": ">=20"
+    "node": ">=24"
   },
   "publishConfig": {
     "access": "public",

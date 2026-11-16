@@ -1,4 +1,4 @@
-import { Platform } from '../platform.js'
+import { Platform } from '../utilities/index.js'
 
 export const vHover = {
 

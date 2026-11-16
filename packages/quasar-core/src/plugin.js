@@ -1,6 +1,6 @@
 import { defineAsyncComponent } from 'vue'
 import { I18n } from './i18n.js'
-import { Platform } from './platform.js'
+import { Platform } from './utilities/platform.js'
 
 const componentModules = import.meta.glob('./components/**/*.vue')
 const directiveModules = import.meta.glob('./directives/v-*.js', { eager: true })

@@ -1,10 +1,10 @@
-import { getLogger } from '@logtape/logtape'
+import { getLogger } from '@kalisio/common-core/runtime'
 import { Notify } from 'quasar'
 import { file } from '@kalisio/common-core/utilities'
+import { palette } from '../utilities/index.js'
 import { I18n } from '../i18n.js'
-import { palette } from '../utilities'
 
-const logger = getLogger(['quasar-core', 'directives', 'v-drop-file'])
+const logger = getLogger(['quasar-core', 'v-drop-file'])
 
 export const vDropFile = {
 

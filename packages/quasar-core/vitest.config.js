@@ -3,7 +3,7 @@ import { dirname } from 'node:path'
 import { defineConfig, mergeConfig } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
-import { baseConfig } from '../../vitest.base-config'
+import { baseConfig } from '../../vitest.base-config.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 

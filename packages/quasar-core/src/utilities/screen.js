@@ -1,69 +1,60 @@
-import { get } from 'lodash-es'
-import { getLogger } from '@logtape/logtape'
-import { toRef } from 'vue'
-import { Screen, AppFullscreen } from 'quasar'
-import { is } from '@kalisio/common-core/predicates'
+import { assert, is } from '@kalisio/common-core/predicates'
+import { getLogger } from '@kalisio/common-core/runtime'
+import { computed, reactive, readonly, toRef } from 'vue'
+import { Screen as QScreen, AppFullscreen } from 'quasar'
 
-const logger = getLogger(['quasar-core', 'utilities', 'screen'])
+const logger = getLogger(['quasar-core', 'screen'])
 
-function resolveDimension (value, screenSize, dimensionName) {
-  if (is.number(value)) {
-    if (value > 100) return value
-    return screenSize * value / 100
-  }
-  if (!is.plainObject(value)) {
-    logger.warn(`Invalid ${dimensionName} parameter ${value}`)
-    return undefined
-  }
-  const breakpointValue = get(value, Screen.name)
-  if (!breakpointValue) {
-    logger.warn(`Cannot find ${dimensionName} value for breakpoint ${Screen.name}`)
-    return undefined
-  }
-  if (!is.number(breakpointValue)) {
-    logger.warn(`Invalid ${dimensionName} value ${breakpointValue} for breakpoint ${Screen.name}`)
-    return undefined
-  }
-  return resolveDimension(breakpointValue, screenSize, dimensionName)
+// dense reads Screen.lt and wide reads Screen.gt, which do not define the same breakpoints
+const DENSE_BREAKPOINTS = ['sm', 'md', 'lg', 'xl']
+const WIDE_BREAKPOINTS = ['xs', 'sm', 'md', 'lg']
+const DEFAULT_BREAKPOINT = 'sm'
+
+const breakpoints = reactive({ dense: DEFAULT_BREAKPOINT, wide: DEFAULT_BREAKPOINT })
+
+// Optional: the default breakpoints apply without it.
+// A breakpoint that is not given is reset to its default.
+function initialize ({ dense = DEFAULT_BREAKPOINT, wide = DEFAULT_BREAKPOINT } = {}) {
+  assert.that(dense, (value) => is.oneOf(value, DENSE_BREAKPOINTS), `dense must be one of: ${DENSE_BREAKPOINTS.join(', ')}`)
+  assert.that(wide, (value) => is.oneOf(value, WIDE_BREAKPOINTS), `wide must be one of: ${WIDE_BREAKPOINTS.join(', ')}`)
+  breakpoints.dense = dense
+  breakpoints.wide = wide
+  logger.debug('Screen initialized with breakpoints {dense} and {wide}', { dense, wide })
 }
 
-export const screen = {
-  Fullscreen: toRef(AppFullscreen, 'isActive'),
-
-  resolveWidth (width) {
-    return resolveDimension(width, Screen.width, 'width')
-  },
-
-  resolveHeight (height) {
-    return resolveDimension(height, Screen.height, 'height')
-  },
-
-  resolveSize (size) {
-    if (is.arrayOfLength(size, 2)) {
-      return size
-    }
-    if (is.plainObject(size)) {
-      const breakpointSize = get(size, Screen.name)
-      return [this.resolveWidth(breakpointSize[0]), this.resolveHeight(breakpointSize[1])]
-    }
-    logger.warn(`Invalid size parameter ${size}`)
-  },
-
-  orientation () {
-    return Screen.width > Screen.height ? 'landscape' : 'portrait'
-  },
-
-  async lockOrientation (orientation) {
-    if (window.screen.orientation?.lock) await window.screen.orientation.lock(orientation)
-  },
-
-  async toggleFullscreen () {
-    try {
-      await AppFullscreen.toggle()
-      return true
-    } catch (err) {
-      logger.warn(`Cannot toggle fullscreen mode: ${err}`)
-      return false
-    }
+async function toggleFullscreen () {
+  try {
+    await AppFullscreen.toggle()
+    return true
+  } catch (error) {
+    logger.warn('Cannot toggle fullscreen mode: {error}', { error })
+    return false
   }
 }
+
+// Quasar does not lock orientation: use the native Screen Orientation API
+// lock() usually requires fullscreen and rejects on desktop and iOS Safari
+async function lockOrientation (orientation) {
+  if (typeof window.screen.orientation?.lock !== 'function') return false
+  try {
+    await window.screen.orientation.lock(orientation)
+    return true
+  } catch (error) {
+    logger.warn('Cannot lock orientation to {orientation}: {error}', { orientation, error })
+    return false
+  }
+}
+
+// readonly() unwraps nested refs: Screen.dense is a boolean, not a ref.
+// The Quasar Screen is not exposed here: through readonly() its methods (setSizes, setDebounce)
+// would silently fail, so import it from quasar when needed.
+export const Screen = readonly({
+  initialize,
+  dense: computed(() => QScreen.lt[breakpoints.dense]),
+  wide: computed(() => QScreen.gt[breakpoints.wide]),
+  // Viewport shape, same rule as the CSS orientation media feature
+  orientation: computed(() => QScreen.height >= QScreen.width ? 'portrait' : 'landscape'),
+  fullscreen: toRef(AppFullscreen, 'isActive'),
+  toggleFullscreen,
+  lockOrientation
+})
