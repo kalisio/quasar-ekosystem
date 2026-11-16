@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { palette, QUASAR_PALETTE, HTML_PALETTE } from '../../src/utilities'
+import chroma from 'chroma-js'
+import { palette, QUASAR_PALETTE } from '../../src/utilities'
 
 describe('palette.resolve', () => {
   describe('empty color', () => {
@@ -47,26 +48,33 @@ describe('palette.resolve', () => {
       expect(palette.resolve('deep-purple-10')).toBe('#311b92')
     })
 
-    it('takes priority over the HTML palette for shared names', () => {
-      // "red" is #f44336 in Quasar, #FF0000 in HTML
+    it('takes priority over HTML colors for shared names', () => {
       expect(palette.resolve('red')).toBe(QUASAR_PALETTE.red)
-      expect(palette.resolve('red')).not.toBe(HTML_PALETTE.red)
+      expect(palette.resolve('red')).not.toBe(chroma.colors.red)
     })
   })
 
-  describe('HTML palette', () => {
+  describe('HTML colors', () => {
     it('resolves "navy"', () => {
-      expect(palette.resolve('navy')).toBe('#000080')
+      expect(palette.resolve('navy')).toBe(chroma.colors.navy)
     })
 
     it('resolves "coral"', () => {
-      expect(palette.resolve('coral')).toBe('#FF7F50')
+      expect(palette.resolve('coral')).toBe(chroma.colors.coral)
+    })
+
+    it('resolves "rebeccapurple"', () => {
+      expect(palette.resolve('rebeccapurple')).toBe(chroma.colors.rebeccapurple)
     })
   })
 
   describe('unknown color', () => {
     it('returns defaultColor when color is not found anywhere', () => {
       expect(palette.resolve('not-a-color', '#ffffff')).toBe('#ffffff')
+    })
+
+    it('returns undefined when no defaultColor is provided', () => {
+      expect(palette.resolve('not-a-color')).toBeUndefined()
     })
   })
 })
@@ -85,7 +93,6 @@ describe('palette.findClosest', () => {
   })
 
   it('returns a nearby key for an approximate color', () => {
-    // #ff5555 is very close to red
     const result = palette.findClosest('#ff5555')
     expect(result).toMatch(/^red/)
   })
