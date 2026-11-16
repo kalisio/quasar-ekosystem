@@ -1,6 +1,5 @@
 export * from './actions.js'
 export * from './content.js'
-export * from './indexeddb-storage.js'
 export * from './palette.js'
 export * from './platform.js'
 export * from './screen.js'

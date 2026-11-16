@@ -58,7 +58,6 @@
     "@kalisio/common-core": "catalog:",
     "@kalisio/common-graphics": "catalog:",
     "chroma-js": "catalog:",
-    "idb-keyval": "catalog:",
     "js-yaml": "catalog:",
     "lodash-es": "catalog:",
     "mathjs": "catalog:",
@@ -72,7 +71,6 @@
     "@vitejs/plugin-vue": "catalog:",
     "@vue/test-utils": "catalog:",
     "happy-dom": "catalog:",
-    "fake-indexeddb": "catalog:",
     "sass": "^1.99.0",
     "sharp": "catalog:",
     "vue-router-mock": "catalog:"
