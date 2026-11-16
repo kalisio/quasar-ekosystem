@@ -18,7 +18,7 @@ export const plugin = {
     if (options.i18n) I18n.setInstance(options.i18n)
     app.provide('i18n', I18n)
     app.config.globalProperties.$tie = (key, params) => I18n.tie(key, params)
-    await Platform.initialize(options.buildMode)
+    Platform.initialize(options.buildMode)
     app.provide('platform', Platform)
     app.config.globalProperties.$platform = Platform
   }
