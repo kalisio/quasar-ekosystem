@@ -1,7 +1,6 @@
 {
   "name": "docs",
   "description": "quasar-ekosystem docs",
-  "packageManager": "pnpm@10.34.5",
   "type": "module",
   "private": true,
   "scripts": {

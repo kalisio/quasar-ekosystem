@@ -3,7 +3,6 @@
   "description": "layout-designer example",
   "type": "module",
   "private": true,
-  "packageManager": "pnpm@10.34.5",
   "scripts": {
     "dev": "vite",
     "lint": "standard --fix"

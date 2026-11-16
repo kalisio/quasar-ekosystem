@@ -100,7 +100,7 @@ Renders a continuous or discrete color scale on an HTML canvas. The scale automa
 
 **Continuous horizontal scale**
 
-![KColorScale continuous horizontal](../../kcolor-scale-continuous.png)
+![KColorScale continuous horizontal](../assets/kcolor-scale-continuous.png)
 
 ```html
 <KColorScale label="Temperature" colors="RdYlBu" :domain="[-20, 40]" />
@@ -108,7 +108,7 @@ Renders a continuous or discrete color scale on an HTML canvas. The scale automa
 
 **Discrete horizontal scale**
 
-![KColorScale discrete horizontal](../../kcolor-scale-discrete.png)
+![KColorScale discrete horizontal](../assets/kcolor-scale-discrete.png)
 
 ```html
 <KColorScale

@@ -1,7 +1,6 @@
 {
   "name": "quasar-form",
   "description": "quasar-form example",
-  "packageManager": "pnpm@10.34.5",
   "type": "module",
   "private:": false,
   "scripts": {
